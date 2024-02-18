@@ -59,7 +59,7 @@ jobs:
 
       # Docker image 빌드
       - name: Build Docker image
-        run: docker build -t byeonjuhwan/usercicid:latest .
+        run: docker build -t ${{ secrets.DOCKER_IMAGE_NAME }} .
 
 
       # Docker image -> Docker Hub 로 푸쉬
@@ -74,7 +74,7 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            docker pull byeonjuhwan/usercicid:latest
+            docker pull ${{ secrets.DOCKER_IMAGE_NAME }}
             docker-compose -f docker-compose.yml up -d
 
             
