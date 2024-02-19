@@ -1,5 +1,5 @@
 # 1. 베이스 이미지 선택
-FROM bellsoft/liberica-openjdk-alpine:21 as build
+FROM openjdk:17-jdk-alpine as build
 
 # 2. 작업 디렉토리 설정
 WORKDIR /build
@@ -12,7 +12,7 @@ RUN chmod +x ./gradlew && \
     ./gradlew build
 
 # 5. 애플리케이션 실행을 위한 새로운 스테이지
-FROM bellsoft/liberica-openjdk-alpine:21
+FROM openjdk:17-jdk-alpine
 
 WORKDIR /srv/teutoo-server/lib
 
