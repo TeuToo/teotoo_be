@@ -19,10 +19,10 @@ WORKDIR /app
 
 # 빌드 스테이지에서 생성된 실행 가능한 JAR 파일을 현재 이미지로 복사
 # 여기서 경로를 수정합니다. 빌드 스테이지의 작업 디렉토리는 /app 이므로, 그에 맞게 경로를 조정합니다.
-COPY --from=build /app/build/libs/*.jar app.jar
+COPY --from=build /app/build/libs/*.jar teotoo.jar
 
 # 6. 애플리케이션 실행 환경 변수 설정 (필요한 경우)
 ENV SPRING_PROFILES_ACTIVE=dev
 
 # 7. 애플리케이션 실행
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-jar", "teotoo.jar"]
