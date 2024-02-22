@@ -1,6 +1,7 @@
 package com.project.durumoongsil.teutoo.member.domain;
 
 
+import com.project.durumoongsil.teutoo.commom.BaseTimeEntity;
 import com.project.durumoongsil.teutoo.member.dto.MemberJoinDto;
 import jakarta.persistence.*;
 import lombok.*;
@@ -10,7 +11,7 @@ import static lombok.AccessLevel.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = PROTECTED)
-public class Member {
+public class Member extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
