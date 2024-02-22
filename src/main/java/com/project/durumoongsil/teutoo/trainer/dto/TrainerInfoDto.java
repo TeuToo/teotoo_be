@@ -13,7 +13,7 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
-public class TrainerIntroUpdateDto {
+public class TrainerInfoDto {
 
     @Schema(description = "헬스장 이름", examples = "xxx헬스장")
     @NotBlank(message = "헬스장 이름을 입력 해 주셔야 합니다.")

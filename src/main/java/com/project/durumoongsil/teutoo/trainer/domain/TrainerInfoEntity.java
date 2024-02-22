@@ -10,12 +10,12 @@ import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Getter
-@Table(name = "trainer_intro")
+@Table(name = "trainer_info")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class TrainerIntroEntity {
+public class TrainerInfoEntity {
 
     @Id
-    @Column(name = "trainer_intro_id")
+    @Column(name = "trainer_info_id")
     private Long id;
 
     @Column(nullable = false)
@@ -38,8 +38,8 @@ public class TrainerIntroEntity {
     private Member member;
 
     @Builder
-    public TrainerIntroEntity(String gymName, String simpleIntro, String introContent,
-                              int reviewCnt, double reviewScore, Member member) {
+    public TrainerInfoEntity(String gymName, String simpleIntro, String introContent,
+                             int reviewCnt, double reviewScore, Member member) {
         this.gymName = gymName;
         this.simpleIntro = simpleIntro;
         this.introContent = introContent;
