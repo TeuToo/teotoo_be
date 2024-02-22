@@ -1,7 +1,7 @@
 package com.project.durumoongsil.teutoo.member.domain;
 
 
-import com.project.durumoongsil.teutoo.commom.BaseTimeEntity;
+import com.project.durumoongsil.teutoo.common.BaseTimeEntity;
 import com.project.durumoongsil.teutoo.member.dto.MemberJoinDto;
 import jakarta.persistence.*;
 import lombok.*;

@@ -1,4 +1,4 @@
-package com.project.durumoongsil.teutoo.commom;
+package com.project.durumoongsil.teutoo.common;
 
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 @MappedSuperclass
 @Getter
 @EntityListeners(value = {AuditingEntityListener.class})
-
 public class BaseTimeEntity {
 
     @CreatedDate
