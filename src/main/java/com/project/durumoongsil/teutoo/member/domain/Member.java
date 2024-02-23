@@ -3,6 +3,7 @@ package com.project.durumoongsil.teutoo.member.domain;
 
 import com.project.durumoongsil.teutoo.common.BaseTimeEntity;
 import com.project.durumoongsil.teutoo.member.dto.MemberJoinDto;
+import com.project.durumoongsil.teutoo.trainer.domain.TrainerInfo;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -30,6 +31,8 @@ public class Member extends BaseTimeEntity {
     private String profile_image_path;
     private String profile_image_name;
 
+    @OneToOne(mappedBy = "member", fetch = FetchType.LAZY)
+    private TrainerInfo trainerInfo;
 
     @Builder
     public Member(Long id, String name, String email, String password, String address,
