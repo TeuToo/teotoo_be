@@ -62,6 +62,12 @@ public class FileService {
         return amazonS3.getUrl(bucketName, savedFileFullName).toString();
     }
 
+    public void deleteImg(String path, String imgFileName) {
+        String savedFileFullName = path + "/" + imgFileName;
+
+        amazonS3.deleteObject(bucketName, savedFileFullName);
+    }
+
 
     private String convertUniqueName(String imgName) {
         String extension = imgName.substring(imgName.lastIndexOf("."));
