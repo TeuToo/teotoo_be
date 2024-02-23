@@ -26,7 +26,7 @@ public class TrainerInfoService {
     private final CareerImgRepository careerImgRepository;
     private final FileService fileService;
 
-    // 트레이너 소개 페이지 등록 dto -> dao
+    // 트레이너 소개 페이지 등록 및 갱신
     @Transactional
     public void saveOrUpdate(Long trainerId, TrainerUpdateInfoDto trainerUpdateInfoDto) {
 
