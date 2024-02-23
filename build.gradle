@@ -54,7 +54,7 @@ dependencies {
 	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.2'
 
 	// 열거형 상수 주석 에러 해결방법?
-	implementation 'javax.annotation:javax.annotation-api:1.3.2'
+	implementation 'com.google.code.findbugs:jsr305:3.0.2'
 }
 
 tasks.named('test') {
