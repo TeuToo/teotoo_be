@@ -1,28 +1,35 @@
 package com.project.durumoongsil.teutoo.trainer.service;
 
+import com.project.durumoongsil.teutoo.common.domain.File;
+import com.project.durumoongsil.teutoo.common.service.FileService;
 import com.project.durumoongsil.teutoo.exception.NotFoundUserException;
 import com.project.durumoongsil.teutoo.member.domain.Member;
 import com.project.durumoongsil.teutoo.member.repository.MemberRepository;
+import com.project.durumoongsil.teutoo.trainer.domain.CareerImg;
 import com.project.durumoongsil.teutoo.trainer.domain.TrainerInfo;
 import com.project.durumoongsil.teutoo.trainer.dto.TrainerUpdateInfoDto;
+import com.project.durumoongsil.teutoo.trainer.repository.CareerImgRepository;
 import com.project.durumoongsil.teutoo.trainer.repository.TrainerInfoCustomRepositoryImpl;
 import com.project.durumoongsil.teutoo.trainer.repository.TrainerInfoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @Service
 @RequiredArgsConstructor
 public class TrainerInfoService {
 
-    private final MemberRepository memberRepository;
     private final TrainerInfoRepository trainerInfoRepository;
+    private final CareerImgRepository careerImgRepository;
+    private final FileService fileService;
 
     // 트레이너 소개 페이지 등록 dto -> dao
     @Transactional
     public void saveOrUpdate(Long trainerId, TrainerUpdateInfoDto trainerUpdateInfoDto) {
 
-        // 최적화?
         Member member = trainerInfoRepository.findMemberByIdWithTrainerInfo(trainerId)
                 .orElseThrow(() -> new NotFoundUserException("사용자를 찾을 수 없습니다."));
 
@@ -44,11 +51,16 @@ public class TrainerInfoService {
             trainerInfo.updateIntroContent(trainerUpdateInfoDto.getIntroContent());
         }
 
-        // 자격사항 이미지 추가
-
-        // TrainerInfo 엔티티 생성
+        // 자격사항 이미지 저장
+        for (MultipartFile file : trainerUpdateInfoDto.getCareerImages()) {
+            File savedFile = null;
+            try {
+                savedFile = fileService.saveImg("trainer_info", file);
+            } catch (IOException e) {
+                throw new RuntimeException("자격사항 이미지 저장에 실패 하였습니다. 다시 시도 해주세요.");
+            }
+            CareerImg careerImg = new CareerImg(trainerInfo, savedFile);
+            careerImgRepository.save(careerImg);
+        }
     }
-
-
-    // 트레이너 소개 페이지 정보 dao -> dto
 }
