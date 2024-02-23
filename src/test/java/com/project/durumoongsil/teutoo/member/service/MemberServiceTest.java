@@ -1,13 +1,18 @@
 package com.project.durumoongsil.teutoo.member.service;
 
+import com.project.durumoongsil.teutoo.exception.NotFoundUserException;
 import com.project.durumoongsil.teutoo.member.domain.Member;
 import com.project.durumoongsil.teutoo.member.domain.Role;
 import com.project.durumoongsil.teutoo.member.dto.MemberJoinDto;
+import com.project.durumoongsil.teutoo.member.dto.MemberUpdateDto;
 import com.project.durumoongsil.teutoo.member.repository.MemberRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
+
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -27,6 +32,7 @@ class MemberServiceTest {
     }
 
     @Test
+    @DisplayName("회원가입")
     void signUp() {
         //given
         MemberJoinDto memberJoinDto = MemberJoinDto.builder()
@@ -50,5 +56,41 @@ class MemberServiceTest {
         Member captorValue = memberArgumentCaptor.getValue();
         assertThat(captorValue.getRole()).isEqualTo(Role.TRAINER);
         verify(memberRepository, times(1)).save(any(Member.class));
+    }
+
+    @Test
+    @DisplayName("회원수정 성공 로직")
+    void update() {
+        //given
+        Long memberId = 1L;
+        Member originalMember = Member.builder()
+                .address("경기도 성남시 분당구")
+                .build();
+
+        MemberUpdateDto updateMember = MemberUpdateDto.builder()
+                .address("서울특별시 강남구")
+                .build();
+
+        when(memberRepository.findById(memberId)).thenReturn(Optional.of(originalMember));
+
+        // when
+        memberService.updateInfo(memberId, updateMember);
+
+        // then
+        verify(memberRepository).findById(memberId);
+        verify(memberRepository, times(1)).findById(memberId);
+        assertThat(originalMember.getAddress()).isEqualTo(updateMember.getAddress());
+    }
+
+    @Test
+    @DisplayName("회원수정시 사용자를 찾지 못했을때 예외")
+    void failFindUser() {
+        //given
+        when(memberRepository.findById(1L)).thenReturn(Optional.empty());
+
+        // when then
+        assertThatThrownBy(() -> {
+            memberService.updateInfo(1L, new MemberUpdateDto());
+        }).isInstanceOf(NotFoundUserException.class).hasMessageContaining("사용자를 찾을 수 없습니다.");
     }
 }
