@@ -62,7 +62,7 @@ class MemberServiceTest {
     @DisplayName("회원수정 성공 로직")
     void update() {
         //given
-        Long memberId = 1L;
+        String userId = "test@naver.com";
         Member originalMember = Member.builder()
                 .address("경기도 성남시 분당구")
                 .build();
@@ -71,14 +71,14 @@ class MemberServiceTest {
                 .address("서울특별시 강남구")
                 .build();
 
-        when(memberRepository.findById(memberId)).thenReturn(Optional.of(originalMember));
+        when(memberRepository.findMemberByEmail(userId)).thenReturn(Optional.of(originalMember));
 
         // when
-        memberService.updateInfo(memberId, updateMember);
+        memberService.updateInfo(userId, updateMember);
 
         // then
-        verify(memberRepository).findById(memberId);
-        verify(memberRepository, times(1)).findById(memberId);
+        verify(memberRepository).findMemberByEmail(userId);
+        verify(memberRepository, times(1)).findMemberByEmail(userId);
         assertThat(originalMember.getAddress()).isEqualTo(updateMember.getAddress());
     }
 
@@ -86,11 +86,11 @@ class MemberServiceTest {
     @DisplayName("회원수정시 사용자를 찾지 못했을때 예외")
     void failFindUser() {
         //given
-        when(memberRepository.findById(1L)).thenReturn(Optional.empty());
+        when(memberRepository.findMemberByEmail("test@naver.com")).thenReturn(Optional.empty());
 
         // when then
         assertThatThrownBy(() -> {
-            memberService.updateInfo(1L, new MemberUpdateDto());
+            memberService.updateInfo("test@naver.com", new MemberUpdateDto());
         }).isInstanceOf(NotFoundUserException.class).hasMessageContaining("사용자를 찾을 수 없습니다.");
     }
 }
