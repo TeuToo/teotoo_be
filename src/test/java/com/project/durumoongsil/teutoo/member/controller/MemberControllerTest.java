@@ -24,11 +24,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest
 class MemberControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    @MockBean
-    MemberService memberService;
+//    @Autowired
+//    private MockMvc mockMvc;
+//
+//    @MockBean
+//    MemberService memberService;
 
 
 //    @Test
