@@ -12,8 +12,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 import static com.project.durumoongsil.teutoo.member.domain.Role.*;
 
 @Service
@@ -37,11 +35,11 @@ public class MemberService {
         memberRepository.save(member);
     }
 
-    public void updateInfo(Long id, MemberUpdateDto memberUpdateDto) {
-        Member member = memberRepository.findById(id)
+    public Member updateInfo(String userEmail, MemberUpdateDto memberUpdateDto) {
+        Member member = memberRepository.findMemberByEmail(userEmail)
                 .orElseThrow(() -> new NotFoundUserException("사용자를 찾을 수 없습니다."));
 
-        //member.updateInfo(memberUpdateDto);
+        return member.updateInfo(memberUpdateDto);
     }
 
     private Role getRole(MemberJoinDto memberJoinDto) {
