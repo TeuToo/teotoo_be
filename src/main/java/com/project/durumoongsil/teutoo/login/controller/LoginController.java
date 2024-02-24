@@ -35,9 +35,9 @@ public class LoginController {
             @ApiResponse(responseCode = "401", description = "로그인 실패"),
             @ApiResponse(responseCode = "403", description = "권한이 없는 오류")
     })
-    @PostMapping("/login")
+    @PostMapping(value = "/login")
     public ResponseEntity<TokenDto> authorize(
-            @ParameterObject @Validated @RequestBody LoginDto loginDto) {
+            @ParameterObject @Validated LoginDto loginDto) {
 
         log.info("loginDto ={}", loginDto);
 

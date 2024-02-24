@@ -50,9 +50,9 @@ public class SecurityConfig {
                 // token을 사용하는 방식이기 때문에 csrf를 disable 한다.
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
-                        .requestMatchers("/login","/join").permitAll()
-                        .requestMatchers(PathRequest.toH2Console()).permitAll()
-                        .anyRequest().authenticated())
+//                        .requestMatchers("/login","/join","/swagger-ui/**","/").permitAll()
+//                        .requestMatchers(PathRequest.toH2Console()).permitAll()
+                        .anyRequest().permitAll())
                 .addFilterBefore(corsFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .accessDeniedHandler(jwtAccessDeniedHandler)
