@@ -3,8 +3,8 @@ name: 백엔드 API CI/CD
 on:
   push:
     branches: [ "deploy" ]
-  # pull_request:
-  #   branches: [ "deploy" ]
+  pull_request:
+    branches: [ "deploy" ]
 
 jobs:
   build:
@@ -31,9 +31,60 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: Setup Gradle
+
+      - name: application-dev.yml 생성
+        run: |
+          cat << EOF > src/main/resources/application-dev.yaml
+          spring:
+              datasource:
+                driver-class-name: ${{ secrets.DRIVER_CLASS_NAME }}
+                username: ${{ secrets.DB_USERNAME }}
+                url: ${{ secrets.DB_URL }}
+                password: ${{ secrets.DB_PASSWORD }}
+            jpa:
+              properties:
+                hibernate:
+                  format_sql: true
+                  default_batch_fetch_size: 1000
+              show-sql: true
+              hibernate:
+                ddl-auto: ${{ secrets.HIBERNATE_DDL_AUTO }}
+              open-in-view: false
+
+          springdoc:
+            default-produces-media-type: application/json;charset=UTF-8
+            api-docs:
+              path: /api-docs/json
+            default-consumes-media-type: application/json;charset=UTF-8
+            swagger-ui:
+              operations-sorter: alpha
+              tags-sorter: alpha
+              path: swagger-ui.html
+            cache:
+              disabled: true
+            packages-to-scan: ${{ secrets.PACKAGES_TO_SCAN }}
+            
+          jwt: 
+            secret: ${{ secrets.TOKEN_SECRET_KEY }}
+            expiration: ${{ secrets.TOKEN_EXPIRATION }}
+
+          cloud:
+            aws:
+              credentials:
+              accessKey: ${{ secrets.AWS_ACCESS_KEY }}
+              secretKey: ${{ secrets.AWS_SECRET_KEY }}
+            s3:
+              bucketName: ${{ secrets.S3_BUCKETNAME }}  
+            region:
+              static: ap-northeast-2
+            stack:
+              auto: false
+          
+          EOF
+
+      - name: Gradle 설정
         uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 
-      - name: Build with Gradle Wrapper
+      - name: Gradle 빌드
         run: |
           chmod +x ./gradlew
           ./gradlew build
