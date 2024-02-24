@@ -32,58 +32,52 @@ jobs:
             ${{ runner.os }}-gradle-
 
             
-      - name: yaml 파일 디렉토리 생성
-        run: mkdir -p src/main/resources/
-
-      - name: application-dev.yml 생성
+      - name: Create application-dev.yaml
         run: |
-          cat << EOF > src/main/resources/application-dev.yaml
-          spring:
-              datasource:
-                driver-class-name: ${{ secrets.DRIVER_CLASS_NAME }}
-                username: ${{ secrets.DB_USERNAME }}
-                url: ${{ secrets.DB_URL }}
-                password: ${{ secrets.DB_PASSWORD }}
-            jpa:
-              properties:
-                hibernate:
-                  format_sql: true
-                  default_batch_fetch_size: 1000
-              show-sql: true
-              hibernate:
-                ddl-auto: ${{ secrets.HIBERNATE_DDL_AUTO }}
-              open-in-view: false
+          mkdir -p ./src/main/resources 
+          echo "spring:" > ./src/main/resources/application-dev.yaml
+          echo "  datasource:" >> ./src/main/resources/application-dev.yaml
+          echo "    driver-class-name: ${{ secrets.DRIVER_CLASS_NAME }}" >> ./src/main/resources/application-dev.yaml
+          echo "    username: ${{ secrets.DB_USERNAME }}" >> ./src/main/resources/application-dev.yaml
+          echo "    url: ${{ secrets.DB_URL }}" >> ./src/main/resources/application-dev.yaml
+          echo "    password: ${{ secrets.DB_PASSWORD }}" >> ./src/main/resources/application-dev.yaml
+          echo "jpa:" >> ./src/main/resources/application-dev.yaml
+          echo "  properties:" >> ./src/main/resources/application-dev.yaml
+          echo "    hibernate:" >> ./src/main/resources/application-dev.yaml
+          echo "      format_sql: true" >> ./src/main/resources/application-dev.yaml
+          echo "      default_batch_fetch_size: 1000" >> ./src/main/resources/application-dev.yaml
+          echo "  show-sql: true" >> ./src/main/resources/application-dev.yaml
+          echo "  hibernate:" >> ./src/main/resources/application-dev.yaml
+          echo "    ddl-auto: ${{ secrets.HIBERNATE_DDL_AUTO }}" >> ./src/main/resources/application-dev.yaml
+          echo "  open-in-view: false" >> ./src/main/resources/application-dev.yaml
+          echo "springdoc:" >> ./src/main/resources/application-dev.yaml
+          echo "  default-produces-media-type: application/json;charset=UTF-8" >> ./src/main/resources/application-dev.yaml
+          echo "  api-docs:" >> ./src/main/resources/application-dev.yaml
+          echo "    path: /api-docs/json" >> ./src/main/resources/application-dev.yaml
+          echo "  default-consumes-media-type: application/json;charset=UTF-8" >> ./src/main/resources/application-dev.yaml
+          echo "  swagger-ui:" >> ./src/main/resources/application-dev.yaml
+          echo "    operations-sorter: alpha" >> ./src/main/resources/application-dev.yaml
+          echo "    tags-sorter: alpha" >> ./src/main/resources/application-dev.yaml
+          echo "    path: swagger-ui.html" >> ./src/main/resources/application-dev.yaml
+          echo "  cache:" >> ./src/main/resources/application-dev.yaml
+          echo "    disabled: true" >> ./src/main/resources/application-dev.yaml
+          echo "  packages-to-scan: ${{ secrets.PACKAGES_TO_SCAN }}" >> ./src/main/resources/application-dev.yaml
+          echo "jwt:" >> ./src/main/resources/application-dev.yaml
+          echo "  secret: ${{ secrets.TOKEN_SECRET_KEY }}" >> ./src/main/resources/application-dev.yaml
+          echo "  expiration: ${{ secrets.TOKEN_EXPIRATION }}" >> ./src/main/resources/application-dev.yaml
+          echo "cloud:" >> ./src/main/resources/application-dev.yaml
+          echo "  aws:" >> ./src/main/resources/application-dev.yaml
+          echo "    credentials:" >> ./src/main/resources/application-dev.yaml
+          echo "      accessKey: ${{ secrets.AWS_ACCESS_KEY }}" >> ./src/main/resources/application-dev.yaml
+          echo "      secretKey: ${{ secrets.AWS_SECRET_KEY }}" >> ./src/main/resources/application-dev.yaml
+          echo "    s3:" >> ./src/main/resources/application-dev.yaml
+          echo "      bucketName: ${{ secrets.S3_BUCKETNAME }}" >> ./src/main/resources/application-dev.yaml
+          echo "    region:" >> ./src/main/resources/application-dev.yaml
+          echo "      static: ap-northeast-2" >> ./src/main/resources/application-dev.yaml
+          echo "    stack:" >> ./src/main/resources/application-dev.yaml
+          echo "      auto: false" >> ./src/main/resources/application-dev.yaml
+        shell: bash
 
-          springdoc:
-            default-produces-media-type: application/json;charset=UTF-8
-            api-docs:
-              path: /api-docs/json
-            default-consumes-media-type: application/json;charset=UTF-8
-            swagger-ui:
-              operations-sorter: alpha
-              tags-sorter: alpha
-              path: swagger-ui.html
-            cache:
-              disabled: true
-            packages-to-scan: ${{ secrets.PACKAGES_TO_SCAN }}
-            
-          jwt: 
-            secret: ${{ secrets.TOKEN_SECRET_KEY }}
-            expiration: ${{ secrets.TOKEN_EXPIRATION }}
-
-          cloud:
-            aws:
-              credentials:
-              accessKey: ${{ secrets.AWS_ACCESS_KEY }}
-              secretKey: ${{ secrets.AWS_SECRET_KEY }}
-            s3:
-              bucketName: ${{ secrets.S3_BUCKETNAME }}  
-            region:
-              static: ap-northeast-2
-            stack:
-              auto: false
-          
-          EOF
           
       - name: Check application-dev.yaml
         run: |
