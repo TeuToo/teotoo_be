@@ -20,7 +20,7 @@ public class CareerImg {
     @JoinColumn(name = "trainer_info_id")
     private TrainerInfo trainerInfo;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "file_id")
     private File file;
 

@@ -40,7 +40,7 @@ public class TrainerInfo {
     private Member member;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "trainerInfo")
-    List<CareerImg> careerImgs = new ArrayList<>();
+    List<CareerImg> careerImgList = new ArrayList<>();
 
     public void updateGymName(String gymName) {
         this.gymName = gymName;
