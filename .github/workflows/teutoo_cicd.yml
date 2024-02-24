@@ -31,6 +31,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
+            
+      - name: yaml 파일 디렉토리 생성
+        run: mkdir -p src/main/resources/
 
       - name: application-dev.yml 생성
         run: |
