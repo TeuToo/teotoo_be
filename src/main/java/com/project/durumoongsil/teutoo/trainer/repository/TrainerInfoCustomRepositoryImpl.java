@@ -36,7 +36,4 @@ public class TrainerInfoCustomRepositoryImpl implements TrainerInfoCustomReposit
         return Optional.of(member);
     }
 
-
-    // member id로 불러오고, trainerInfo fetch join
-
 }
