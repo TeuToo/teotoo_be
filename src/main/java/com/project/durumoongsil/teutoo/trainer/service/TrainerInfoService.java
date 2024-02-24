@@ -84,8 +84,9 @@ public class TrainerInfoService {
             careerImgUrls.add(imgUrl);
         }
 
-        String trainerImgUrl = (member.getProfile_image_path() == null || member.getProfile_image_name() == null) ?
-                        null : fileService.getImgUrl(member.getProfile_image_path(), member.getProfile_image_name());
+        String trainerImgUrl = null;
+        if (member.getProfile_image_path() != null && member.getProfile_image_name() != null)
+            trainerImgUrl = fileService.getImgUrl(member.getProfile_image_path(), member.getProfile_image_name());
 
         TrainerInfoResDto trainerInfoResDto = TrainerInfoResDto.builder()
                 .trainerAddress(member.getAddress())
