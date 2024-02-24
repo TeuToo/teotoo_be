@@ -78,6 +78,22 @@ jobs:
           echo "      auto: false" >> ./src/main/resources/application-dev.yaml
         shell: bash
 
+
+    # Docker Hub 로그인
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # Docker image 빌드
+      - name: Build Docker image
+        run: docker build -t ${{ secrets.DOCKER_IMAGE_NAME }} .
+
+
+      # Docker image -> Docker Hub 로 푸쉬
+      - name: Push Docker image to Docker Hub
+        run: docker push ${{ secrets.DOCKER_IMAGE_NAME }}
           
       - name: Check application-dev.yaml
         run: |
@@ -105,21 +121,7 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           
-      # Docker Hub 로그인
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
-      # Docker image 빌드
-      - name: Build Docker image
-        run: docker build -t ${{ secrets.DOCKER_IMAGE_NAME }} .
-
-
-      # Docker image -> Docker Hub 로 푸쉬
-      - name: Push Docker image to Docker Hub
-        run: docker push ${{ secrets.DOCKER_IMAGE_NAME }}
+      
 
       # SSH 로 EC2 instance 접근, 가장 최신 버전 Docker image pull 받고 Docker Compose 를 사용해서 빌드
       - name: SSH into EC2 and deploy Docker image using Docker Compose
