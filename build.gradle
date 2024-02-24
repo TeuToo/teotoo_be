@@ -39,6 +39,22 @@ dependencies {
 	annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
 	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
 	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+
+	//s3 설정, javax.xml.bind issue 때문에 추가,
+	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+	implementation 'javax.xml.bind:jaxb-api:2.4.0-b180830.0359'
+
+	//스프링 시큐리티 설정
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	testImplementation 'org.springframework.security:spring-security-test'
+
+	// JWT  설정
+	implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.2'
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.2'
+
+	// 열거형 상수 주석 에러 해결방법?
+	implementation 'com.google.code.findbugs:jsr305:3.0.2'
 }
 
 tasks.named('test') {

@@ -1,0 +1,41 @@
+spring:
+  profiles:
+    active: test
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:tcp://localhost/~/testcase
+    username: sa
+    password:
+  h2:
+    console:
+      enabled: true
+  messages:
+    basename: messages,errors
+
+  jpa:
+    properties:
+      hibernate:
+        # 로깅은 개발시에만
+        format_sql: true
+        default_batch_fetch_size: 1000
+    show-sql: true
+    hibernate:
+      ddl-auto: create
+    open-in-view: false
+
+jwt:
+  secret: fW8QlurjGFRKAqUqYXw5Ess3DnYpyyiNCrbTi8QZFSA=
+  expiration: 3600000
+
+
+cloud:
+  aws:
+    credentials:
+      accessKey: AKIAQ3EGUC65N5JNKWOT
+      secretKey: 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
+    s3:
+      bucketName: teutoo-bucket
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
