@@ -8,8 +8,8 @@ WORKDIR /app
 COPY . .
 
 # application-dev.yaml 파일을 애플리케이션 리소스 디렉토리로 복사
-# Gradle 빌드가 이 파일을 찾을 수 있도록 적절한 위치에 복사해야 합니다.
-COPY application-dev.yaml src/main/resources/
+COPY src/main/resources/application-dev.yaml /app/src/main/resources/application-dev.yaml
+
 
 # 4. Gradle Wrapper 실행 권한 부여 및 애플리케이션 빌드
 RUN chmod +x ./gradlew && \
