@@ -1,9 +1,9 @@
 spring:
   datasource:
-    driver-class-name: ${DRIVER_CLASS_NAME}
-    username: ${DB_USERNAME}
-    url: ${DB_URL}
-    password: ${DB_PASSWORD}
+    driver-class-name: ${{ secrets.DRIVER_CLASS_NAME }}
+    username: ${{ secrets.DB_USERNAME }}
+    url: ${{ secrets.DB_URL }}
+    password: ${{ secrets.DB_PASSWORD }}
   jpa:
     properties:
       hibernate:
@@ -11,7 +11,7 @@ spring:
         default_batch_fetch_size: 1000
     show-sql: true
     hibernate:
-      ddl-auto: ${HIBERNATE_DDL_AUTO}
+      ddl-auto: ${{ secrets.HIBERNATE_DDL_AUTO }}
     open-in-view: false
 
 springdoc:
@@ -25,19 +25,19 @@ springdoc:
     path: swagger-ui.html
   cache:
     disabled: true
-  packages-to-scan: ${PACKAGES_TO_SCAN}
+  packages-to-scan: ${{ secrets.PACKAGES_TO_SCAN }}
   
 jwt: 
-  secret: ${TOKEN_SECRET_KEY}
-  expiration: ${TOKEN_EXPIRATION}
+  secret: ${{ secrets.TOKEN_SECRET_KEY }}
+  expiration: ${{ secrets.TOKEN_EXPIRATION }}
 
 cloud:
   aws:
     credentials:
-      accessKey: ${AWS_ACCESS_KEY}
-      secretKey: ${AWS_SECRET_KEY}
+      accessKey: ${{ secrets.AWS_ACCESS_KEY }}
+      secretKey: ${{ secrets.AWS_SECRET_KEY }}
     s3:
-      bucketName: ${S3_BUCKETNAME}
+      bucketName: ${{ secrets.S3_BUCKETNAME }}  
     region:
       static: ap-northeast-2
     stack:
