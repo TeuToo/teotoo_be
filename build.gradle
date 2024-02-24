@@ -76,3 +76,9 @@ tasks.withType(JavaCompile) {
 clean.doLast {
 	file(querydslDir).deleteDir()
 }
+
+bootJar{
+	archivesBaseName = 'teutoo'
+	archiveFileName = 'teutoo.jar'
+	archiveVersion = "0.0.0"
+}
