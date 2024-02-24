@@ -39,7 +39,7 @@ public class MemberController {
     @Operation(summary = "멤버 정보 수정 API", description = "회원가입, 로그인 한 유저의 정보를 수정하는데 사용합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "회원 가입 성공"),
-            @ApiResponse(responseCode = "403", description = "로그인 안한 유저의 요청")
+            @ApiResponse(responseCode = "403", description = "권한이 없는 유저의 요청")
     })
     @PatchMapping("/members/me")
     public RestResult updateMemberInfo(@ParameterObject @Validated @RequestBody MemberUpdateDto memberUpdateDto) {
