@@ -33,6 +33,7 @@ public class Member extends BaseTimeEntity {
     private String profile_image_name;
 
     @OneToOne(mappedBy = "member", fetch = FetchType.LAZY)
+    @Setter
     private TrainerInfo trainerInfo;
 
     @Builder

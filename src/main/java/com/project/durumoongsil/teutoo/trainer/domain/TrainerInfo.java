@@ -8,14 +8,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @Table(name = "trainer_info")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TrainerInfo {
 
-    @Id
-    @Column(name = "id")
+    @Id @GeneratedValue
     private Long id;
 
     @Column(nullable = false)
@@ -36,6 +38,9 @@ public class TrainerInfo {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "trainerInfo")
+    List<CareerImg> careerImgList = new ArrayList<>();
 
     public void updateGymName(String gymName) {
         this.gymName = gymName;

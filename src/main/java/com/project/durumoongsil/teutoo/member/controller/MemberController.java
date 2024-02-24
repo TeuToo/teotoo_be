@@ -10,14 +10,17 @@ import com.project.durumoongsil.teutoo.security.util.SecurityUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 
+@Tag(name = "회원 관련 API")
 @RestController
 @RequiredArgsConstructor
 @Slf4j
@@ -30,8 +33,8 @@ public class MemberController {
             @ApiResponse(responseCode = "200", description = "회원 가입 성공"),
             @ApiResponse(responseCode = "400", description = "클라이언트의 잘못된 요청")
     })
-    @PostMapping("/join")
-    public ResponseEntity<String> join(@ParameterObject @Validated @RequestBody MemberJoinDto memberJoinDto) {
+    @PostMapping( "/join")
+    public ResponseEntity<String> join(@ParameterObject @Validated MemberJoinDto memberJoinDto) {
         memberService.signUp(memberJoinDto);
         return ResponseEntity.ok("회원가입 성공");
     }
@@ -42,7 +45,7 @@ public class MemberController {
             @ApiResponse(responseCode = "403", description = "권한이 없는 유저의 요청")
     })
     @PatchMapping("/members/me")
-    public RestResult updateMemberInfo(@ParameterObject @Validated @RequestBody MemberUpdateDto memberUpdateDto) {
+    public RestResult updateMemberInfo(@ParameterObject @Validated MemberUpdateDto memberUpdateDto) {
         String userEmail = SecurityUtil.getCurrentLoginId().orElseThrow(() ->
                 new UserUnauthorizedException("인증 권한이 없습니다."));
 
