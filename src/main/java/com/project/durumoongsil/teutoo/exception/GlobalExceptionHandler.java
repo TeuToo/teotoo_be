@@ -35,4 +35,10 @@ public class GlobalExceptionHandler {
     public RestError handlingAuthorizationException(UserUnauthorizedException ex) {
         return new RestError(HttpStatus.UNAUTHORIZED.toString(), ex.getMessage());
     }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(NotFoundUserException.class)
+    public RestError handlingNotFoundUserException(NotFoundUserException ex) {
+        return new RestError(HttpStatus.UNAUTHORIZED.toString(), ex.getMessage());
+    }
 }
