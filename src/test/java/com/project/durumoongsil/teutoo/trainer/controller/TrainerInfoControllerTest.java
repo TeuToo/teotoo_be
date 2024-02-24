@@ -42,6 +42,7 @@ class TrainerInfoControllerTest {
                                 .param("gymName", "goooood gym")
                                 .param("introContent", "goooooooood")
                                 .param("simpleIntro", "niceeeeeeeeeeee")
+                                .contentType(MediaType.MULTIPART_FORM_DATA)
                 )
                 .andExpect(status().isOk())
                 .andReturn();
@@ -65,6 +66,7 @@ class TrainerInfoControllerTest {
                     .perform(
                             MockMvcRequestBuilders.post("/trainer/info/{trainerId}", 1)
                                     .params(map)
+                                    .contentType(MediaType.MULTIPART_FORM_DATA)
                     )
                     .andExpect(status().isBadRequest())
                     .andReturn();
