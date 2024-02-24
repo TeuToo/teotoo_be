@@ -78,7 +78,7 @@ clean.doLast {
 }
 
 bootJar{
-	archivesBaseName = 'teutoo'
-	archiveFileName = 'teutoo.jar'
+	archivesBaseName = 'teotoo'
+	archiveFileName = 'teotoo.jar'
 	archiveVersion = "0.0.0"
 }
