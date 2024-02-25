@@ -39,7 +39,7 @@ public class MemberService {
         String encodedPassword = passwordEncoder.encode(member.getPassword());
         member.setRole(grantRole(memberJoinDto.getSortRole()));
         member.setPassword(encodedPassword);
-        setProfileImageAndPath(member,memberJoinDto.getMultipartFile());
+        setProfileImageAndPath(member, memberJoinDto.getMultipartFile());
 
         memberRepository.save(member);
     }
@@ -90,8 +90,10 @@ public class MemberService {
      */
     private void setProfileImageAndPath(Member member, MultipartFile file) {
         try {
-            String fileName = fileService.saveImg(MEMBER_IMAGE_PATH, file);
-            member.setProfileImageAndPath(MEMBER_IMAGE_PATH + "/" + fileName, file.getOriginalFilename());
+            if (file != null && !file.isEmpty()) {
+                String fileName = fileService.saveImg(MEMBER_IMAGE_PATH, file);
+                member.setProfileImageAndPath(MEMBER_IMAGE_PATH + "/" + fileName, file.getOriginalFilename());
+            }
         } catch (IOException e) {
             throw new RuntimeException("이미지 저장에 실패했습니다. 다시 시도해 주세요");
         }
