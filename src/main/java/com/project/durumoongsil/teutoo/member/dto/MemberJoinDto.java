@@ -36,4 +36,8 @@ public class MemberJoinDto {
     @Schema( description = "역할 구분 (true: 트레이너, false: 일반 사용자)")
     @NotNull
     private Boolean sortRole;
+
+
+    @Schema(description = "프로필 사진", defaultValue = "기본 사진 이미지")
+    private MultipartFile multipartFile;
 }
