@@ -1,7 +1,5 @@
 package com.project.durumoongsil.teutoo.member.service;
 
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.project.durumoongsil.teutoo.common.domain.File;
 import com.project.durumoongsil.teutoo.common.service.FileService;
 import com.project.durumoongsil.teutoo.exception.NotFoundUserException;
 import com.project.durumoongsil.teutoo.member.domain.Member;
@@ -9,7 +7,6 @@ import com.project.durumoongsil.teutoo.member.domain.Role;
 import com.project.durumoongsil.teutoo.member.dto.MemberJoinDto;
 import com.project.durumoongsil.teutoo.member.dto.MemberUpdateDto;
 import com.project.durumoongsil.teutoo.member.repository.MemberRepository;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,6 +28,8 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final FileService fileService;
 
+    private static final String MEMBER_IMAGE_PATH = "member_profile";
+
 
     public void signUp(MemberJoinDto memberJoinDto) {
         Member member = Member.toEntity(memberJoinDto);
@@ -48,6 +47,9 @@ public class MemberService {
         Member member = memberRepository.findMemberByEmail(userEmail)
                 .orElseThrow(() -> new NotFoundUserException("사용자를 찾을 수 없습니다."));
 
+        // 이미지가 있을 경우 이미지 처리
+        updateProfileImage(memberUpdateDto, member);
+
         return member.updateInfo(memberUpdateDto);
     }
 
@@ -60,10 +62,25 @@ public class MemberService {
     }
 
     /**
+     * 기존 이미지는 삭제하고, 새로운 이미지로 대체
+     */
+    private void updateProfileImage(MemberUpdateDto memberUpdateDto, Member member) {
+        if (memberUpdateDto.getProfileImage() != null) {
+            fileService.deleteImg(MEMBER_IMAGE_PATH, member.getProfile_image_name());
+            setProfileImageAndPath(member, memberUpdateDto.getProfileImage());
+        }
+    }
+
+    /**
      * s3 랑 File 엔티티에 프로필 사진 관리
      * @param file 기본이미지 혹은, 회원이 올린 프로필 사진
      */
     private void setProfileImageAndPath(Member member, MultipartFile file) {
-
+        try {
+            String fileName = fileService.saveImg(MEMBER_IMAGE_PATH, file);
+            member.setProfileImageAndPath(MEMBER_IMAGE_PATH + "/" + fileName, file.getOriginalFilename());
+        } catch (IOException e) {
+            throw new RuntimeException("이미지 저장에 실패했습니다. 다시 시도해 주세요");
+        }
     }
 }
