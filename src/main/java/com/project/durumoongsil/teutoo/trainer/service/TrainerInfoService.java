@@ -56,7 +56,7 @@ public class TrainerInfoService {
         for (MultipartFile file : trainerUpdateInfoDto.getCareerImages()) {
             File savedFile = null;
             try {
-                savedFile = fileService.saveImg("trainer_info", file);
+                savedFile = fileService.saveImgToDB("trainer_info", file);
             } catch (IOException e) {
                 throw new RuntimeException("자격사항 이미지 저장에 실패 하였습니다. 다시 시도 해주세요.");
             }
