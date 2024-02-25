@@ -5,6 +5,7 @@ import com.project.durumoongsil.teutoo.exception.NotFoundUserException;
 import com.project.durumoongsil.teutoo.member.domain.Member;
 import com.project.durumoongsil.teutoo.member.domain.Role;
 import com.project.durumoongsil.teutoo.member.dto.MemberJoinDto;
+import com.project.durumoongsil.teutoo.member.dto.MemberSearchDto;
 import com.project.durumoongsil.teutoo.member.dto.MemberUpdateDto;
 import com.project.durumoongsil.teutoo.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -43,6 +44,18 @@ public class MemberService {
         memberRepository.save(member);
     }
 
+    public MemberSearchDto findMember(String userEmail) {
+        Member member = memberRepository.findMemberByEmail(userEmail)
+                .orElseThrow(() -> new NotFoundUserException("사용자를 찾을 수 없습니다."));
+
+        return MemberSearchDto.builder()
+                .name(member.getName())
+                .address(member.getAddress())
+                .profileImageName(member.getProfileImageName())
+                .profileImagePath(member.getProfileImagePath())
+                .build();
+    }
+
     public Member updateInfo(String userEmail, MemberUpdateDto memberUpdateDto) {
         Member member = memberRepository.findMemberByEmail(userEmail)
                 .orElseThrow(() -> new NotFoundUserException("사용자를 찾을 수 없습니다."));
@@ -66,7 +79,7 @@ public class MemberService {
      */
     private void updateProfileImage(MemberUpdateDto memberUpdateDto, Member member) {
         if (memberUpdateDto.getProfileImage() != null) {
-            fileService.deleteImg(MEMBER_IMAGE_PATH, member.getProfile_image_name());
+            fileService.deleteImg(MEMBER_IMAGE_PATH, member.getProfileImageName());
             setProfileImageAndPath(member, memberUpdateDto.getProfileImage());
         }
     }
