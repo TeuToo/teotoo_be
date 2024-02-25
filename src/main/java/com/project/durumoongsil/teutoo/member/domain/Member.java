@@ -62,4 +62,9 @@ public class Member extends BaseTimeEntity {
         this.address = memberUpdateDto.getAddress();
         return this;
     }
+
+    public void setProfileImageAndPath(String imagePath, String imageName) {
+        this.profile_image_name = imageName;
+        this.profile_image_path = imagePath;
+    }
 }
