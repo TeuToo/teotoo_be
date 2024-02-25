@@ -19,6 +19,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 
 @Tag(name = "회원 관련 API")
 @RestController
@@ -34,10 +36,21 @@ public class MemberController {
             @ApiResponse(responseCode = "400", description = "클라이언트의 잘못된 요청")
     })
     @PostMapping( "/join")
-    public ResponseEntity<String> join(@ParameterObject @Validated MemberJoinDto memberJoinDto) {
+    public ResponseEntity<String> join(@Validated MemberJoinDto memberJoinDto) {
         memberService.signUp(memberJoinDto);
         return ResponseEntity.ok("회원가입 성공");
     }
+
+
+    @Operation(summary = "회원 정보 조회 (단건)", description = "회원이 자신의 정보를 조회 할때 자기 자신의 정보 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "회원 조회 성공")
+    })
+    @GetMapping("/members/me")
+    public RestResult findMember() {
+        return null;
+    }
+
 
     @Operation(summary = "멤버 정보 수정 API", description = "회원가입, 로그인 한 유저의 정보를 수정하는데 사용합니다.")
     @ApiResponses(value = {
@@ -45,7 +58,7 @@ public class MemberController {
             @ApiResponse(responseCode = "403", description = "권한이 없는 유저의 요청")
     })
     @PatchMapping("/members/me")
-    public RestResult updateMemberInfo(@ParameterObject @Validated MemberUpdateDto memberUpdateDto) {
+    public RestResult updateMemberInfo(@Validated MemberUpdateDto memberUpdateDto) {
         String userEmail = SecurityUtil.getCurrentLoginId().orElseThrow(() ->
                 new UserUnauthorizedException("인증 권한이 없습니다."));
 
