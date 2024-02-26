@@ -39,7 +39,7 @@ public class MemberService {
         String encodedPassword = passwordEncoder.encode(member.getPassword());
         member.setRole(grantRole(memberJoinDto.getSortRole()));
         member.setPassword(encodedPassword);
-        setProfileImageAndPath(member, memberJoinDto.getMultipartFile());
+        setProfileImageAndPath(member, memberJoinDto.getProfileImage());
 
         memberRepository.save(member);
     }
@@ -51,8 +51,8 @@ public class MemberService {
         return MemberSearchDto.builder()
                 .name(member.getName())
                 .address(member.getAddress())
-                .profileImageName(member.getProfileImageName())
-                .profileImagePath(member.getProfileImagePath())
+                .profileImageName(member.getProfileOriginalImageName())
+                .profileImagePath(fileService.getImgUrl(MEMBER_IMAGE_PATH,member.getProfileImageName()))
                 .build();
     }
 
@@ -79,7 +79,7 @@ public class MemberService {
      */
     private void updateProfileImage(MemberUpdateDto memberUpdateDto, Member member) {
         if (memberUpdateDto.getProfileImage() != null) {
-            fileService.deleteImg(MEMBER_IMAGE_PATH, member.getProfileImageName());
+            fileService.deleteImg(MEMBER_IMAGE_PATH, member.getProfileOriginalImageName());
             setProfileImageAndPath(member, memberUpdateDto.getProfileImage());
         }
     }
@@ -92,7 +92,7 @@ public class MemberService {
         try {
             if (file != null && !file.isEmpty()) {
                 String fileName = fileService.saveImg(MEMBER_IMAGE_PATH, file);
-                member.setProfileImageAndPath(MEMBER_IMAGE_PATH + "/" + fileName, file.getOriginalFilename());
+                member.setProfileImageAndPath(fileName, file.getOriginalFilename());
             }
         } catch (IOException e) {
             throw new RuntimeException("이미지 저장에 실패했습니다. 다시 시도해 주세요");

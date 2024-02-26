@@ -40,6 +40,6 @@ public class MemberJoinDto {
     private Boolean sortRole;
 
     @Schema(description = "프로필 사진")
-    private MultipartFile multipartFile;
+    private MultipartFile profileImage;
 
 }
