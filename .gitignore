@@ -38,3 +38,4 @@ out/
 
 **/src/main/resources/application-dev.yaml
 **/src/main/resources/application-local.yaml
+**/src/test/resources/application.yaml
