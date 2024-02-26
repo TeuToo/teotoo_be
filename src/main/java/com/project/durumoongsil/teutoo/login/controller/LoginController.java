@@ -20,7 +20,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "로그인 API")
@@ -38,9 +37,7 @@ public class LoginController {
             @ApiResponse(responseCode = "403", description = "권한이 없는 오류")
     })
     @PostMapping(value = "/login")
-    public ResponseEntity<TokenDto> authorize(
-            @ParameterObject @Validated LoginDto loginDto) {
-
+    public ResponseEntity<TokenDto> authorize(@Validated LoginDto loginDto) {
         log.info("loginDto ={}", loginDto);
 
         UsernamePasswordAuthenticationToken authenticationToken =

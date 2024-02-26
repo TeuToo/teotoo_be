@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 import java.security.Key;
 import java.time.Instant;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -50,13 +51,14 @@ public class TokenProvider implements InitializingBean {
 
         // 토큰만료 시간
         Instant validity = Instant.now().atZone(ZoneId.of("Asia/Seoul")).plusSeconds(this.tokenExpirationSec).toInstant();
-        log.info("토큰만료 시간={}", validity);
+        ZonedDateTime validityInKST = validity.atZone(ZoneId.of("Asia/Seoul"));
+        log.info("토큰만료 시간={}", validityInKST);
 
         return Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim(AUTHORITIES_KEY, authorities)
                 .signWith(key, SignatureAlgorithm.HS512)
-                .setExpiration(Date.from(validity))
+                .setExpiration(Date.from(validityInKST.toInstant()))
                 .compact();
     }
 
