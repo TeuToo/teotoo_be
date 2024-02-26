@@ -28,5 +28,8 @@ public class TrainerUpdateInfoDto {
     private String introContent;
 
     @Schema(description = "경력사항 이미지")
-    private List<MultipartFile> careerImages;
+    private List<MultipartFile> careerImgList;
+
+    @Schema(description = "삭제될 이미지(파일명 확장자 포함)")
+    private List<String> deletedImgList;
 }
