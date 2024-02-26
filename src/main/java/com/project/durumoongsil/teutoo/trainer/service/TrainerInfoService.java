@@ -85,8 +85,8 @@ public class TrainerInfoService {
         }
 
         String trainerImgUrl = null;
-        if (member.getProfileImagePath() != null && member.getProfileImageName() != null)
-            trainerImgUrl = fileService.getImgUrl(member.getProfileImagePath(), member.getProfileImageName());
+        if (member.getProfileImageName() != null && member.getProfileOriginalImageName() != null)
+            trainerImgUrl = fileService.getImgUrl(member.getProfileImageName(), member.getProfileOriginalImageName());
 
         TrainerInfoResDto trainerInfoResDto = TrainerInfoResDto.builder()
                 .trainerAddress(member.getAddress())
