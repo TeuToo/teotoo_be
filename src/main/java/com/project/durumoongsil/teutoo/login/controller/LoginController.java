@@ -2,9 +2,13 @@ package com.project.durumoongsil.teutoo.login.controller;
 
 import com.project.durumoongsil.teutoo.login.dto.LoginDto;
 import com.project.durumoongsil.teutoo.login.dto.TokenDto;
+import com.project.durumoongsil.teutoo.member.dto.MemberJoinDto;
 import com.project.durumoongsil.teutoo.security.jwt.JwtAuthenticationFilter;
 import com.project.durumoongsil.teutoo.security.jwt.TokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -30,7 +34,10 @@ public class LoginController {
     private final TokenProvider tokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
-    @Operation(summary = "로그인", description = "이메일과 비밀번호를 사용하여 로그인합니다.")
+    @Operation(summary = "로그인",
+            description = "이메일과 비밀번호를 사용하여 로그인합니다.",
+            requestBody = @RequestBody(content = @Content(mediaType = "application/x-www-form-urlencoded",
+                    schema = @Schema(implementation = LoginDto.class))))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공적으로 토큰 발급"),
             @ApiResponse(responseCode = "401", description = "로그인 실패"),
