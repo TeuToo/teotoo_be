@@ -3,8 +3,8 @@ name: 백엔드 API CI/CD
 on:
   push:
     branches: [ "deploy" ]
-  pull_request:
-    branches: [ "deploy" ]
+  # pull_request:
+  #   branches: [ "deploy" ]
 
 jobs:
   build:
