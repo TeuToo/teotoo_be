@@ -23,6 +23,7 @@ jobs:
 
       - name: make application-dev.yaml
         run: |
+          mkdir -p ./src/main/resources
           touch ./src/main/resources/application-dev.yaml
           echo "${{ secrets.PROPERTIES_DEV }}" > ./src/main/resources/application-dev.yaml
 
