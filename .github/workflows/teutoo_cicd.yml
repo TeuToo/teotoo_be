@@ -30,7 +30,7 @@ jobs:
       - name: make test application.yaml
         run: |
           touch ./src/test/resources/application.yaml
-          echo "${{ secrets.PROPERTIES_TEST }}" > ./src/main/resources/application.yaml
+          echo "${{ secrets.PROPERTIES_TEST }}" > ./src/test/resources/application.yaml
 
 
       # Gradle Caching 을 통해서 빌드 과정 시간 단축
