@@ -36,7 +36,7 @@ public class MemberController {
 
     @Operation(summary = "회원가입 API",
             description = "유저, 트레이너가 처음 회원가입 할때 사용합니다.",
-            requestBody = @RequestBody(content = @Content(mediaType = "application/x-www-form-urlencoded",
+            requestBody = @RequestBody(content = @Content(mediaType = "multipart/form-data",
                     schema = @Schema(implementation = MemberJoinDto.class)))
     )
     @ApiResponses(value = {
@@ -62,7 +62,7 @@ public class MemberController {
 
     @Operation(summary = "멤버 정보 수정 API",
             description = "회원가입, 로그인 한 유저의 정보를 수정하는데 사용합니다.",
-            requestBody = @RequestBody(content = @Content(mediaType = "application/x-www-form-urlencoded",
+            requestBody = @RequestBody(content = @Content(mediaType = "multipart/form-data",
                     schema = @Schema(implementation = MemberUpdateDto.class)))
     )
     @ApiResponses(value = {
