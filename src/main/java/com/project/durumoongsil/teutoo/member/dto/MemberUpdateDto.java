@@ -16,8 +16,8 @@ public class MemberUpdateDto {
     @NotBlank
     private String address;
 
-//    @Schema(description = "프로필 이미지")
-//    private MultipartFile profileImage;
+    @Schema(description = "프로필 이미지")
+    private MultipartFile profileImage;
 
 
     @Builder

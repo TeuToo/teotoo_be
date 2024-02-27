@@ -29,8 +29,8 @@ public class Member extends BaseTimeEntity {
     @Setter
     private Role role;
 
-    private String profile_image_path;
-    private String profile_image_name;
+    private String profileImageName;
+    private String profileOriginalImageName;
 
     @OneToOne(mappedBy = "member", fetch = FetchType.LAZY)
     @Setter
@@ -38,15 +38,15 @@ public class Member extends BaseTimeEntity {
 
     @Builder
     public Member(Long id, String name, String email, String password, String address,
-                  Role role, String profile_image_path, String profile_image_name) {
+                  Role role, String profileImagePath, String profileImageName) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
         this.address = address;
         this.role = role;
-        this.profile_image_path = profile_image_path;
-        this.profile_image_name = profile_image_name;
+        this.profileImageName = profileImagePath;
+        this.profileOriginalImageName = profileImageName;
     }
 
     public static Member toEntity(MemberJoinDto memberJoinDto) {
@@ -61,5 +61,10 @@ public class Member extends BaseTimeEntity {
     public Member updateInfo(MemberUpdateDto memberUpdateDto) {
         this.address = memberUpdateDto.getAddress();
         return this;
+    }
+
+    public void setProfileImageAndPath(String imagePath, String imageName) {
+        this.profileOriginalImageName = imageName;
+        this.profileImageName = imagePath;
     }
 }

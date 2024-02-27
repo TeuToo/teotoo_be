@@ -1,9 +1,11 @@
 package com.project.durumoongsil.teutoo.member.service;
 
+import com.project.durumoongsil.teutoo.common.service.FileService;
 import com.project.durumoongsil.teutoo.exception.NotFoundUserException;
 import com.project.durumoongsil.teutoo.member.domain.Member;
 import com.project.durumoongsil.teutoo.member.domain.Role;
 import com.project.durumoongsil.teutoo.member.dto.MemberJoinDto;
+import com.project.durumoongsil.teutoo.member.dto.MemberSearchDto;
 import com.project.durumoongsil.teutoo.member.dto.MemberUpdateDto;
 import com.project.durumoongsil.teutoo.member.repository.MemberRepository;
 import org.assertj.core.api.Assertions;
@@ -26,6 +28,9 @@ class MemberServiceTest {
 
     @Mock
     private PasswordEncoder passwordEncoder;
+
+    @Mock
+    private FileService fileService;
 
     @InjectMocks
     private MemberService memberService;
@@ -98,5 +103,27 @@ class MemberServiceTest {
         assertThatThrownBy(() -> {
             memberService.updateInfo("test@naver.com", new MemberUpdateDto());
         }).isInstanceOf(NotFoundUserException.class).hasMessageContaining("사용자를 찾을 수 없습니다.");
+    }
+
+    @Test
+    @DisplayName("회원 조회 (단건)")
+    void findMember() {
+        Member member = Member.builder()
+                .name("변주환")
+                .email("test@naver.com")
+                .password("1111")
+                .address("경기도 성남시 분당구")
+                .role(Role.USER)
+                .build();
+
+        //given
+        when(memberRepository.findMemberByEmail("test@naver.com")).thenReturn(Optional.of(member));
+
+        //when
+        MemberSearchDto memberSearchDto = memberService.findMember("test@naver.com");
+
+        // then
+        assertThat(memberSearchDto.getName()).isEqualTo("변주환");
+        assertThat(memberSearchDto.getAddress()).isEqualTo("경기도 성남시 분당구");
     }
 }

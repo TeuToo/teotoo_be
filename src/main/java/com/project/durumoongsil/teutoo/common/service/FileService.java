@@ -5,6 +5,7 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.project.durumoongsil.teutoo.common.domain.File;
 import com.project.durumoongsil.teutoo.common.repository.FileRepository;
 import com.project.durumoongsil.teutoo.exception.FileSaveException;
+import com.project.durumoongsil.teutoo.exception.NotFoundUserException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 /*
@@ -33,10 +35,9 @@ public class FileService {
          이미지 저장
          path: bucket에 저장될 디렉토리명
 
-         return 시, 저장 후 파일 객체 반환
+         return 시, 버킷에 저장 된 파일명 반환
      */
-    @Transactional
-    public File saveImg(String path, MultipartFile imgFile) throws IOException {
+    public String saveImg(String path, MultipartFile imgFile) throws IOException {
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentType(imgFile.getContentType());
         objectMetadata.setContentLength(imgFile.getSize());
@@ -44,8 +45,14 @@ public class FileService {
         String savedFileName = convertUniqueName(imgFile.getOriginalFilename());
         String savedFileFullName = path + "/" + savedFileName;
 
-
         amazonS3.putObject(bucketName, savedFileFullName, imgFile.getInputStream(), objectMetadata);
+
+        return savedFileName;
+    }
+
+    @Transactional
+    public File saveImgToDB(String path, MultipartFile imgFile) throws IOException {
+        String savedFileName = saveImg(path, imgFile);
 
         // 저장 성공시, 레포지터리에 파일 정보 저장
         File file = new File(path, savedFileName);
@@ -66,6 +73,21 @@ public class FileService {
         String savedFileFullName = path + "/" + imgFileName;
 
         amazonS3.deleteObject(bucketName, savedFileFullName);
+    }
+
+    @Transactional
+    public void deleteImgListToDB(String path, List<String> imgFileNameList) {
+        // 먼저, DB 에서 삭제,
+        for (String deletedImgName : imgFileNameList) {
+            File savedFile = fileRepository.findByFileNameWithCareerImg(deletedImgName)
+                    .orElseThrow(() -> new NotFoundUserException("삭제할 파일을 찾을 수 없습니다."));
+            fileRepository.delete(savedFile);
+        }
+
+        // 버킷의 이미지 삭제
+        for (String deletedImgName : imgFileNameList) {
+            this.deleteImg("trainer_info", deletedImgName);
+        }
     }
 
 

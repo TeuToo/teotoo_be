@@ -20,6 +20,18 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+
+      - name: make application-dev.yaml
+        run: |
+          touch ./src/main/resources/application-dev.yaml
+          echo "${{ secrets.PROPERTIES_DEV }}" > ./src/main/resources/application-dev.yaml
+
+      - name: make test application.yaml
+        run: |
+          touch ./src/test/resources/application.yaml
+          echo "${{ secrets.PROPERTIES_TEST }}" > ./src/main/resources/application.yaml
+
+
       # Gradle Caching 을 통해서 빌드 과정 시간 단축
       - name: Cache Gradle packages
         uses: actions/cache@v2

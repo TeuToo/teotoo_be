@@ -18,7 +18,7 @@ public class TrainerInfoCustomRepositoryImpl implements TrainerInfoCustomReposit
     EntityManager em;
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public Optional<Member> findMemberByIdWithTrainerInfo(Long memberId) {
         JPAQueryFactory queryFactory = new JPAQueryFactory(em);
 

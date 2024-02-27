@@ -1,11 +1,13 @@
 package com.project.durumoongsil.teutoo.trainer.service;
 
 import com.project.durumoongsil.teutoo.common.domain.File;
+import com.project.durumoongsil.teutoo.common.repository.FileRepository;
 import com.project.durumoongsil.teutoo.common.service.FileService;
 import com.project.durumoongsil.teutoo.exception.NotFoundUserException;
 import com.project.durumoongsil.teutoo.member.domain.Member;
 import com.project.durumoongsil.teutoo.trainer.domain.CareerImg;
 import com.project.durumoongsil.teutoo.trainer.domain.TrainerInfo;
+import com.project.durumoongsil.teutoo.trainer.dto.ImgResDto;
 import com.project.durumoongsil.teutoo.trainer.dto.TrainerInfoResDto;
 import com.project.durumoongsil.teutoo.trainer.dto.TrainerUpdateInfoDto;
 import com.project.durumoongsil.teutoo.trainer.repository.CareerImgRepository;
@@ -25,10 +27,10 @@ public class TrainerInfoService {
 
     private final TrainerInfoRepository trainerInfoRepository;
     private final CareerImgRepository careerImgRepository;
+    private final FileRepository fileRepository;
     private final FileService fileService;
 
     // 트레이너 소개 페이지 등록 및 갱신
-    @Transactional
     public void saveOrUpdate(Long trainerId, TrainerUpdateInfoDto trainerUpdateInfoDto) {
 
         Member member = trainerInfoRepository.findMemberByIdWithTrainerInfo(trainerId)
@@ -50,13 +52,16 @@ public class TrainerInfoService {
             trainerInfo.updateSimpleIntro(trainerUpdateInfoDto.getSimpleIntro());
             trainerInfo.updateGymName(trainerUpdateInfoDto.getGymName());
             trainerInfo.updateIntroContent(trainerUpdateInfoDto.getIntroContent());
+
+            // 사용자가 삭제한 이미지가 존재한다면,
+            fileService.deleteImgListToDB("trainer_info", trainerUpdateInfoDto.getDeletedImgList());
         }
 
         // 자격사항 이미지 저장
-        for (MultipartFile file : trainerUpdateInfoDto.getCareerImages()) {
+        for (MultipartFile file : trainerUpdateInfoDto.getCareerImgList()) {
             File savedFile = null;
             try {
-                savedFile = fileService.saveImg("trainer_info", file);
+                savedFile = fileService.saveImgToDB("trainer_info", file);
             } catch (IOException e) {
                 throw new RuntimeException("자격사항 이미지 저장에 실패 하였습니다. 다시 시도 해주세요.");
             }
@@ -77,16 +82,20 @@ public class TrainerInfoService {
             throw new NotFoundUserException("해당 사용자의 소개 데이터를 찾을 수 없습니다.");
         }
 
-        List<String> careerImgUrls = new ArrayList<>();
+        List<ImgResDto> careerImgList = new ArrayList<>();
 
+        // 자격사항 이미지 불러옴
         for (CareerImg careerImg : careerImgRepository.findByTrainerIdWithFile(trainerId)) {
+            String imgName = careerImg.getFile().getFileName();
             String imgUrl = fileService.getImgUrl(careerImg.getFile().getFilePath(), careerImg.getFile().getFileName());
-            careerImgUrls.add(imgUrl);
+
+            careerImgList.add(new ImgResDto(imgName, imgUrl));
         }
 
+        // 트레이너 프로필 이미지
         String trainerImgUrl = null;
-        if (member.getProfile_image_path() != null && member.getProfile_image_name() != null)
-            trainerImgUrl = fileService.getImgUrl(member.getProfile_image_path(), member.getProfile_image_name());
+        if (member.getProfileImageName() != null && member.getProfileOriginalImageName() != null)
+            trainerImgUrl = fileService.getImgUrl(member.getProfileImageName(), member.getProfileOriginalImageName());
 
         TrainerInfoResDto trainerInfoResDto = TrainerInfoResDto.builder()
                 .trainerAddress(member.getAddress())
@@ -95,7 +104,7 @@ public class TrainerInfoService {
                 .gymName(trainerInfo.getGymName())
                 .simpleIntro(trainerInfo.getSimpleIntro())
                 .introContent(trainerInfo.getIntroContent())
-                .careerImgUrls(careerImgUrls)
+                .careerImgList(careerImgList)
                 .build();
 
         return trainerInfoResDto;

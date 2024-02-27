@@ -7,6 +7,7 @@ import com.project.durumoongsil.teutoo.security.jwt.TokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.annotations.ParameterObject;
@@ -19,9 +20,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "로그인 API")
 @RestController
 @RequiredArgsConstructor
 @Slf4j
@@ -36,9 +37,7 @@ public class LoginController {
             @ApiResponse(responseCode = "403", description = "권한이 없는 오류")
     })
     @PostMapping(value = "/login")
-    public ResponseEntity<TokenDto> authorize(
-            @ParameterObject @Validated LoginDto loginDto) {
-
+    public ResponseEntity<TokenDto> authorize(@Validated LoginDto loginDto) {
         log.info("loginDto ={}", loginDto);
 
         UsernamePasswordAuthenticationToken authenticationToken =

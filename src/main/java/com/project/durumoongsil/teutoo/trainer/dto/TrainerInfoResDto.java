@@ -31,8 +31,8 @@ public class TrainerInfoResDto {
     @Schema(description = "트레이너 소개글", examples = "매번 마음에 들지 않아도 상담 후")
     private String introContent;
 
-    @Schema(description = "자격사항 이미지 주소")
-    private List<String> careerImgUrls;
+    @Schema(description = "자격사항 이미지")
+    private List<ImgResDto> careerImgList;
 
     // 후기는 나중에...
     private int reviewCnt;
