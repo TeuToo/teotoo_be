@@ -9,7 +9,7 @@ import com.project.durumoongsil.teutoo.member.domain.Role;
 import com.project.durumoongsil.teutoo.trainer.domain.CareerImg;
 import com.project.durumoongsil.teutoo.trainer.domain.TrainerInfo;
 import com.project.durumoongsil.teutoo.trainer.dto.ImgResDto;
-import com.project.durumoongsil.teutoo.common.dto.TrainerInfoResDto;
+import com.project.durumoongsil.teutoo.trainer.dto.TrainerInfoResDto;
 import com.project.durumoongsil.teutoo.trainer.dto.TrainerUpdateInfoDto;
 import com.project.durumoongsil.teutoo.trainer.repository.CareerImgRepository;
 import com.project.durumoongsil.teutoo.trainer.repository.TrainerInfoRepository;
