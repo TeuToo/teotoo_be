@@ -1,14 +1,14 @@
-package com.project.durumoongsil.teutoo.trainer.service;
+package com.project.durumoongsil.teutoo.trainer.info.service;
 
 import com.project.durumoongsil.teutoo.common.domain.File;
 import com.project.durumoongsil.teutoo.common.service.FileService;
 import com.project.durumoongsil.teutoo.exception.NotFoundUserException;
 import com.project.durumoongsil.teutoo.member.domain.Member;
-import com.project.durumoongsil.teutoo.trainer.domain.CareerImg;
-import com.project.durumoongsil.teutoo.trainer.domain.TrainerInfo;
-import com.project.durumoongsil.teutoo.trainer.dto.*;
-import com.project.durumoongsil.teutoo.trainer.repository.CareerImgRepository;
-import com.project.durumoongsil.teutoo.trainer.repository.TrainerInfoRepository;
+import com.project.durumoongsil.teutoo.trainer.info.domain.CareerImg;
+import com.project.durumoongsil.teutoo.trainer.info.domain.TrainerInfo;
+import com.project.durumoongsil.teutoo.trainer.info.dto.*;
+import com.project.durumoongsil.teutoo.trainer.info.repository.CareerImgRepository;
+import com.project.durumoongsil.teutoo.trainer.info.repository.TrainerInfoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -57,6 +57,7 @@ public class TrainerInfoService {
         // 자격사항 이미지 저장
         for (MultipartFile file : trainerUpdateInfoDto.getCareerImgList()) {
             File savedFile = null;
+            // 익셉션 핸들링 제어 필요
             try {
                 savedFile = fileService.saveImgToDB("trainer_info", file);
             } catch (IOException e) {

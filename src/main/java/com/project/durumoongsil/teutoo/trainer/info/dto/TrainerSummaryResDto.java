@@ -1,9 +1,8 @@
-package com.project.durumoongsil.teutoo.trainer.dto;
+package com.project.durumoongsil.teutoo.trainer.info.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 @Schema(description = "트레이너 목록 반환 Dto")
 @Getter

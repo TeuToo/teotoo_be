@@ -1,10 +1,10 @@
-package com.project.durumoongsil.teutoo.trainer.repository;
+package com.project.durumoongsil.teutoo.trainer.info.repository;
 
 import com.project.durumoongsil.teutoo.member.domain.Member;
 import com.project.durumoongsil.teutoo.member.domain.QMember;
-import com.project.durumoongsil.teutoo.trainer.domain.QTrainerInfo;
-import com.project.durumoongsil.teutoo.trainer.domain.TrainerInfo;
-import com.project.durumoongsil.teutoo.trainer.dto.TrainerListReqDto;
+import com.project.durumoongsil.teutoo.trainer.info.domain.QTrainerInfo;
+import com.project.durumoongsil.teutoo.trainer.info.domain.TrainerInfo;
+import com.project.durumoongsil.teutoo.trainer.info.dto.TrainerListReqDto;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.NumberPath;

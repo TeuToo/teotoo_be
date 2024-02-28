@@ -4,7 +4,7 @@ package com.project.durumoongsil.teutoo.member.domain;
 import com.project.durumoongsil.teutoo.common.BaseTimeEntity;
 import com.project.durumoongsil.teutoo.member.dto.MemberJoinDto;
 import com.project.durumoongsil.teutoo.member.dto.MemberUpdateDto;
-import com.project.durumoongsil.teutoo.trainer.domain.TrainerInfo;
+import com.project.durumoongsil.teutoo.trainer.info.domain.TrainerInfo;
 import jakarta.persistence.*;
 import lombok.*;
 

@@ -1,4 +1,4 @@
-package com.project.durumoongsil.teutoo.trainer.domain;
+package com.project.durumoongsil.teutoo.trainer.info.domain;
 
 import com.project.durumoongsil.teutoo.member.domain.Member;
 import jakarta.persistence.*;

@@ -1,11 +1,9 @@
-package com.project.durumoongsil.teutoo.trainer.repository;
+package com.project.durumoongsil.teutoo.trainer.info.repository;
 
 import com.project.durumoongsil.teutoo.common.domain.QFile;
-import com.project.durumoongsil.teutoo.trainer.domain.CareerImg;
-import com.project.durumoongsil.teutoo.trainer.domain.QCareerImg;
+import com.project.durumoongsil.teutoo.trainer.info.domain.CareerImg;
+import com.project.durumoongsil.teutoo.trainer.info.domain.QCareerImg;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
