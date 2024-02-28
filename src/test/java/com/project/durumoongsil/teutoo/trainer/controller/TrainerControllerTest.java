@@ -38,7 +38,7 @@ class TrainerControllerTest {
     public void saveTrainerIntroDtoValidationTest() throws Exception {
         mockMvc
                 .perform(
-                        MockMvcRequestBuilders.post("/trainer/info/{trainerId}", 1)
+                        MockMvcRequestBuilders.post("/trainer/info")
                                 .param("gymName", "goooood gym")
                                 .param("introContent", "goooooooood")
                                 .param("simpleIntro", "niceeeeeeeeeeee")
@@ -64,7 +64,7 @@ class TrainerControllerTest {
             }
             mockMvc
                     .perform(
-                            MockMvcRequestBuilders.post("/trainer/info/{trainerId}", 1)
+                            MockMvcRequestBuilders.post("/trainer/info")
                                     .params(map)
                                     .contentType(MediaType.MULTIPART_FORM_DATA)
                     )
