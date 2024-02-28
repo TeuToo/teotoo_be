@@ -15,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
+import java.util.OptionalLong;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -27,7 +28,6 @@ class TrainerInfoRepositoryTest {
     @Autowired
     MemberRepository memberRepository;
 
-
     @BeforeAll
     public void setData() {
         String[] names = {"가가가", "김김김", "이이이", "박박박", "한한한"};
@@ -35,6 +35,7 @@ class TrainerInfoRepositoryTest {
 
         for (int i = 0; i < names.length; i++) {
             Member testMember = Member.builder()
+                    .email("aaaa" + i + "@gmail.com")
                     .name(names[i])
                     .address(addresses[i])
                     .role(Role.TRAINER)
@@ -154,6 +155,16 @@ class TrainerInfoRepositoryTest {
         assertEquals(trainerInfoPage.getTotalElements(), 5);
         assertEquals(trainerInfoPage.getNumberOfElements(), 1);
         assertEquals(trainerInfoPage.getNumber(), 1);
+    }
+
+    @Test
+    @DisplayName("Member email로 TrainerInfo id 확인")
+    public void checkTrainerInfoIdWithMemberEmailTest() {
+
+        Long trainerInfoId = trainerInfoRepository.findTrainerInfoIdByMemberEmail("aaaa0@gmail.com")
+                .orElseThrow(() -> new RuntimeException("해당 사용자의 트레이너 정보를 찾을 수 없습니다."));
+
+        assertEquals(trainerInfoId, 1L);
     }
 
 }

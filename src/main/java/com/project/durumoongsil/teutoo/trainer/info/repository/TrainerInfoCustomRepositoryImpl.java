@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.OptionalLong;
 
 @Component
 @RequiredArgsConstructor
@@ -94,6 +95,22 @@ public class TrainerInfoCustomRepositoryImpl implements TrainerInfoCustomReposit
                 );
 
         return PageableExecutionUtils.getPage(trainerInfoList, pageRequest, count::fetchOne);
+    }
+
+    @Override
+    public OptionalLong findTrainerInfoIdByMemberEmail(String email) {
+
+        Long trainerInfoId =  queryFactory
+                .select(qTrainerInfo.id)
+                .from(qMember)
+                .innerJoin(qMember.trainerInfo, qTrainerInfo)
+                .where(qMember.email.eq(email))
+                .fetchFirst();
+
+        if (trainerInfoId == null)
+            return OptionalLong.empty();
+
+        return OptionalLong.of(trainerInfoId);
     }
 
     private BooleanExpression gymEq(String gymName) {

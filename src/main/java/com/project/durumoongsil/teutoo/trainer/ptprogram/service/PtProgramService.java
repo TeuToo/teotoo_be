@@ -3,9 +3,7 @@ package com.project.durumoongsil.teutoo.trainer.ptprogram.service;
 import com.project.durumoongsil.teutoo.common.domain.File;
 import com.project.durumoongsil.teutoo.common.service.FileService;
 import com.project.durumoongsil.teutoo.exception.NotFoundUserException;
-import com.project.durumoongsil.teutoo.member.domain.Member;
 import com.project.durumoongsil.teutoo.security.service.SecurityService;
-import com.project.durumoongsil.teutoo.trainer.info.domain.CareerImg;
 import com.project.durumoongsil.teutoo.trainer.info.domain.TrainerInfo;
 import com.project.durumoongsil.teutoo.trainer.info.repository.TrainerInfoRepository;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.domain.PtImg;
@@ -36,15 +34,13 @@ public class PtProgramService {
         // security에서, member를 얻고, member의 trainer_info와 맵핑을 시켜주어야 한다..
         String userEmail = securityService.getLoginedUserEmail();
 
-        // member 의 유무 파악과 trainer info id만 되므로, 이 부분은 개선필요!!
-        Member member = trainerInfoRepository.findMemberByIdWithTrainerInfo(userEmail)
-                .orElseThrow(() -> new NotFoundUserException("사용자를 찾을 수 없습니다."));
+        // trainer info id 만 조회,
+        Long trainerInfoId = trainerInfoRepository.findTrainerInfoIdByMemberEmail(userEmail)
+                .orElseThrow(() -> new NotFoundUserException("트레이너 소개 등록 정보를 찾을 수 없습니다."));
 
-        TrainerInfo trainerInfo = member.getTrainerInfo();
-
-        // 익셉션 핸들링 필요
-        if (trainerInfo == null)
-            throw new RuntimeException();
+        TrainerInfo trainerInfo = TrainerInfo.builder()
+                .id(trainerInfoId)
+                .build();
 
         TrainerProgram trainerProgram = TrainerProgram.builder()
                 .content(ptProgramRegDto.getContent())

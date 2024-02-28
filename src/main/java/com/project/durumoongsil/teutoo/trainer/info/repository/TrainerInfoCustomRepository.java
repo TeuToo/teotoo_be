@@ -6,6 +6,7 @@ import com.project.durumoongsil.teutoo.trainer.info.dto.TrainerListReqDto;
 import org.springframework.data.domain.Page;
 
 import java.util.Optional;
+import java.util.OptionalLong;
 
 public interface TrainerInfoCustomRepository {
 
@@ -13,4 +14,6 @@ public interface TrainerInfoCustomRepository {
 
     Page<TrainerInfo> findBySearchCondition(TrainerListReqDto trainerListReqDto);
     Optional<Member> findMemberByIdWithTrainerInfo(Long id);
+
+    OptionalLong findTrainerInfoIdByMemberEmail(String email);
 }
