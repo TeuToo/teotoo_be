@@ -28,9 +28,9 @@ public class TrainerInfoService {
     private final FileService fileService;
 
     // 트레이너 소개 페이지 등록 및 갱신
-    public void saveOrUpdate(Long trainerId, TrainerUpdateInfoDto trainerUpdateInfoDto) {
+    public void saveOrUpdate(String userEmail, TrainerUpdateInfoDto trainerUpdateInfoDto) {
 
-        Member member = trainerInfoRepository.findMemberByIdWithTrainerInfo(trainerId)
+        Member member = trainerInfoRepository.findMemberByIdWithTrainerInfo(userEmail)
                 .orElseThrow(() -> new NotFoundUserException("사용자를 찾을 수 없습니다."));
 
         TrainerInfo trainerInfo = member.getTrainerInfo();
