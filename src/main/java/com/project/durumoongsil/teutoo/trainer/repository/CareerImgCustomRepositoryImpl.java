@@ -6,22 +6,21 @@ import com.project.durumoongsil.teutoo.trainer.domain.QCareerImg;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Repository
+@RequiredArgsConstructor
 public class CareerImgCustomRepositoryImpl implements CareerImgCustomRepository{
 
-    @PersistenceContext
-    EntityManager em;
-
+    private final JPAQueryFactory queryFactory;
 
     @Transactional(readOnly = true)
     @Override
     public List<CareerImg> findByTrainerIdWithFile(Long trainerId) {
-        JPAQueryFactory queryFactory = new JPAQueryFactory(em);
 
         QCareerImg qCareerImg = QCareerImg.careerImg;
         QFile qFile = QFile.file;
