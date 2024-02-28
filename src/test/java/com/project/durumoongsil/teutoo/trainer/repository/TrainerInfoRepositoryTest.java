@@ -4,7 +4,6 @@ import com.project.durumoongsil.teutoo.member.domain.Member;
 import com.project.durumoongsil.teutoo.member.domain.Role;
 import com.project.durumoongsil.teutoo.member.repository.MemberRepository;
 import com.project.durumoongsil.teutoo.trainer.domain.TrainerInfo;
-import com.project.durumoongsil.teutoo.trainer.dto.TrainerInfoResDto;
 import com.project.durumoongsil.teutoo.trainer.dto.TrainerListReqDto;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;

@@ -8,9 +8,7 @@ import com.project.durumoongsil.teutoo.member.domain.Member;
 import com.project.durumoongsil.teutoo.member.domain.Role;
 import com.project.durumoongsil.teutoo.trainer.domain.CareerImg;
 import com.project.durumoongsil.teutoo.trainer.domain.TrainerInfo;
-import com.project.durumoongsil.teutoo.trainer.dto.ImgResDto;
-import com.project.durumoongsil.teutoo.trainer.dto.TrainerInfoResDto;
-import com.project.durumoongsil.teutoo.trainer.dto.TrainerUpdateInfoDto;
+import com.project.durumoongsil.teutoo.trainer.dto.*;
 import com.project.durumoongsil.teutoo.trainer.repository.CareerImgRepository;
 import com.project.durumoongsil.teutoo.trainer.repository.TrainerInfoRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -20,6 +18,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -165,5 +165,63 @@ class TrainerInfoServiceTest {
         assertThrows(NotFoundUserException.class, () -> trainerInfoService.getInfo(1L));
     }
 
-    // 삭제될 이미지 존재시 테스트 케이스 작성..
+    // 삭제될 이미지 존재시 테스트 케이스 작성해야함..
+
+
+    @Test
+    @DisplayName("트레이너 목록 API 조회 테스트")
+    public void checkGetTrainerList() {
+        String[] names = {"가가가", "김김김", "이이이", "박박박", "한한한"};
+        String[] addresses = {"서울특별시", "경기도", "충청도", "강원도", "전라도"};
+
+        List<TrainerInfo> testTrainerInfoList = new ArrayList<>();
+
+        for (int i = 0; i < names.length; i++) {
+            Member testMember = Member.builder()
+                    .name(names[i])
+                    .address(addresses[i])
+                    .role(Role.TRAINER)
+                    .profileImageName("adsdadadsa")
+                    .profileImagePath("sadadasdsadsadadsa good")
+                    .build();
+
+            TrainerInfo testTrainerInfo = TrainerInfo.builder()
+                    .simpleIntro("안녕하세요...")
+                    .gymName("GYM"+i)
+                    .introContent("안녕하세요 안녕하세요 안녕하세요")
+                    .member(testMember)
+                    .build();
+
+            testTrainerInfoList.add(testTrainerInfo);
+        }
+
+        TrainerListReqDto trainerListReqDtoMock = mock(TrainerListReqDto.class);
+
+        Page<TrainerInfo> mockTrainerInfoPage = new PageImpl<>(testTrainerInfoList);
+
+        when(trainerInfoRepository.findBySearchCondition(trainerListReqDtoMock)).thenReturn(mockTrainerInfoPage);
+
+        List<TrainerSummaryResDto> trainerSummaryResDtoList = trainerInfoService.getTrainerList(trainerListReqDtoMock).getContent();
+
+        // return 된 값 크기 검사
+        assertEquals(trainerSummaryResDtoList.size(), 5);
+
+        // fileService 호출
+        verify(fileService, times(5)).getImgUrl(anyString(), anyString());
+
+        // return 된 값 유효 검사
+        for (int i = 0; i < 5; i++) {
+            // return 된 값
+            TrainerSummaryResDto trainerSummaryResDto = trainerSummaryResDtoList.get(i);
+
+            // input 값
+            TrainerInfo testTrainerInfo = testTrainerInfoList.get(i);
+
+            // 검사
+            assertEquals(trainerSummaryResDto.getTrainerName(), testTrainerInfo.getMember().getName());
+            assertEquals(trainerSummaryResDto.getGymName(), testTrainerInfo.getGymName());
+            assertEquals(trainerSummaryResDto.getSimpleIntro(), testTrainerInfo.getSimpleIntro());
+        }
+    }
+
 }
