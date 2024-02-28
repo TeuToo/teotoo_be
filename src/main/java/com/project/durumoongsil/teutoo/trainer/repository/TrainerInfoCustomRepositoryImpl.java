@@ -31,11 +31,24 @@ public class TrainerInfoCustomRepositoryImpl implements TrainerInfoCustomReposit
     QTrainerInfo qTrainerInfo = QTrainerInfo.trainerInfo;
 
     @Override
-    @Transactional(readOnly = true)
-    public Optional<Member> findMemberByIdWithTrainerInfo(Long memberId) {
+    public Optional<Member> findMemberByIdWithTrainerInfo(String userEmail) {
 
         Member member = queryFactory.selectFrom(qMember)
-                .where(qMember.id.eq(memberId))
+                .where(qMember.email.eq(userEmail))
+                .leftJoin(qMember.trainerInfo, qTrainerInfo).fetchJoin()
+                .fetchFirst();
+
+        if (member == null)
+            return Optional.empty();
+
+        return Optional.of(member);
+    }
+
+    @Override
+    public Optional<Member> findMemberByIdWithTrainerInfo(Long id) {
+
+        Member member = queryFactory.selectFrom(qMember)
+                .where(qMember.id.eq(id))
                 .leftJoin(qMember.trainerInfo, qTrainerInfo).fetchJoin()
                 .fetchFirst();
 

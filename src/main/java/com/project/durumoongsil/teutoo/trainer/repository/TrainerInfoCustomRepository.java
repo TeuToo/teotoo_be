@@ -9,7 +9,8 @@ import java.util.Optional;
 
 public interface TrainerInfoCustomRepository {
 
-    Optional<Member> findMemberByIdWithTrainerInfo(Long memberId);
+    Optional<Member> findMemberByIdWithTrainerInfo(String userEmail);
 
     Page<TrainerInfo> findBySearchCondition(TrainerListReqDto trainerListReqDto);
+    Optional<Member> findMemberByIdWithTrainerInfo(Long id);
 }

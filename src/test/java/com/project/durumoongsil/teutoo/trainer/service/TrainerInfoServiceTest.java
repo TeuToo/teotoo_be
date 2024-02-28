@@ -77,11 +77,11 @@ class TrainerInfoServiceTest {
                         .careerImgList(imgList)
                         .build();
 
-        when(trainerInfoRepository.findMemberByIdWithTrainerInfo(1L)).thenReturn(Optional.of(testMember));
+        when(trainerInfoRepository.findMemberByIdWithTrainerInfo(testMember.getEmail())).thenReturn(Optional.of(testMember));
 
         ArgumentCaptor<TrainerInfo> trainerInfoArgumentCaptor = ArgumentCaptor.forClass(TrainerInfo.class);
 
-        trainerInfoService.saveOrUpdate(1L, testUpdateInfoDto);
+        trainerInfoService.saveOrUpdate(testMember.getEmail(), testUpdateInfoDto);
 
 
         verify(trainerInfoRepository).save(trainerInfoArgumentCaptor.capture());
