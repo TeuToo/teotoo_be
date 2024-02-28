@@ -11,9 +11,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "트레이너 소개 페이지 API")
@@ -50,7 +50,11 @@ public class TrainerController {
     }
 
     @GetMapping("list")
-    public Page<TrainerSummaryResDto> getTrainerList(@ModelAttribute TrainerListReqDto trainerListReqDto) {
+    @Operation(summary = "트레이너 목록 페이지 조회 API", description = "트레이너 찾기 페이지에 데이터 조회 하기 위한 API 입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "트레이너 목록 조회 성공")
+    })
+    public Page<TrainerSummaryResDto> getTrainerList(@ParameterObject @ModelAttribute TrainerListReqDto trainerListReqDto) {
         return trainerInfoService.getTrainerList(trainerListReqDto);
     }
 }
