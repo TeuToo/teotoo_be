@@ -15,6 +15,9 @@ public interface CareerImgRepository extends JpaRepository<CareerImg, Long> {
     @Query("select ci from CareerImg ci join fetch ci.file where ci.trainerInfo.id = :trainerId")
     List<CareerImg> findByTrainerIdWithFile(@Param("trainerId") Long trainerId);
 
-    @Query("select f from File f left join fetch f.careerImg where f.fileName in :fileName")
-    List<CareerImg> findByFileNameWithCareerImg(@Param("fileNameList") List<String> fileName);
+    @Query("select ci from CareerImg ci inner join ci.trainerInfo inner join fetch ci.file where ci.trainerInfo.id = :trainerInfoId and ci.file.fileName in :fileNameList")
+    List<CareerImg> findByFileNameWithCareerImg(@Param("trainerInfoId") Long trainerInfoId, @Param("fileNameList") List<String> fileNameList);
+
+    @Query("delete from CareerImg c where c.id in :idList")
+    void deleteAllById(@Param("idList") List<Long> idList);
 }

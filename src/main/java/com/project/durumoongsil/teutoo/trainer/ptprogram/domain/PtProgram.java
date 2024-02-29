@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -27,6 +29,9 @@ public class PtProgram {
     @JoinColumn(name="id2")
     private TrainerInfo trainerInfo;
 
+    @OneToMany(mappedBy = "ptProgram", fetch = FetchType.LAZY)
+    private List<PtImg> ptImgList;
+
     @Builder
     public PtProgram(String title, String content, int price, int ptCnt, TrainerInfo trainerInfo) {
         this.title = title;
@@ -34,5 +39,21 @@ public class PtProgram {
         this.price = price;
         this.ptCnt = ptCnt;
         this.trainerInfo = trainerInfo;
+    }
+
+    public void updateTitle(String title) {
+        this.title = title;
+    }
+
+    public void updateContent(String content) {
+        this.content = content;
+    }
+
+    public void updatePrice(int price) {
+        this.price = price;
+    }
+
+    public void updatePtCnt(int ptCnt) {
+        this.ptCnt = ptCnt;
     }
 }

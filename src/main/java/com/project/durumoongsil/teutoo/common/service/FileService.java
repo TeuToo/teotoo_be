@@ -76,12 +76,14 @@ public class FileService {
     }
 
     @Transactional
-    public void deleteImgToDB(String path, String imgFileName) {
+    public void deleteImgListToDB(String path, List<String> imgFileNameList) {
         // DB에서 삭제
-        fileRepository.deleteByFileName(imgFileName);
+        fileRepository.deleteAllByFileName(imgFileNameList);
 
         // 버킷의 이미지 삭제
-        this.deleteImg("trainer_info", imgFileName);
+        for (String imgFileName : imgFileNameList) {
+            this.deleteImg("trainer_info", imgFileName);
+        }
     }
 
 

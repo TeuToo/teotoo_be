@@ -11,10 +11,6 @@ import java.util.Optional;
 
 @Repository
 public interface FileRepository extends JpaRepository<File, Long> {
-
-
-    @Query("select f from File f left join fetch f.careerImg where f.fileName in :fileName")
-    List<File> findByFileNameWithCareerImg(@Param("fileNameList") List<String> fileName);
-
-    Optional<File> deleteByFileName(String fileName);
+    @Query("delete from File f where f.fileName in :fileNameList")
+    void deleteAllByFileName(@Param("fileNameList") List<String> fileNameList);
 }

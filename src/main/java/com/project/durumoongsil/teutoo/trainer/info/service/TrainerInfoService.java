@@ -55,13 +55,15 @@ public class TrainerInfoService {
             // 사용자가 삭제한 이미지가 존재한다면,
             if (!trainerUpdateInfoDto.getDeletedImgList().isEmpty()) {
                 // 삭제 될 CareerImg 조회
-                List<CareerImg> delCareerImgList = careerImgRepository.findByFileNameWithCareerImg(trainerUpdateInfoDto.getDeletedImgList());
-                for (CareerImg delCareerImg : delCareerImgList) {
-                    // CareerImg 엔티티 삭제
-                    careerImgRepository.delete(delCareerImg);
-                    // 버킷 및 File 엔티티 삭제
-                    fileService.deleteImgToDB("trainer_info", delCareerImg.getFile().getFileName());
-                }
+                // 이 부분 수정해야함
+                List<CareerImg> delCareerImgList = careerImgRepository.findByFileNameWithCareerImg(trainerInfo.getId(), trainerUpdateInfoDto.getDeletedImgList());
+
+                // 삭제될 CareerImg id 획득
+                List<Long> delCareerImgIdList = delCareerImgList.stream().map(CareerImg::getId).toList();
+                List<String> delFileNameList = delCareerImgList.stream().map(careerImg -> careerImg.getFile().getFileName()).toList();
+
+                careerImgRepository.deleteAllById(delCareerImgIdList);
+                fileService.deleteImgListToDB("trainer_info", delFileNameList);
             }
         }
 
