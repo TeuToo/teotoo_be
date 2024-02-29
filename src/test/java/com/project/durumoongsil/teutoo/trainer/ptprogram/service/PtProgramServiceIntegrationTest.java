@@ -10,10 +10,10 @@ import com.project.durumoongsil.teutoo.security.service.SecurityService;
 import com.project.durumoongsil.teutoo.trainer.info.domain.TrainerInfo;
 import com.project.durumoongsil.teutoo.trainer.info.repository.TrainerInfoRepository;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.domain.PtImg;
-import com.project.durumoongsil.teutoo.trainer.ptprogram.domain.TrainerProgram;
+import com.project.durumoongsil.teutoo.trainer.ptprogram.domain.PtProgram;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.PtProgramRegDto;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.repository.PtImgRepository;
-import com.project.durumoongsil.teutoo.trainer.ptprogram.repository.TrainerProgramRepository;
+import com.project.durumoongsil.teutoo.trainer.ptprogram.repository.PtProgramRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +44,7 @@ class PtProgramServiceIntegrationTest {
     MemberRepository memberRepository;
 
     @Autowired
-    TrainerProgramRepository trainerProgramRepository;
+    PtProgramRepository ptProgramRepository;
 
     @MockBean
     SecurityService securityService;
@@ -100,13 +100,13 @@ class PtProgramServiceIntegrationTest {
         ptProgramService.register(ptProgramRegDto);
 
         // DB에 저장된 값 유효 검사
-        TrainerProgram savedTrainerProgram = trainerProgramRepository.findAll().get(0);
+        PtProgram savedPtProgram = ptProgramRepository.findAll().get(0);
 
-        assertEquals(savedTrainerProgram.getPrice(), ptProgramRegDto.getPrice());
-        assertEquals(savedTrainerProgram.getPtCnt(), ptProgramRegDto.getPtCnt());
-        assertEquals(savedTrainerProgram.getTitle(), ptProgramRegDto.getTitle());
-        assertEquals(savedTrainerProgram.getContent(), ptProgramRegDto.getContent());
-        assertEquals(savedTrainerProgram.getTrainerInfo().getId(), savedTrainerInfo.getId());
+        assertEquals(savedPtProgram.getPrice(), ptProgramRegDto.getPrice());
+        assertEquals(savedPtProgram.getPtCnt(), ptProgramRegDto.getPtCnt());
+        assertEquals(savedPtProgram.getTitle(), ptProgramRegDto.getTitle());
+        assertEquals(savedPtProgram.getContent(), ptProgramRegDto.getContent());
+        assertEquals(savedPtProgram.getTrainerInfo().getId(), savedTrainerInfo.getId());
 
         verify(ptImgRepository, times(10)).save(any(PtImg.class));
     }

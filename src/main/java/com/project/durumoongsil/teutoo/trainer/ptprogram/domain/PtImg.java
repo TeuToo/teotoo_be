@@ -19,14 +19,14 @@ public class PtImg {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id3")
-    private TrainerProgram trainerProgram;
+    private PtProgram ptProgram;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id2")
     private File file;
 
-    public PtImg(TrainerProgram trainerProgram, File file) {
-        this.trainerProgram = trainerProgram;
+    public PtImg(PtProgram ptProgram, File file) {
+        this.ptProgram = ptProgram;
         this.file = file;
     }
 }

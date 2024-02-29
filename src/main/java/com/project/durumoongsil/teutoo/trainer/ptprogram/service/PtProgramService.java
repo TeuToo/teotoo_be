@@ -7,10 +7,11 @@ import com.project.durumoongsil.teutoo.security.service.SecurityService;
 import com.project.durumoongsil.teutoo.trainer.info.domain.TrainerInfo;
 import com.project.durumoongsil.teutoo.trainer.info.repository.TrainerInfoRepository;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.domain.PtImg;
-import com.project.durumoongsil.teutoo.trainer.ptprogram.domain.TrainerProgram;
+import com.project.durumoongsil.teutoo.trainer.ptprogram.domain.PtProgram;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.PtProgramRegDto;
+import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.PtProgramUpdateDto;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.repository.PtImgRepository;
-import com.project.durumoongsil.teutoo.trainer.ptprogram.repository.TrainerProgramRepository;
+import com.project.durumoongsil.teutoo.trainer.ptprogram.repository.PtProgramRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,14 +25,13 @@ public class PtProgramService {
 
     private final SecurityService securityService;
     private final TrainerInfoRepository trainerInfoRepository;
-    private final TrainerProgramRepository trainerProgramRepository;
+    private final PtProgramRepository ptProgramRepository;
     private final PtImgRepository ptImgRepository;
     private final FileService fileService;
 
     @Transactional
     public void register(PtProgramRegDto ptProgramRegDto) {
 
-        // security에서, member를 얻고, member의 trainer_info와 맵핑을 시켜주어야 한다..
         String userEmail = securityService.getLoginedUserEmail();
 
         // trainer info id 만 조회,
@@ -42,7 +42,7 @@ public class PtProgramService {
                 .id(trainerInfoId)
                 .build();
 
-        TrainerProgram trainerProgram = TrainerProgram.builder()
+        PtProgram ptProgram = PtProgram.builder()
                 .content(ptProgramRegDto.getContent())
                 .price(ptProgramRegDto.getPrice())
                 .ptCnt(ptProgramRegDto.getPtCnt())
@@ -50,13 +50,13 @@ public class PtProgramService {
                 .trainerInfo(trainerInfo)
                 .build();
 
-        trainerProgramRepository.save(trainerProgram);
+        ptProgramRepository.save(ptProgram);
 
         // pt 프로그램 이미지 저장
         for (MultipartFile file : ptProgramRegDto.getProgramImgList()) {
             try {
                 File savedFile = fileService.saveImgToDB("pt_program", file);
-                PtImg careerImg = new PtImg(trainerProgram, savedFile);
+                PtImg careerImg = new PtImg(ptProgram, savedFile);
                 ptImgRepository.save(careerImg);
             } catch (IOException e) {
                 // 익셉션 핸들링 제어 필요
@@ -64,5 +64,11 @@ public class PtProgramService {
             }
         }
     }
+
+    @Transactional
+    public void update(PtProgramUpdateDto ptProgramUpdateDto) {
+
+    }
+
 
 }

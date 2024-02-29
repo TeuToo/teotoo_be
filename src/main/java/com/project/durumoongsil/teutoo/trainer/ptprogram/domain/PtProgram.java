@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class TrainerProgram {
+public class PtProgram {
 
     @Id @GeneratedValue
     private Long id;
@@ -28,7 +28,7 @@ public class TrainerProgram {
     private TrainerInfo trainerInfo;
 
     @Builder
-    public TrainerProgram(String title, String content, int price, int ptCnt, TrainerInfo trainerInfo) {
+    public PtProgram(String title, String content, int price, int ptCnt, TrainerInfo trainerInfo) {
         this.title = title;
         this.content = content;
         this.price = price;
