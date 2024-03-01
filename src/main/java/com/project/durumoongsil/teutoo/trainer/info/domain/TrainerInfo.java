@@ -36,7 +36,7 @@ public class TrainerInfo {
     private double reviewScore;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
+    @MapsId
     private Member member;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "trainerInfo")
