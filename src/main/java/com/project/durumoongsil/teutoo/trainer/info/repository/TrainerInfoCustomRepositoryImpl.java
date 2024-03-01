@@ -2,6 +2,7 @@ package com.project.durumoongsil.teutoo.trainer.info.repository;
 
 import com.project.durumoongsil.teutoo.member.domain.Member;
 import com.project.durumoongsil.teutoo.member.domain.QMember;
+import com.project.durumoongsil.teutoo.member.domain.Role;
 import com.project.durumoongsil.teutoo.trainer.info.domain.QTrainerInfo;
 import com.project.durumoongsil.teutoo.trainer.info.domain.TrainerInfo;
 import com.project.durumoongsil.teutoo.trainer.info.dto.TrainerListReqDto;
@@ -35,7 +36,10 @@ public class TrainerInfoCustomRepositoryImpl implements TrainerInfoCustomReposit
     public Optional<Member> findMemberByIdWithTrainerInfo(String userEmail) {
 
         Member member = queryFactory.selectFrom(qMember)
-                .where(qMember.email.eq(userEmail))
+                .where(
+                        qMember.email.eq(userEmail),
+                        qMember.role.eq(Role.TRAINER)
+                )
                 .leftJoin(qMember.trainerInfo, qTrainerInfo).fetchJoin()
                 .fetchFirst();
 

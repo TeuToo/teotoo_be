@@ -32,7 +32,7 @@ public class TrainerInfoService {
     public void saveOrUpdate(String userEmail, TrainerUpdateInfoDto trainerUpdateInfoDto) {
 
         Member member = trainerInfoRepository.findMemberByIdWithTrainerInfo(userEmail)
-                .orElseThrow(() -> new NotFoundUserException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new NotFoundUserException("해당 트레이너를 찾을 수 없습니다."));
 
         TrainerInfo trainerInfo = member.getTrainerInfo();
         if (trainerInfo == null) {
