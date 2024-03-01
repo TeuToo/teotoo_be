@@ -21,10 +21,6 @@ public class File extends BaseTimeEntity {
     @Column(nullable = false)
     private String fileName;
 
-    // File 삭제시 CareerImg 또한 같이 삭제됨
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "file", cascade = CascadeType.REMOVE)
-    private CareerImg careerImg;
-
     public File(String filePath, String fileName) {
         this.filePath = filePath;
         this.fileName = fileName;
