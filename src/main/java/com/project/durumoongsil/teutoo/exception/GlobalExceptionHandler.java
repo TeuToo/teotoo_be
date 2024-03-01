@@ -41,4 +41,10 @@ public class GlobalExceptionHandler {
     public RestError handlingNotFoundUserException(NotFoundUserException ex) {
         return new RestError(HttpStatus.UNAUTHORIZED.toString(), ex.getMessage());
     }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(DuplicateEmailException.class)
+    public RestError handlingDuplicationEmailException(DuplicateEmailException ex) {
+        return new RestError(HttpStatus.BAD_REQUEST.toString(), ex.getMessage());
+    }
 }
