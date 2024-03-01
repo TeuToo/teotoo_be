@@ -47,4 +47,10 @@ public class GlobalExceptionHandler {
     public RestError handlingDuplicationEmailException(DuplicateEmailException ex) {
         return new RestError(HttpStatus.BAD_REQUEST.toString(), ex.getMessage());
     }
+
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(DuplicateEstimateException.class)
+    public RestError handlingDuplicateEstimateException(DuplicateEstimateException ex) {
+        return new RestError(HttpStatus.CONFLICT.toString(), ex.getMessage());
+    }
 }
