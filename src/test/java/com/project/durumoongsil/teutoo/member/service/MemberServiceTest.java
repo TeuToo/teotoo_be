@@ -120,10 +120,10 @@ class MemberServiceTest {
         when(memberRepository.findMemberByEmail("test@naver.com")).thenReturn(Optional.of(member));
 
         //when
-        MemberSearchDto memberSearchDto = memberService.findMember("test@naver.com");
+        Member finedMember = memberService.findMember("test@naver.com");
 
         // then
-        assertThat(memberSearchDto.getName()).isEqualTo("변주환");
-        assertThat(memberSearchDto.getAddress()).isEqualTo("경기도 성남시 분당구");
+        assertThat(finedMember.getName()).isEqualTo("변주환");
+        assertThat(finedMember.getAddress()).isEqualTo("경기도 성남시 분당구");
     }
 }

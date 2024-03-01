@@ -2,11 +2,9 @@ package com.project.durumoongsil.teutoo.member.controller;
 
 import com.project.durumoongsil.teutoo.common.RestResult;
 import com.project.durumoongsil.teutoo.exception.UserUnauthorizedException;
-import com.project.durumoongsil.teutoo.member.domain.Member;
 import com.project.durumoongsil.teutoo.member.dto.MemberJoinDto;
-import com.project.durumoongsil.teutoo.member.dto.MemberSearchDto;
 import com.project.durumoongsil.teutoo.member.dto.MemberUpdateDto;
-import com.project.durumoongsil.teutoo.member.service.MemberService;
+import com.project.durumoongsil.teutoo.member.service.front.MemberFrontService;
 import com.project.durumoongsil.teutoo.security.util.SecurityUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -17,13 +15,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springdoc.core.annotations.ParameterObject;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 
 @Tag(name = "회원 관련 API")
@@ -32,7 +25,7 @@ import java.util.Optional;
 @Slf4j
 public class MemberController {
 
-    private final MemberService memberService;
+    private final MemberFrontService memberFrontService;
 
     @Operation(summary = "회원가입 API",
             description = "유저, 트레이너가 처음 회원가입 할때 사용합니다.",
@@ -43,10 +36,9 @@ public class MemberController {
             @ApiResponse(responseCode = "200", description = "회원 가입 성공"),
             @ApiResponse(responseCode = "400", description = "클라이언트의 잘못된 요청")
     })
-    @PostMapping( "/join")
+    @PostMapping("/join")
     public RestResult join(@Validated MemberJoinDto memberJoinDto) {
-        memberService.signUp(memberJoinDto);
-        return new RestResult("회원가입 성공");
+        return memberFrontService.signUpResultResult(memberJoinDto);
     }
 
 
@@ -56,7 +48,7 @@ public class MemberController {
     })
     @GetMapping("/members/me")
     public RestResult findMember() {
-        return new RestResult(memberService.findMember(getLoginedUserEmail()));
+        return memberFrontService.findMemberData(getLoginUserEmail());
     }
 
 
@@ -71,13 +63,13 @@ public class MemberController {
     })
     @PatchMapping("/members/me")
     public RestResult updateMemberInfo(@Validated MemberUpdateDto memberUpdateDto) {
-        return new RestResult(memberService.updateInfo(getLoginedUserEmail(), memberUpdateDto));
+        return memberFrontService.updateInfoResult(getLoginUserEmail(), memberUpdateDto);
     }
 
     /**
      * 스프링 시큐리티 + jwt 토큰을 통해서 현재 인증된 사용자의 아이디(email)를 가져온다.
      */
-    private static String getLoginedUserEmail() {
+    private static String getLoginUserEmail() {
         return SecurityUtil.getCurrentLoginId().orElseThrow(() ->
                 new UserUnauthorizedException("인증 권한이 없습니다."));
     }
