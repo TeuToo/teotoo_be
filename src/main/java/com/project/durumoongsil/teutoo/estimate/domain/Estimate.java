@@ -23,7 +23,7 @@ public class Estimate{
     private Integer ptCount;
     private String ptAddress;
 
-    @ManyToOne(fetch = LAZY, cascade = ALL)
+    @ManyToOne(fetch = LAZY, cascade = REMOVE)
     @ToString.Exclude
     private Member member;
 
