@@ -1,11 +1,12 @@
-package com.project.durumoongsil.teutoo.trainer.repository;
+package com.project.durumoongsil.teutoo.trainer.info.repository;
 
 import com.project.durumoongsil.teutoo.member.domain.Member;
-import com.project.durumoongsil.teutoo.trainer.domain.TrainerInfo;
-import com.project.durumoongsil.teutoo.trainer.dto.TrainerListReqDto;
+import com.project.durumoongsil.teutoo.trainer.info.domain.TrainerInfo;
+import com.project.durumoongsil.teutoo.trainer.info.dto.TrainerListReqDto;
 import org.springframework.data.domain.Page;
 
 import java.util.Optional;
+import java.util.OptionalLong;
 
 public interface TrainerInfoCustomRepository {
 
@@ -13,4 +14,6 @@ public interface TrainerInfoCustomRepository {
 
     Page<TrainerInfo> findBySearchCondition(TrainerListReqDto trainerListReqDto);
     Optional<Member> findMemberByIdWithTrainerInfo(Long id);
+
+    OptionalLong findTrainerInfoIdByMemberEmail(String email);
 }

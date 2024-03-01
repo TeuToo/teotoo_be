@@ -1,4 +1,4 @@
-package com.project.durumoongsil.teutoo.trainer.domain;
+package com.project.durumoongsil.teutoo.trainer.info.domain;
 
 import com.project.durumoongsil.teutoo.member.domain.Member;
 import jakarta.persistence.*;
@@ -55,8 +55,9 @@ public class TrainerInfo {
     }
 
     @Builder
-    public TrainerInfo(String gymName, String simpleIntro, String introContent,
+    public TrainerInfo(Long id, String gymName, String simpleIntro, String introContent,
                        int reviewCnt, double reviewScore, Member member) {
+        this.id = id;
         this.gymName = gymName;
         this.simpleIntro = simpleIntro;
         this.introContent = introContent;

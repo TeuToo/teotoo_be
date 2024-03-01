@@ -1,7 +1,7 @@
 package com.project.durumoongsil.teutoo.common.domain;
 
 import com.project.durumoongsil.teutoo.common.BaseTimeEntity;
-import com.project.durumoongsil.teutoo.trainer.domain.CareerImg;
+import com.project.durumoongsil.teutoo.trainer.info.domain.CareerImg;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

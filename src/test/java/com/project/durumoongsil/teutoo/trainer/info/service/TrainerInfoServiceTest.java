@@ -1,4 +1,4 @@
-package com.project.durumoongsil.teutoo.trainer.service;
+package com.project.durumoongsil.teutoo.trainer.info.service;
 
 import com.project.durumoongsil.teutoo.common.domain.File;
 import com.project.durumoongsil.teutoo.common.repository.FileRepository;
@@ -6,11 +6,11 @@ import com.project.durumoongsil.teutoo.common.service.FileService;
 import com.project.durumoongsil.teutoo.exception.NotFoundUserException;
 import com.project.durumoongsil.teutoo.member.domain.Member;
 import com.project.durumoongsil.teutoo.member.domain.Role;
-import com.project.durumoongsil.teutoo.trainer.domain.CareerImg;
-import com.project.durumoongsil.teutoo.trainer.domain.TrainerInfo;
-import com.project.durumoongsil.teutoo.trainer.dto.*;
-import com.project.durumoongsil.teutoo.trainer.repository.CareerImgRepository;
-import com.project.durumoongsil.teutoo.trainer.repository.TrainerInfoRepository;
+import com.project.durumoongsil.teutoo.trainer.info.domain.CareerImg;
+import com.project.durumoongsil.teutoo.trainer.info.domain.TrainerInfo;
+import com.project.durumoongsil.teutoo.trainer.info.dto.*;
+import com.project.durumoongsil.teutoo.trainer.info.repository.CareerImgRepository;
+import com.project.durumoongsil.teutoo.trainer.info.repository.TrainerInfoRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

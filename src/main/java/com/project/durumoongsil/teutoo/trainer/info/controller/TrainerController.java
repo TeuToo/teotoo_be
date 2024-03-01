@@ -1,13 +1,11 @@
-package com.project.durumoongsil.teutoo.trainer.controller;
+package com.project.durumoongsil.teutoo.trainer.info.controller;
 
-import com.project.durumoongsil.teutoo.exception.UserUnauthorizedException;
 import com.project.durumoongsil.teutoo.security.service.SecurityService;
-import com.project.durumoongsil.teutoo.security.util.SecurityUtil;
-import com.project.durumoongsil.teutoo.trainer.dto.TrainerInfoResDto;
-import com.project.durumoongsil.teutoo.trainer.dto.TrainerListReqDto;
-import com.project.durumoongsil.teutoo.trainer.dto.TrainerSummaryResDto;
-import com.project.durumoongsil.teutoo.trainer.dto.TrainerUpdateInfoDto;
-import com.project.durumoongsil.teutoo.trainer.service.TrainerInfoService;
+import com.project.durumoongsil.teutoo.trainer.info.dto.TrainerInfoResDto;
+import com.project.durumoongsil.teutoo.trainer.info.dto.TrainerListReqDto;
+import com.project.durumoongsil.teutoo.trainer.info.dto.TrainerSummaryResDto;
+import com.project.durumoongsil.teutoo.trainer.info.dto.TrainerUpdateInfoDto;
+import com.project.durumoongsil.teutoo.trainer.info.service.TrainerInfoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -19,10 +17,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "트레이너 소개 페이지 API")
+@Tag(name = "트레이너 소개 관리/조회 페이지 API")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/trainer")
+@RequestMapping("trainer")
 public class TrainerController {
 
     private final TrainerInfoService trainerInfoService;

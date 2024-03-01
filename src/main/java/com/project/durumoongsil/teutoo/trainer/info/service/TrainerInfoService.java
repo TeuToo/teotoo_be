@@ -1,14 +1,14 @@
-package com.project.durumoongsil.teutoo.trainer.service;
+package com.project.durumoongsil.teutoo.trainer.info.service;
 
 import com.project.durumoongsil.teutoo.common.domain.File;
 import com.project.durumoongsil.teutoo.common.service.FileService;
 import com.project.durumoongsil.teutoo.exception.NotFoundUserException;
 import com.project.durumoongsil.teutoo.member.domain.Member;
-import com.project.durumoongsil.teutoo.trainer.domain.CareerImg;
-import com.project.durumoongsil.teutoo.trainer.domain.TrainerInfo;
-import com.project.durumoongsil.teutoo.trainer.dto.*;
-import com.project.durumoongsil.teutoo.trainer.repository.CareerImgRepository;
-import com.project.durumoongsil.teutoo.trainer.repository.TrainerInfoRepository;
+import com.project.durumoongsil.teutoo.trainer.info.domain.CareerImg;
+import com.project.durumoongsil.teutoo.trainer.info.domain.TrainerInfo;
+import com.project.durumoongsil.teutoo.trainer.info.dto.*;
+import com.project.durumoongsil.teutoo.trainer.info.repository.CareerImgRepository;
+import com.project.durumoongsil.teutoo.trainer.info.repository.TrainerInfoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -28,6 +28,7 @@ public class TrainerInfoService {
     private final FileService fileService;
 
     // 트레이너 소개 페이지 등록 및 갱신
+    @Transactional
     public void saveOrUpdate(String userEmail, TrainerUpdateInfoDto trainerUpdateInfoDto) {
 
         Member member = trainerInfoRepository.findMemberByIdWithTrainerInfo(userEmail)
@@ -50,20 +51,32 @@ public class TrainerInfoService {
             trainerInfo.updateGymName(trainerUpdateInfoDto.getGymName());
             trainerInfo.updateIntroContent(trainerUpdateInfoDto.getIntroContent());
 
+
             // 사용자가 삭제한 이미지가 존재한다면,
-            fileService.deleteImgListToDB("trainer_info", trainerUpdateInfoDto.getDeletedImgList());
+            if (!trainerUpdateInfoDto.getDeletedImgList().isEmpty()) {
+                // 삭제 될 CareerImg 조회
+                // 이 부분 수정해야함
+                List<CareerImg> delCareerImgList = careerImgRepository.findByFileNameWithCareerImg(trainerInfo.getId(), trainerUpdateInfoDto.getDeletedImgList());
+
+                // 삭제될 CareerImg id 획득
+                List<Long> delCareerImgIdList = delCareerImgList.stream().map(CareerImg::getId).toList();
+                List<String> delFileNameList = delCareerImgList.stream().map(careerImg -> careerImg.getFile().getFileName()).toList();
+
+                careerImgRepository.deleteAllById(delCareerImgIdList);
+                fileService.deleteImgListToDB("trainer_info", delFileNameList);
+            }
         }
 
         // 자격사항 이미지 저장
         for (MultipartFile file : trainerUpdateInfoDto.getCareerImgList()) {
-            File savedFile = null;
+            // 익셉션 핸들링 제어 필요
             try {
-                savedFile = fileService.saveImgToDB("trainer_info", file);
+                File savedFile = fileService.saveImgToDB("trainer_info", file);
+                CareerImg careerImg = new CareerImg(trainerInfo, savedFile);
+                careerImgRepository.save(careerImg);
             } catch (IOException e) {
                 throw new RuntimeException("자격사항 이미지 저장에 실패 하였습니다. 다시 시도 해주세요.");
             }
-            CareerImg careerImg = new CareerImg(trainerInfo, savedFile);
-            careerImgRepository.save(careerImg);
         }
     }
 

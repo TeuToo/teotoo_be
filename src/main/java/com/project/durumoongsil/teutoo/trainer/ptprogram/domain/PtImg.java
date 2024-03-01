@@ -1,4 +1,4 @@
-package com.project.durumoongsil.teutoo.trainer.domain;
+package com.project.durumoongsil.teutoo.trainer.ptprogram.domain;
 
 import com.project.durumoongsil.teutoo.common.domain.File;
 import jakarta.persistence.*;
@@ -11,21 +11,22 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class CareerImg {
+public class PtImg {
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "trainer_info_id")
-    private TrainerInfo trainerInfo;
+    @JoinColumn(name = "id3")
+    private PtProgram ptProgram;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "file_id")
+    @JoinColumn(name = "id2")
     private File file;
 
-    public CareerImg(TrainerInfo trainerInfo, File file) {
-        this.trainerInfo = trainerInfo;
+    public PtImg(PtProgram ptProgram, File file) {
+        this.ptProgram = ptProgram;
         this.file = file;
     }
 }

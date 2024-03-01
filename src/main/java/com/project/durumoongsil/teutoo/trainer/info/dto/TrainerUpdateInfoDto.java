@@ -1,4 +1,4 @@
-package com.project.durumoongsil.teutoo.trainer.dto;
+package com.project.durumoongsil.teutoo.trainer.info.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -30,6 +30,6 @@ public class TrainerUpdateInfoDto {
     @Schema(description = "경력사항 이미지")
     private List<MultipartFile> careerImgList;
 
-    @Schema(description = "삭제될 이미지(파일명 확장자 포함)")
+    @Schema(description = "삭제될 이미지")
     private List<String> deletedImgList;
 }

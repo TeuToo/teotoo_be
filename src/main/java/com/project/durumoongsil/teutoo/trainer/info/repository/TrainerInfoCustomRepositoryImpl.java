@@ -1,10 +1,10 @@
-package com.project.durumoongsil.teutoo.trainer.repository;
+package com.project.durumoongsil.teutoo.trainer.info.repository;
 
 import com.project.durumoongsil.teutoo.member.domain.Member;
 import com.project.durumoongsil.teutoo.member.domain.QMember;
-import com.project.durumoongsil.teutoo.trainer.domain.QTrainerInfo;
-import com.project.durumoongsil.teutoo.trainer.domain.TrainerInfo;
-import com.project.durumoongsil.teutoo.trainer.dto.TrainerListReqDto;
+import com.project.durumoongsil.teutoo.trainer.info.domain.QTrainerInfo;
+import com.project.durumoongsil.teutoo.trainer.info.domain.TrainerInfo;
+import com.project.durumoongsil.teutoo.trainer.info.dto.TrainerListReqDto;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.NumberPath;
@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.OptionalLong;
 
 @Component
 @RequiredArgsConstructor
@@ -94,6 +95,22 @@ public class TrainerInfoCustomRepositoryImpl implements TrainerInfoCustomReposit
                 );
 
         return PageableExecutionUtils.getPage(trainerInfoList, pageRequest, count::fetchOne);
+    }
+
+    @Override
+    public OptionalLong findTrainerInfoIdByMemberEmail(String email) {
+
+        Long trainerInfoId =  queryFactory
+                .select(qTrainerInfo.id)
+                .from(qMember)
+                .innerJoin(qMember.trainerInfo, qTrainerInfo)
+                .where(qMember.email.eq(email))
+                .fetchFirst();
+
+        if (trainerInfoId == null)
+            return OptionalLong.empty();
+
+        return OptionalLong.of(trainerInfoId);
     }
 
     private BooleanExpression gymEq(String gymName) {

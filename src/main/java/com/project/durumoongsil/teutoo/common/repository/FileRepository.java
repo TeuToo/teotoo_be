@@ -6,11 +6,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface FileRepository extends JpaRepository<File, Long> {
-
-    @Query("select f from File f left join fetch f.careerImg where f.fileName like :fileName")
-    Optional<File> findByFileNameWithCareerImg(@Param("fileName") String fileName);
+    @Query("delete from File f where f.fileName in :fileNameList")
+    void deleteAllByFileName(@Param("fileNameList") List<String> fileNameList);
 }
