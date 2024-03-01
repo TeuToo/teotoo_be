@@ -88,9 +88,8 @@ public class PtProgramService {
             List<Long> delImgIdList = ptImgList.stream().map(PtImg::getId).toList();
             ptImgRepository.deleteAllById(delImgIdList);
 
-            List<String> filterDelImgList = ptImgList.stream().map(ptImg -> ptImg.getFile().getFileName()).toList();
-
-            fileService.deleteImgListToDB("pt_program", filterDelImgList);
+            List<String> savedDelImgList = ptImgList.stream().map(ptImg -> ptImg.getFile().getFileName()).toList();
+            fileService.deleteImgListToDB("pt_program", savedDelImgList);
         }
 
         // 자격사항 이미지 저장
@@ -105,7 +104,4 @@ public class PtProgramService {
             }
         }
     }
-
-
-
 }
