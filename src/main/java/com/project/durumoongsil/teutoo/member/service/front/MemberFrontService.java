@@ -1,6 +1,8 @@
 package com.project.durumoongsil.teutoo.member.service.front;
 
 import com.project.durumoongsil.teutoo.common.RestResult;
+import com.project.durumoongsil.teutoo.common.service.FileService;
+import com.project.durumoongsil.teutoo.member.domain.Member;
 import com.project.durumoongsil.teutoo.member.dto.MemberJoinDto;
 import com.project.durumoongsil.teutoo.member.dto.MemberSearchDto;
 import com.project.durumoongsil.teutoo.member.dto.MemberUpdateDto;
@@ -16,7 +18,7 @@ import org.springframework.stereotype.Service;
 public class MemberFrontService {
 
     private final MemberService memberService;
-    private final ModelMapper modelMapper;
+    private final FileService fileService;
 
     public RestResult signUpResultResult(MemberJoinDto memberJoinDto) {
         memberService.signUp(memberJoinDto);
@@ -24,10 +26,22 @@ public class MemberFrontService {
     }
 
     public RestResult findMemberData(String loginUserEmail) {
-        return new RestResult(modelMapper.map(memberService.findMember(loginUserEmail), MemberSearchDto.class));
+        Member member = memberService.findMember(loginUserEmail);
+        return new RestResult(createMemberSearchDto(member));
     }
 
     public RestResult updateInfoResult(String loginUserEmail, MemberUpdateDto memberUpdateDto) {
-        return new RestResult(modelMapper.map(memberService.updateInfo(loginUserEmail, memberUpdateDto), MemberSearchDto.class));
+        Member member = memberService.updateInfo(loginUserEmail, memberUpdateDto);
+        return new RestResult(createMemberSearchDto(member));
+    }
+
+    private MemberSearchDto createMemberSearchDto(Member member) {
+        String MEMBER_IMAGE_PATH = "member_profile";
+        return MemberSearchDto.builder()
+                .name(member.getName())
+                .address(member.getAddress())
+                .profileImagePath(fileService.getImgUrl(MEMBER_IMAGE_PATH, member.getProfileImageName()))
+                .profileImageName(member.getProfileOriginalImageName())
+                .build();
     }
 }
