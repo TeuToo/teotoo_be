@@ -24,16 +24,11 @@ public class Member extends BaseTimeEntity {
     private String email;
     private String password;
     private String address;
-
     @Enumerated(EnumType.STRING)
     private Role role;
     private String profileImageName;
     private String profileOriginalImageName;
-
-
     @OneToOne(mappedBy = "member", fetch = FetchType.LAZY, optional = false)
-    @Setter
-
     private TrainerInfo trainerInfo;
 
     @Builder
