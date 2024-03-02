@@ -27,7 +27,7 @@ public class EstimateController {
 
     @GetMapping("/estimates/{estimateId}")
     public RestResult getEstimate(@PathVariable Long estimateId) {
-        return new RestResult(estimateFrontService.searchEstimateResult(estimateId,LoginEmail.getLoginUserEmail()));
+        return estimateFrontService.searchEstimateResult(estimateId);
     }
 
     @PatchMapping("/estimates/{estimateId}")
