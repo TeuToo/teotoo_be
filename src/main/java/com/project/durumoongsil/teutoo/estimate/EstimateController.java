@@ -32,7 +32,7 @@ public class EstimateController {
 
     @PatchMapping("/estimates/{estimateId}")
     public RestResult updateEstimate(@PathVariable Long estimateId, UpdateEstimateDto updateEstimateDto) {
-        return new RestResult(estimateFrontService.updateEstimateResult(estimateId, updateEstimateDto,LoginEmail.getLoginUserEmail()));
+        return estimateFrontService.updateEstimateResult(estimateId, updateEstimateDto,LoginEmail.getLoginUserEmail());
     }
 
     @DeleteMapping("/estimates/{estimateId}")

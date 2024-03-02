@@ -2,6 +2,7 @@ package com.project.durumoongsil.teutoo.estimate.service;
 
 import com.project.durumoongsil.teutoo.estimate.domain.Estimate;
 import com.project.durumoongsil.teutoo.estimate.dto.CreateEstimateDto;
+import com.project.durumoongsil.teutoo.estimate.dto.UpdateEstimateDto;
 import com.project.durumoongsil.teutoo.estimate.repository.EstimateRepository;
 import com.project.durumoongsil.teutoo.exception.DuplicateEstimateException;
 import com.project.durumoongsil.teutoo.exception.UnauthorizedActionException;
@@ -10,9 +11,11 @@ import com.project.durumoongsil.teutoo.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class EstimateService {
 
@@ -30,8 +33,20 @@ public class EstimateService {
     /**
      * 견적서 단건 조회
      */
+    @Transactional(readOnly = true)
     public Estimate searchEstimate(Long estimateId) {
          return estimateRepository.findEstimateWithMemberName(estimateId);
+    }
+
+    /**
+     * 견적서 수정
+     */
+    public Estimate updateEstimate(Long estimateId, UpdateEstimateDto updateEstimateDto, String currentLoginId) {
+        Estimate estimate = isEstimateDeleteAvailable(estimateId, currentLoginId);
+        estimate.setPrice(updateEstimateDto.getPrice());
+        estimate.setPtCount(updateEstimateDto.getPtCount());
+        estimate.setPtAddress(updateEstimateDto.getPtAddress());
+        return estimate;
     }
 
     /**
@@ -67,6 +82,7 @@ public class EstimateService {
     }
 
     private Member getMember(String loginUserEmail) {
+        log.info("loinEmail ={}", loginUserEmail);
         return memberRepository.findMemberByEmail(loginUserEmail).get();
     }
 }

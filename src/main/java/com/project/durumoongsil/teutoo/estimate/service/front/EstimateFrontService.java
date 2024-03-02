@@ -34,8 +34,13 @@ public class EstimateFrontService {
         return new RestResult(modelMapper.map(estimate, EstimateSearchDto.class));
     }
 
-    public Object updateEstimateResult(Long estimateId, UpdateEstimateDto updateEstimateDto, String currentLoginId) {
-        return null;
+    public RestResult updateEstimateResult(Long estimateId, UpdateEstimateDto updateEstimateDto, String currentLoginId) {
+        modelMapper.typeMap(Estimate.class,EstimateSearchDto.class).addMappings(mapper-> {
+            mapper.map(estimate -> estimate.getMember().getName(), EstimateSearchDto::setName);
+        });
+
+        Estimate estimate = estimateService.updateEstimate(estimateId, updateEstimateDto, currentLoginId);
+        return new RestResult(modelMapper.map(estimate,EstimateSearchDto.class));
     }
 
     public RestResult deleteEstimateResult(Long estimateId, String currentLoginId) {
