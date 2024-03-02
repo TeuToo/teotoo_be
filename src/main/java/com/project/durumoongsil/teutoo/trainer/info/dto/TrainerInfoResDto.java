@@ -14,6 +14,9 @@ import java.util.List;
 @Builder
 public class TrainerInfoResDto {
 
+    @Schema(description = "트레이너 소개 페이지 id")
+    private long trainerInfoId;
+
     @Schema(description = "트레이너 이름", examples = "김헬창")
     private String trainerName;
 

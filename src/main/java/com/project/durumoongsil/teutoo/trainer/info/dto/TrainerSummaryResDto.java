@@ -10,6 +10,9 @@ import lombok.Getter;
 @Builder
 public class TrainerSummaryResDto {
 
+    @Schema(description = "트레이너 소개 페이지 id")
+    private long trainerInfoId;
+
     @Schema(description = "트레이너 명", examples = "김김김")
     private String trainerName;
 

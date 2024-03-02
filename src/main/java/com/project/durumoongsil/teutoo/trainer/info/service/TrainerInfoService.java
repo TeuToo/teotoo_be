@@ -109,6 +109,7 @@ public class TrainerInfoService {
             trainerImgUrl = fileService.getImgUrl(member.getProfileImageName(), member.getProfileOriginalImageName());
 
         return TrainerInfoResDto.builder()
+                .trainerInfoId(trainerInfo.getId())
                 .trainerAddress(member.getAddress())
                 .trainerName(member.getName())
                 .trainerImgUrl(trainerImgUrl)
@@ -126,6 +127,7 @@ public class TrainerInfoService {
             Member member = trainerInfo.getMember();
 
             return TrainerSummaryResDto.builder()
+                    .trainerInfoId(trainerInfo.getId())
                     .trainerName(member.getName())
                     .reviewScore(trainerInfo.getReviewScore())
                     .reviewCnt(trainerInfo.getReviewCnt())
