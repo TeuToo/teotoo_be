@@ -1,4 +1,4 @@
-package com.project.durumoongsil.teutoo.estimate;
+package com.project.durumoongsil.teutoo.estimate.controller;
 
 import com.project.durumoongsil.teutoo.common.LoginEmail;
 import com.project.durumoongsil.teutoo.common.RestResult;
@@ -23,6 +23,11 @@ public class EstimateController {
     public RestResult createEstimate(@Validated CreateEstimateDto createEstimateDto) {
         log.info("CreateEstimateDto = {}", createEstimateDto);
         return estimateFrontService.createEstimateResult(createEstimateDto, LoginEmail.getLoginUserEmail());
+    }
+
+    @GetMapping("/estimates")
+    public RestResult getEstimates() {
+        return estimateFrontService.searchAllEstimateResult();
     }
 
     @GetMapping("/estimates/{estimateId}")
