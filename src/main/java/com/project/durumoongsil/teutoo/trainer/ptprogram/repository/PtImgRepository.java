@@ -20,5 +20,5 @@ public interface PtImgRepository extends JpaRepository<PtImg, Long> {
             "inner join pi.ptProgram " +
             "inner join fetch pi.file " +
             "where pi.ptProgram.id = :ptProgramId and pi.file.fileName in :imgNameList")
-    List<PtImg> findAllByProgramIdAndImgNameList(@Param("ptProgramId")Long ptProgramId, @Param("imgNameList")List<String> imgNameList);
+    List<PtImg> findAllByProgramIdAndImgNameListWithFile(@Param("ptProgramId")Long ptProgramId, @Param("imgNameList")List<String> imgNameList);
 }

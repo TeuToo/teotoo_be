@@ -22,5 +22,5 @@ public class PtProgramRegDto {
     @Schema(description = "프로그램 횟수")
     private int ptCnt;
     @Schema(description = "추가 프로그램 이미지")
-    private List<MultipartFile> programImgList;
+    private List<MultipartFile> addPtImgList;
 }

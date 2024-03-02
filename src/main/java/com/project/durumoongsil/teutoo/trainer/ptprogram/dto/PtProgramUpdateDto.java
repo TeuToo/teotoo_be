@@ -28,9 +28,9 @@ public class PtProgramUpdateDto {
     private int ptCnt;
 
     @Schema(description = "추가 프로그램 이미지")
-    private List<MultipartFile> addProgramImgList;
+    private List<MultipartFile> addPtImgList;
 
     @Schema(description = "삭제될 이미지")
-    private List<String> deletedImgList;
+    private List<String> delPtImgList;
 
 }

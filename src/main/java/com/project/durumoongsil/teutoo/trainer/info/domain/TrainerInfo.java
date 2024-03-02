@@ -1,6 +1,7 @@
 package com.project.durumoongsil.teutoo.trainer.info.domain;
 
 import com.project.durumoongsil.teutoo.member.domain.Member;
+import com.project.durumoongsil.teutoo.trainer.ptprogram.domain.PtProgram;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -41,6 +42,9 @@ public class TrainerInfo {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "trainerInfo")
     List<CareerImg> careerImgList = new ArrayList<>();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "trainerInfo")
+    List<PtProgram> ptProgramList = new ArrayList<>();
 
     public void updateGymName(String gymName) {
         this.gymName = gymName;

@@ -54,7 +54,7 @@ public class PtProgramService {
         ptProgramRepository.save(ptProgram);
 
         // pt 프로그램 이미지 저장
-        for (MultipartFile file : ptProgramRegDto.getProgramImgList()) {
+        for (MultipartFile file : ptProgramRegDto.getAddPtImgList()) {
             try {
                 File savedFile = fileService.saveImgToDB("pt_program", file);
                 PtImg careerImg = new PtImg(ptProgram, savedFile);
@@ -80,11 +80,11 @@ public class PtProgramService {
         ptProgram.updateContent(ptProgramUpdateDto.getContent());
 
         // 사용자가 삭제한 이미지가 존재한다면,
-        if (!ptProgramUpdateDto.getDeletedImgList().isEmpty()) {
-            List<String> delImgList = ptProgramUpdateDto.getDeletedImgList();
+        if (!ptProgramUpdateDto.getDelPtImgList().isEmpty()) {
+            List<String> delImgList = ptProgramUpdateDto.getDelPtImgList();
 
             // pt program id하고, 삭제될 이미지를 통해, PtImg 조회 (사용자의 이메일로 우선 조회했기 때문에, 본인만 가능)
-            List<PtImg> ptImgList = ptImgRepository.findAllByProgramIdAndImgNameList(ptProgram.getId(), delImgList);
+            List<PtImg> ptImgList = ptImgRepository.findAllByProgramIdAndImgNameListWithFile(ptProgram.getId(), delImgList);
             List<Long> delImgIdList = ptImgList.stream().map(PtImg::getId).toList();
             ptImgRepository.deleteAllById(delImgIdList);
 
@@ -93,7 +93,7 @@ public class PtProgramService {
         }
 
         // 자격사항 이미지 저장
-        for (MultipartFile file : ptProgramUpdateDto.getAddProgramImgList()) {
+        for (MultipartFile file : ptProgramUpdateDto.getAddPtImgList()) {
             // 익셉션 핸들링 제어 필요
             try {
                 File savedFile = fileService.saveImgToDB("pt_program", file);

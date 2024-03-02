@@ -3,10 +3,8 @@ package com.project.durumoongsil.teutoo.trainer.ptprogram.service;
 import com.project.durumoongsil.teutoo.common.service.FileService;
 import com.project.durumoongsil.teutoo.security.service.SecurityService;
 import com.project.durumoongsil.teutoo.trainer.info.repository.TrainerInfoRepository;
-import com.project.durumoongsil.teutoo.trainer.ptprogram.domain.PtImg;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.domain.PtProgram;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.PtProgramRegDto;
-import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.PtProgramUpdateDto;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.repository.PtImgRepository;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.repository.PtProgramRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -16,17 +14,13 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.OptionalLong;
-import java.util.stream.IntStream;
-import java.util.stream.LongStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -66,7 +60,7 @@ class PtProgramServiceTest {
         ptProgramRegDto.setPtCnt(9999);
         ptProgramRegDto.setContent("abc");
         ptProgramRegDto.setTitle("abc");
-        ptProgramRegDto.setProgramImgList(imgList);
+        ptProgramRegDto.setAddPtImgList(imgList);
 
         when(securityService.getLoginedUserEmail()).thenReturn("aaa@aaa.com");
         when(trainerInfoRepository.findTrainerInfoIdByMemberEmail("aaa@aaa.com"))
