@@ -10,6 +10,7 @@ import com.project.durumoongsil.teutoo.trainer.info.domain.TrainerInfo;
 import com.project.durumoongsil.teutoo.trainer.info.dto.*;
 import com.project.durumoongsil.teutoo.trainer.info.repository.CareerImgRepository;
 import com.project.durumoongsil.teutoo.trainer.info.repository.TrainerInfoRepository;
+import com.project.durumoongsil.teutoo.trainer.info.util.DtoEntityConverter;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.PtProgramResDto;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.service.PtProgramService;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,7 @@ public class TrainerInfoService {
     private final CareerImgRepository careerImgRepository;
     private final FileService fileService;
     private final PtProgramService ptProgramService;
+    private final DtoEntityConverter converter = new DtoEntityConverter();
 
     // 트레이너 소개 페이지 등록 및 갱신
     @Transactional
@@ -41,12 +43,7 @@ public class TrainerInfoService {
         TrainerInfo trainerInfo = member.getTrainerInfo();
         if (trainerInfo == null) {
             // trainerInfo 가 없을 때,
-            trainerInfo = TrainerInfo.builder()
-                    .introContent(trainerUpdateInfoDto.getIntroContent())
-                    .gymName(trainerUpdateInfoDto.getGymName())
-                    .simpleIntro(trainerUpdateInfoDto.getSimpleIntro())
-                    .member(member)
-                    .build();
+            trainerInfo = converter.toTrainerInfo(trainerUpdateInfoDto, member);
             // 저장
             trainerInfoRepository.save(trainerInfo);
         } else {
@@ -54,7 +51,6 @@ public class TrainerInfoService {
             trainerInfo.updateSimpleIntro(trainerUpdateInfoDto.getSimpleIntro());
             trainerInfo.updateGymName(trainerUpdateInfoDto.getGymName());
             trainerInfo.updateIntroContent(trainerUpdateInfoDto.getIntroContent());
-
 
             // 사용자가 삭제한 이미지가 존재한다면,
             if (!trainerUpdateInfoDto.getDeletedImgList().isEmpty()) {
@@ -110,43 +106,29 @@ public class TrainerInfoService {
         if (member.getProfileImageName() != null && member.getProfileOriginalImageName() != null)
             trainerImgUrl = fileService.getImgUrl(member.getProfileImageName(), member.getProfileOriginalImageName());
 
+        ImgResDto imgResDto = new ImgResDto("trainer_info", trainerImgUrl);
+
         // 트레이너 PT 프로그램 리스트
         List<PtProgramResDto> ptProgramResDtoList = ptProgramService.getPtProgramList(member.getEmail());
 
-        return TrainerInfoResDto.builder()
-                .trainerInfoId(trainerInfo.getId())
-                .trainerAddress(member.getAddress())
-                .trainerName(member.getName())
-                .trainerImgUrl(trainerImgUrl)
-                .gymName(trainerInfo.getGymName())
-                .simpleIntro(trainerInfo.getSimpleIntro())
-                .introContent(trainerInfo.getIntroContent())
-                .careerImgList(careerImgList)
-                .ptProgramResDtoList(ptProgramResDtoList)
-                .build();
+        return converter.toTrainerInfoResDto(trainerInfo, member, imgResDto, careerImgList, ptProgramResDtoList);
     }
 
 
+    // 페이지네이션 방식으로, 트레이너 목록 조회
     public Page<TrainerSummaryResDto> getTrainerList(TrainerListReqDto TrainerListReqDto) {
         Page<TrainerInfo> trainerInfoPage = trainerInfoRepository.findBySearchCondition(TrainerListReqDto);
 
         return trainerInfoPage.map(trainerInfo -> {
             Member member = trainerInfo.getMember();
 
-            return TrainerSummaryResDto.builder()
-                    .trainerInfoId(trainerInfo.getId())
-                    .trainerName(member.getName())
-                    .reviewScore(trainerInfo.getReviewScore())
-                    .reviewCnt(trainerInfo.getReviewCnt())
-                    .simpleIntro(trainerInfo.getSimpleIntro())
-                    .gymName(trainerInfo.getGymName())
-                    .imgResDto(new ImgResDto(
-                            member.getProfileOriginalImageName(),
-                            fileService.getImgUrl(
-                                    member.getProfileImageName(), member.getProfileOriginalImageName())
-                            )
-                    )
-                    .build();
+            ImgResDto imgResDto = new ImgResDto(
+                    member.getProfileOriginalImageName(),
+                    fileService.getImgUrl(
+                            member.getProfileImageName(), member.getProfileOriginalImageName())
+            );
+
+            return converter.toTrainerSummaryResDto(trainerInfo, member, imgResDto);
         });
     }
 }
