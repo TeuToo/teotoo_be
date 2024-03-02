@@ -4,6 +4,7 @@ import com.project.durumoongsil.teutoo.estimate.domain.Estimate;
 import com.project.durumoongsil.teutoo.estimate.dto.CreateEstimateDto;
 import com.project.durumoongsil.teutoo.estimate.repository.EstimateRepository;
 import com.project.durumoongsil.teutoo.exception.DuplicateEstimateException;
+import com.project.durumoongsil.teutoo.exception.UnauthorizedActionException;
 import com.project.durumoongsil.teutoo.member.domain.Member;
 import com.project.durumoongsil.teutoo.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,23 @@ public class EstimateService {
      */
     public Estimate searchEstimate(Long estimateId) {
          return estimateRepository.findEstimateWithMemberName(estimateId);
+    }
+
+    /**
+     * 견적서 삭제 -> 자가가 작성한 건지 확인 후 삭제
+     */
+    public void deleteEstimate(Long estimateId, String currentLoginId) {
+        Estimate estimate = isEstimateDeleteAvailable(estimateId, currentLoginId);
+        estimateRepository.delete(estimate);
+    }
+
+    private Estimate isEstimateDeleteAvailable(Long estimateId, String currentLoginId) {
+        Estimate estimateWithMember = estimateRepository.findEstimateWithMemberName(estimateId);
+
+        if(!estimateWithMember.getMember().getEmail().equals(currentLoginId))
+            throw new UnauthorizedActionException("권한이 없습니다");
+
+        return estimateWithMember;
     }
 
     private Estimate createEstimateEntity(CreateEstimateDto createEstimateDto, Member member) {

@@ -38,7 +38,8 @@ public class EstimateFrontService {
         return null;
     }
 
-    public Object deleteEstimateResult(Long estimateId, String currentLoginId) {
-        return null;
+    public RestResult deleteEstimateResult(Long estimateId, String currentLoginId) {
+        estimateService.deleteEstimate(estimateId, currentLoginId);
+        return new RestResult("견적서 삭제 완료");
     }
 }

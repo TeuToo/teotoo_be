@@ -37,6 +37,6 @@ public class EstimateController {
 
     @DeleteMapping("/estimates/{estimateId}")
     public RestResult deleteEstimate(@PathVariable Long estimateId) {
-        return new RestResult(estimateFrontService.deleteEstimateResult(estimateId,LoginEmail.getLoginUserEmail()));
+        return estimateFrontService.deleteEstimateResult(estimateId,LoginEmail.getLoginUserEmail());
     }
 }
