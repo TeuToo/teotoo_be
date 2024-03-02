@@ -4,7 +4,7 @@ package com.project.durumoongsil.teutoo.member.domain;
 import com.project.durumoongsil.teutoo.common.BaseTimeEntity;
 import com.project.durumoongsil.teutoo.member.dto.MemberJoinDto;
 import com.project.durumoongsil.teutoo.member.dto.MemberUpdateDto;
-import com.project.durumoongsil.teutoo.trainer.domain.TrainerInfo;
+import com.project.durumoongsil.teutoo.trainer.info.domain.TrainerInfo;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,6 +12,7 @@ import static lombok.AccessLevel.*;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor(access = PROTECTED)
 public class Member extends BaseTimeEntity {
 
@@ -21,19 +22,13 @@ public class Member extends BaseTimeEntity {
 
     private String name;
     private String email;
-    @Setter
     private String password;
     private String address;
-
     @Enumerated(EnumType.STRING)
-    @Setter
     private Role role;
-
     private String profileImageName;
     private String profileOriginalImageName;
-
-    @OneToOne(mappedBy = "member", fetch = FetchType.LAZY)
-    @Setter
+    @OneToOne(mappedBy = "member", fetch = FetchType.LAZY, optional = false)
     private TrainerInfo trainerInfo;
 
     @Builder

@@ -1,7 +1,7 @@
 package com.project.durumoongsil.teutoo.common.domain;
 
 import com.project.durumoongsil.teutoo.common.BaseTimeEntity;
-import com.project.durumoongsil.teutoo.trainer.domain.CareerImg;
+import com.project.durumoongsil.teutoo.trainer.info.domain.CareerImg;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -20,10 +20,6 @@ public class File extends BaseTimeEntity {
 
     @Column(nullable = false)
     private String fileName;
-
-    // File 삭제시 CareerImg 또한 같이 삭제됨
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "file", cascade = CascadeType.REMOVE)
-    private CareerImg careerImg;
 
     public File(String filePath, String fileName) {
         this.filePath = filePath;
