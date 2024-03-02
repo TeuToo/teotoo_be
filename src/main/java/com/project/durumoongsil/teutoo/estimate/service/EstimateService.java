@@ -10,8 +10,11 @@ import com.project.durumoongsil.teutoo.member.domain.Member;
 import com.project.durumoongsil.teutoo.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 
 @Slf4j
 @Service
@@ -27,9 +30,18 @@ public class EstimateService {
      */
     public void createEstimate(CreateEstimateDto createEstimateDto, String loginUserEmail) {
         Member member = getMember(loginUserEmail);
-        isEstimateAvailable(member);
+//        isEstimateAvailable(member);
         estimateRepository.save(createEstimateEntity(createEstimateDto, member));
     }
+
+    /**
+     * 전체 견적서 페이징
+     */
+    @Transactional(readOnly = true)
+    public Page<Estimate> searchEstimates(Pageable pageable, String ptAddress) {
+        return estimateRepository.findAllWithPtAddressPage(pageable, ptAddress); // Pageable 객체를 사용
+    }
+
     /**
      * 견적서 단건 조회
      */

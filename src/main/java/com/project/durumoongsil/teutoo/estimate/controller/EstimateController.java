@@ -5,10 +5,11 @@ import com.project.durumoongsil.teutoo.common.RestResult;
 import com.project.durumoongsil.teutoo.estimate.dto.CreateEstimateDto;
 import com.project.durumoongsil.teutoo.estimate.dto.UpdateEstimateDto;
 import com.project.durumoongsil.teutoo.estimate.service.front.EstimateFrontService;
-import com.project.durumoongsil.teutoo.security.util.SecurityUtil;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,8 +27,8 @@ public class EstimateController {
     }
 
     @GetMapping("/estimates")
-    public RestResult getEstimates() {
-        return estimateFrontService.searchAllEstimateResult();
+    public RestResult getEstimates(@PageableDefault Pageable pageable, String ptAddress) {
+        return estimateFrontService.searchAllEstimateResult(pageable, ptAddress);
     }
 
     @GetMapping("/estimates/{estimateId}")
