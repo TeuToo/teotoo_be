@@ -12,6 +12,7 @@ import static lombok.AccessLevel.*;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor(access = PROTECTED)
 public class Member extends BaseTimeEntity {
 

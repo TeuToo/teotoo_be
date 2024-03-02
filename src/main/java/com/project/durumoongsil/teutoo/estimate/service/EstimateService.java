@@ -19,12 +19,18 @@ public class EstimateService {
     private final MemberRepository memberRepository;
 
     /**
-     * 우선 기획상 한사람당 한개의 견적사만 할 수 있다.
+     * 우선 기획상 한사람당 한개의 견적서만 할 수 있다.
      */
     public void createEstimate(CreateEstimateDto createEstimateDto, String loginUserEmail) {
-        Member member = memberRepository.findMemberByEmail(loginUserEmail).get();
+        Member member = getMember(loginUserEmail);
         isEstimateAvailable(member);
         estimateRepository.save(createEstimateEntity(createEstimateDto, member));
+    }
+    /**
+     * 견적서 단건 조회
+     */
+    public Estimate searchEstimate(Long estimateId) {
+         return estimateRepository.findEstimateWithMemberName(estimateId);
     }
 
     private Estimate createEstimateEntity(CreateEstimateDto createEstimateDto, Member member) {
@@ -40,5 +46,9 @@ public class EstimateService {
         if (estimateRepository.countEstimateByMember(member) > 0) {
             throw new DuplicateEstimateException("이미 작성한 견적서가 있습니다.");
         }
+    }
+
+    private Member getMember(String loginUserEmail) {
+        return memberRepository.findMemberByEmail(loginUserEmail).get();
     }
 }
