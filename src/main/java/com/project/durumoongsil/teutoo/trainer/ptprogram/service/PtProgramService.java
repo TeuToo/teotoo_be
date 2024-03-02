@@ -56,16 +56,7 @@ public class PtProgramService {
         ptProgramRepository.save(ptProgram);
 
         // pt 프로그램 이미지 저장
-        for (MultipartFile file : ptProgramRegDto.getAddPtImgList()) {
-            try {
-                File savedFile = fileService.saveImgToDB("pt_program", file);
-                PtImg careerImg = new PtImg(ptProgram, savedFile);
-                ptImgRepository.save(careerImg);
-            } catch (IOException e) {
-                // 익셉션 핸들링 제어 필요
-                throw new RuntimeException("자격사항 이미지 저장에 실패 하였습니다. 다시 시도 해주세요.");
-            }
-        }
+        savePtProgramImg(ptProgram, ptProgramRegDto.getAddPtImgList());
     }
 
     @Transactional
@@ -95,7 +86,11 @@ public class PtProgramService {
         }
 
         // 자격사항 이미지 저장
-        for (MultipartFile file : ptProgramUpdateDto.getAddPtImgList()) {
+        savePtProgramImg(ptProgram, ptProgramUpdateDto.getAddPtImgList());
+    }
+
+    private void savePtProgramImg(PtProgram ptProgram, List<MultipartFile> addPtImgList) {
+        for (MultipartFile file : addPtImgList) {
             // 익셉션 핸들링 제어 필요
             try {
                 File savedFile = fileService.saveImgToDB("pt_program", file);
