@@ -1,6 +1,7 @@
 package com.project.durumoongsil.teutoo.trainer.info.service;
 
 import com.project.durumoongsil.teutoo.common.domain.File;
+import com.project.durumoongsil.teutoo.common.dto.ImgResDto;
 import com.project.durumoongsil.teutoo.common.repository.FileRepository;
 import com.project.durumoongsil.teutoo.common.service.FileService;
 import com.project.durumoongsil.teutoo.exception.NotFoundUserException;
