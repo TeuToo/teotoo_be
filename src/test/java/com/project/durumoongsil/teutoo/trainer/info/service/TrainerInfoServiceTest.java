@@ -112,6 +112,7 @@ class TrainerInfoServiceTest {
                 .build();
 
         TrainerInfo testTrainerInfo = TrainerInfo.builder()
+                        .id(1L)
                         .simpleIntro("안녕하세요...")
                         .gymName("GYM")
                         .introContent("안녕하세요 안녕하세요 안녕하세요")
@@ -179,6 +180,7 @@ class TrainerInfoServiceTest {
 
         for (int i = 0; i < names.length; i++) {
             Member testMember = Member.builder()
+                    .id((long) (i+1))
                     .name(names[i])
                     .address(addresses[i])
                     .role(Role.TRAINER)
@@ -187,6 +189,7 @@ class TrainerInfoServiceTest {
                     .build();
 
             TrainerInfo testTrainerInfo = TrainerInfo.builder()
+                    .id((long) (i+1))
                     .simpleIntro("안녕하세요...")
                     .gymName("GYM"+i)
                     .introContent("안녕하세요 안녕하세요 안녕하세요")
