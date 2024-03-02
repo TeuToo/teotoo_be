@@ -10,6 +10,8 @@ import com.project.durumoongsil.teutoo.trainer.info.domain.TrainerInfo;
 import com.project.durumoongsil.teutoo.trainer.info.dto.*;
 import com.project.durumoongsil.teutoo.trainer.info.repository.CareerImgRepository;
 import com.project.durumoongsil.teutoo.trainer.info.repository.TrainerInfoRepository;
+import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.PtProgramResDto;
+import com.project.durumoongsil.teutoo.trainer.ptprogram.service.PtProgramService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -27,6 +29,7 @@ public class TrainerInfoService {
     private final TrainerInfoRepository trainerInfoRepository;
     private final CareerImgRepository careerImgRepository;
     private final FileService fileService;
+    private final PtProgramService ptProgramService;
 
     // 트레이너 소개 페이지 등록 및 갱신
     @Transactional
@@ -82,7 +85,6 @@ public class TrainerInfoService {
     }
 
     // 트레이너 소개 페이지 데이터 조회
-    @Transactional(readOnly = true)
     public TrainerInfoResDto getInfo(Long trainerId) {
         Member member = trainerInfoRepository.findMemberByIdWithTrainerInfo(trainerId)
                 .orElseThrow(() -> new NotFoundUserException("사용자를 찾을 수 없습니다."));
@@ -108,6 +110,9 @@ public class TrainerInfoService {
         if (member.getProfileImageName() != null && member.getProfileOriginalImageName() != null)
             trainerImgUrl = fileService.getImgUrl(member.getProfileImageName(), member.getProfileOriginalImageName());
 
+        // 트레이너 PT 프로그램 리스트
+        List<PtProgramResDto> ptProgramResDtoList = ptProgramService.getPtProgramList(member.getEmail());
+
         return TrainerInfoResDto.builder()
                 .trainerInfoId(trainerInfo.getId())
                 .trainerAddress(member.getAddress())
@@ -117,8 +122,10 @@ public class TrainerInfoService {
                 .simpleIntro(trainerInfo.getSimpleIntro())
                 .introContent(trainerInfo.getIntroContent())
                 .careerImgList(careerImgList)
+                .ptProgramResDtoList(ptProgramResDtoList)
                 .build();
     }
+
 
     public Page<TrainerSummaryResDto> getTrainerList(TrainerListReqDto TrainerListReqDto) {
         Page<TrainerInfo> trainerInfoPage = trainerInfoRepository.findBySearchCondition(TrainerListReqDto);

@@ -1,6 +1,7 @@
 package com.project.durumoongsil.teutoo.trainer.info.dto;
 
 import com.project.durumoongsil.teutoo.common.dto.ImgResDto;
+import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.PtProgramResDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
@@ -43,5 +44,5 @@ public class TrainerInfoResDto {
 
     private double reviewScore;
 
-    // 프로그램 리스트도...
+    private List<PtProgramResDto> ptProgramResDtoList;
 }

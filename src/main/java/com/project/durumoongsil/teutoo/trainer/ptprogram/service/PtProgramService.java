@@ -1,14 +1,19 @@
 package com.project.durumoongsil.teutoo.trainer.ptprogram.service;
 
 import com.project.durumoongsil.teutoo.common.domain.File;
+import com.project.durumoongsil.teutoo.common.dto.ImgResDto;
 import com.project.durumoongsil.teutoo.common.service.FileService;
 import com.project.durumoongsil.teutoo.exception.NotFoundUserException;
+import com.project.durumoongsil.teutoo.member.domain.Member;
+import com.project.durumoongsil.teutoo.member.repository.MemberRepository;
 import com.project.durumoongsil.teutoo.security.service.SecurityService;
 import com.project.durumoongsil.teutoo.trainer.info.domain.TrainerInfo;
 import com.project.durumoongsil.teutoo.trainer.info.repository.TrainerInfoRepository;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.domain.PtImg;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.domain.PtProgram;
+import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.PtProgramManageResDto;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.PtProgramRegDto;
+import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.PtProgramResDto;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.PtProgramUpdateDto;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.repository.PtImgRepository;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.repository.PtProgramRepository;
@@ -25,6 +30,7 @@ import java.util.List;
 public class PtProgramService {
 
     private final SecurityService securityService;
+    private final MemberRepository memberRepository;
     private final TrainerInfoRepository trainerInfoRepository;
     private final PtProgramRepository ptProgramRepository;
     private final PtImgRepository ptImgRepository;
@@ -104,4 +110,48 @@ public class PtProgramService {
             }
         }
     }
+
+
+    public PtProgramManageResDto getPtProgramListForManagement() {
+        String memberEmail = securityService.getLoginedUserEmail();
+
+        Member member = memberRepository.findMemberByEmail(memberEmail)
+                .orElseThrow(() -> new NotFoundUserException("사용자를 찾을 수 없습니다."));
+
+        List<PtProgramResDto> ptProgramResDtoList = this.getPtProgramList(memberEmail);
+
+        return PtProgramManageResDto.builder()
+                .trainerName(member.getName())
+                .trainerImg(new ImgResDto(member.getProfileOriginalImageName(),
+                        fileService.getImgUrl(member.getProfileImageName(), member.getProfileOriginalImageName()))
+                )
+                .ptProgramResList(ptProgramResDtoList)
+                .build();
+    }
+
+    public List<PtProgramResDto> getPtProgramList(String memberEmail) {
+        List<PtProgram> ptProgramList = ptProgramRepository.findByMemberEmailWithPtImg(memberEmail);
+
+        List<PtProgramResDto> ptProgramResDtoList = ptProgramList.stream().map(ptProgram -> {
+            // 각 프로그램에 대한 이미지 리스트
+            List<ImgResDto> imgResDtoList = ptProgram.getPtImgList().stream().map(ptImg -> {
+                return new ImgResDto(ptImg.getFile().getFileName(),
+                        fileService.getImgUrl(ptImg.getFile().getFilePath(), ptImg.getFile().getFileName())
+                );
+            }).toList();
+
+            return PtProgramResDto.builder()
+                    .ptProgramId(ptProgram.getId())
+                    .title(ptProgram.getTitle())
+                    .content(ptProgram.getContent())
+                    .price(ptProgram.getPrice())
+                    .ptCnt(ptProgram.getPtCnt())
+                    .ptImgList(imgResDtoList)
+                    .build();
+        }).toList();
+
+        return ptProgramResDtoList;
+    }
+
+
 }
