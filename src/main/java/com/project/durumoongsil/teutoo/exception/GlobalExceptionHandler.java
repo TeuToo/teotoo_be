@@ -53,4 +53,10 @@ public class GlobalExceptionHandler {
     public RestError handlingDuplicateEstimateException(DuplicateEstimateException ex) {
         return new RestError(HttpStatus.CONFLICT.toString(), ex.getMessage());
     }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(UnauthorizedActionException.class)
+    public RestError handlingDuplicateEstimateException(UnauthorizedActionException ex) {
+        return new RestError(HttpStatus.FORBIDDEN.toString(), ex.getMessage());
+    }
 }
