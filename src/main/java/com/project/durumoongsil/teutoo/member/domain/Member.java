@@ -4,7 +4,7 @@ package com.project.durumoongsil.teutoo.member.domain;
 import com.project.durumoongsil.teutoo.common.BaseTimeEntity;
 import com.project.durumoongsil.teutoo.member.dto.MemberJoinDto;
 import com.project.durumoongsil.teutoo.member.dto.MemberUpdateDto;
-import com.project.durumoongsil.teutoo.trainer.domain.TrainerInfo;
+import com.project.durumoongsil.teutoo.trainer.info.domain.TrainerInfo;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -29,7 +29,11 @@ public class Member extends BaseTimeEntity {
     private Role role;
     private String profileImageName;
     private String profileOriginalImageName;
-    @OneToOne(mappedBy = "member", fetch = FetchType.LAZY)
+
+
+    @OneToOne(mappedBy = "member", fetch = FetchType.LAZY, optional = false)
+    @Setter
+
     private TrainerInfo trainerInfo;
 
     @Builder

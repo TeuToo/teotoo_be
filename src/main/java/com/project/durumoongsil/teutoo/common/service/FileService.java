@@ -77,16 +77,12 @@ public class FileService {
 
     @Transactional
     public void deleteImgListToDB(String path, List<String> imgFileNameList) {
-        // 먼저, DB 에서 삭제,
-        for (String deletedImgName : imgFileNameList) {
-            File savedFile = fileRepository.findByFileNameWithCareerImg(deletedImgName)
-                    .orElseThrow(() -> new NotFoundUserException("삭제할 파일을 찾을 수 없습니다."));
-            fileRepository.delete(savedFile);
-        }
+        // DB에서 삭제
+        fileRepository.deleteAllByFileName(imgFileNameList);
 
         // 버킷의 이미지 삭제
-        for (String deletedImgName : imgFileNameList) {
-            this.deleteImg("trainer_info", deletedImgName);
+        for (String imgFileName : imgFileNameList) {
+            this.deleteImg("trainer_info", imgFileName);
         }
     }
 
