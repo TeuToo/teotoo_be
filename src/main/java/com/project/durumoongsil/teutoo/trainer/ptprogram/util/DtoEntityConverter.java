@@ -37,7 +37,7 @@ public class DtoEntityConverter {
                 .content(ptProgram.getContent())
                 .price(ptProgram.getPrice())
                 .ptCnt(ptProgram.getPtCnt())
-                .ptImgList(imgResDtoList)
+                .ptProgramImgList(imgResDtoList)
                 .build();
     }
 

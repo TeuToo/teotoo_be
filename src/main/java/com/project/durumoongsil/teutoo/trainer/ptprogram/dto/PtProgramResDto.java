@@ -16,5 +16,5 @@ public class PtProgramResDto {
     private String content;
     private int price;
     private int ptCnt;
-    private List<ImgResDto> ptImgList;
+    private List<ImgResDto> ptProgramImgList;
 }

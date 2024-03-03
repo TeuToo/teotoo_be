@@ -12,6 +12,8 @@ import com.project.durumoongsil.teutoo.trainer.info.domain.TrainerInfo;
 import com.project.durumoongsil.teutoo.trainer.info.dto.*;
 import com.project.durumoongsil.teutoo.trainer.info.repository.CareerImgRepository;
 import com.project.durumoongsil.teutoo.trainer.info.repository.TrainerInfoRepository;
+import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.PtProgramResDto;
+import com.project.durumoongsil.teutoo.trainer.ptprogram.service.PtProgramService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -46,10 +48,10 @@ class TrainerInfoServiceTest {
     CareerImgRepository careerImgRepository;
 
     @Mock
-    FileRepository fileRepository;
+    FileService fileService;
 
     @Mock
-    FileService fileService;
+    PtProgramService ptProgramService;
 
     @Test
     @DisplayName("트레이너 소개 API 등록/갱신 테스트 - trainerInfo 등록 안된 상태")
@@ -122,22 +124,39 @@ class TrainerInfoServiceTest {
         when(trainerInfoRepository.findMemberByIdWithTrainerInfo(1L)).thenReturn(Optional.of(testMember));
 
         // 이미지 임의 저장
-        List<CareerImg> careerImgList = new ArrayList<>();
+        List<CareerImg> mockCareerImgList = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
             String filePath = "path" + i;
             String fileName = "name" + i;
 
             CareerImg careerImg = new CareerImg(testTrainerInfo, new File(filePath, fileName));
-            careerImgList.add(careerImg);
+            mockCareerImgList.add(careerImg);
 
             when(fileService.getImgUrl(filePath, fileName)).thenReturn("url" + i);
         }
-        when(careerImgRepository.findByTrainerIdWithFile(1L)).thenReturn(careerImgList);
+
+        // pt 프로그램 이미지 임의 저장
+        List<PtProgramResDto> mockPtProgramImgList = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            PtProgramResDto ptProgramResDto =PtProgramResDto.builder()
+                    .ptProgramId((long) i + 1)
+                    .price(9999)
+                    .title("goood")
+                    .content("good")
+                    .build();
+            mockPtProgramImgList.add(ptProgramResDto);
+        }
+
+        when(careerImgRepository.findByTrainerIdWithFile(1L)).thenReturn(mockCareerImgList);
+        when(ptProgramService.getPtProgramList(testMember.getEmail())).thenReturn(mockPtProgramImgList);
+
+        // 호출
         TrainerInfoResDto trainerInfoResDto = trainerInfoService.getInfo(1L);
 
         // DTO 테스트
         assertEquals(testMember.getName(), trainerInfoResDto.getTrainerName());
         assertEquals(testMember.getAddress(), trainerInfoResDto.getTrainerAddress());
+
         assertEquals(testTrainerInfo.getGymName(), trainerInfoResDto.getGymName());
         assertEquals(testTrainerInfo.getSimpleIntro(), trainerInfoResDto.getSimpleIntro());
         assertEquals(testTrainerInfo.getGymName(), trainerInfoResDto.getGymName());
@@ -147,6 +166,12 @@ class TrainerInfoServiceTest {
             ImgResDto imgResDto = trainerInfoResDto.getCareerImgList().get(i);
             assertEquals("url" + i, imgResDto.getImgUrl());
             assertEquals("name" + i, imgResDto.getImgName());
+        }
+
+        for (int i = 0; i < 3; i++) {
+            PtProgramResDto ptProgramResDto = trainerInfoResDto.getPtProgramResDtoList().get(i);
+            assertEquals(ptProgramResDto.getPtProgramId(), i+1);
+            assertEquals(ptProgramResDto.getPrice(), 9999);
         }
     }
 
