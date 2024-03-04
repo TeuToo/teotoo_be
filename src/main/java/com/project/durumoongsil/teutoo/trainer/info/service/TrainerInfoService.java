@@ -10,7 +10,7 @@ import com.project.durumoongsil.teutoo.trainer.info.domain.TrainerInfo;
 import com.project.durumoongsil.teutoo.trainer.info.dto.*;
 import com.project.durumoongsil.teutoo.trainer.info.repository.CareerImgRepository;
 import com.project.durumoongsil.teutoo.trainer.info.repository.TrainerInfoRepository;
-import com.project.durumoongsil.teutoo.trainer.info.util.DtoEntityConverter;
+import com.project.durumoongsil.teutoo.trainer.info.util.TrainerInfoConverter;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.PtProgramResDto;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.service.PtProgramService;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +31,7 @@ public class TrainerInfoService {
     private final CareerImgRepository careerImgRepository;
     private final FileService fileService;
     private final PtProgramService ptProgramService;
-    private final DtoEntityConverter converter = new DtoEntityConverter();
+    private final TrainerInfoConverter converter = new TrainerInfoConverter();
 
     // 트레이너 소개 페이지 등록 및 갱신
     @Transactional

@@ -17,7 +17,7 @@ import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.PtProgramResDto;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.PtProgramUpdateDto;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.repository.PtImgRepository;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.repository.PtProgramRepository;
-import com.project.durumoongsil.teutoo.trainer.ptprogram.util.DtoEntityConverter;
+import com.project.durumoongsil.teutoo.trainer.ptprogram.util.PtProgramConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,8 +36,10 @@ public class PtProgramService {
     private final PtProgramRepository ptProgramRepository;
     private final PtImgRepository ptImgRepository;
     private final FileService fileService;
-    private final DtoEntityConverter dtoEntityConverter = new DtoEntityConverter();
+    private final PtProgramConverter ptProgramConverter = new PtProgramConverter();
 
+
+    // PT Program 등록
     @Transactional
     public void register(PtProgramRegDto ptProgramRegDto) {
 
@@ -51,7 +53,7 @@ public class PtProgramService {
                 .id(trainerInfoId)
                 .build();
 
-        PtProgram ptProgram = dtoEntityConverter.toPtProgram(ptProgramRegDto, trainerInfo);
+        PtProgram ptProgram = ptProgramConverter.toPtProgram(ptProgramRegDto, trainerInfo);
 
         ptProgramRepository.save(ptProgram);
 
@@ -59,6 +61,7 @@ public class PtProgramService {
         savePtProgramImg(ptProgram, ptProgramRegDto.getAddPtImgList());
     }
 
+    // PT Program 업데이트
     @Transactional
     public void update(PtProgramUpdateDto ptProgramUpdateDto) {
         String userEmail = securityService.getLoginedUserEmail();
@@ -102,6 +105,8 @@ public class PtProgramService {
         }
     }
 
+
+    // PT 프로그램 관리페이지 데이터 조회
     public PtProgramManageResDto getPtProgramListForManagement() {
         String memberEmail = securityService.getLoginedUserEmail();
 
@@ -110,24 +115,27 @@ public class PtProgramService {
 
         List<PtProgramResDto> ptProgramResDtoList = this.getPtProgramList(memberEmail);
 
+        // 사용자 프로필 이미지
         ImgResDto imgResDto = new ImgResDto(member.getProfileOriginalImageName(),
                 fileService.getImgUrl(member.getProfileImageName(), member.getProfileOriginalImageName()));
 
-        return dtoEntityConverter.toPtProgramManageResDto(ptProgramResDtoList, member, imgResDto);
+        return ptProgramConverter.toPtProgramManageResDto(ptProgramResDtoList, member, imgResDto);
     }
 
     public List<PtProgramResDto> getPtProgramList(String memberEmail) {
         List<PtProgram> ptProgramList = ptProgramRepository.findByMemberEmailWithPtImg(memberEmail);
 
         return ptProgramList.stream().map(ptProgram -> {
+
             // 각 프로그램에 대한 이미지 리스트
-            List<ImgResDto> imgResDtoList = ptProgram.getPtImgList().stream().map(ptImg -> {
+            List<ImgResDto> imgResDtoList = ptProgram.getPtImgList()
+                    .stream().map(ptImg -> {
                 return new ImgResDto(ptImg.getFile().getFileName(),
                         fileService.getImgUrl(ptImg.getFile().getFilePath(), ptImg.getFile().getFileName())
                 );
             }).toList();
 
-            return dtoEntityConverter.toPtProgramResDto(ptProgram, imgResDtoList);
+            return ptProgramConverter.toPtProgramResDto(ptProgram, imgResDtoList);
         }).toList();
     }
 }

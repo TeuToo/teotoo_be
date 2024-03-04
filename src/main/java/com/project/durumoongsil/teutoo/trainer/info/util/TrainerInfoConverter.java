@@ -11,7 +11,7 @@ import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.PtProgramResDto;
 import java.util.List;
 
 
-public class DtoEntityConverter {
+public class TrainerInfoConverter {
 
     public TrainerInfo toTrainerInfo(TrainerUpdateInfoDto trainerUpdateInfoDto, Member member) {
         return TrainerInfo.builder()

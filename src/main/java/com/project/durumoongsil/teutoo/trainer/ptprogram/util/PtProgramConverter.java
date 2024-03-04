@@ -10,7 +10,7 @@ import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.PtProgramResDto;
 
 import java.util.List;
 
-public class DtoEntityConverter {
+public class PtProgramConverter {
 
     public PtProgram toPtProgram(PtProgramRegDto ptProgramRegDto, TrainerInfo trainerInfo) {
         return PtProgram.builder()
