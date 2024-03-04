@@ -57,8 +57,10 @@ public class PtProgramService {
 
         ptProgramRepository.save(ptProgram);
 
-        // pt 프로그램 이미지 저장
-        savePtProgramImg(ptProgram, ptProgramRegDto.getAddPtImgList());
+        if (ptProgramRegDto.getAddPtImgList() != null) {
+            // pt 프로그램 이미지 저장
+            savePtProgramImg(ptProgram, ptProgramRegDto.getAddPtImgList());
+        }
     }
 
     // PT Program 업데이트
@@ -76,7 +78,7 @@ public class PtProgramService {
         ptProgram.updateContent(ptProgramUpdateDto.getContent());
 
         // 사용자가 삭제한 이미지가 존재한다면,
-        if (!ptProgramUpdateDto.getDelPtImgList().isEmpty()) {
+        if (ptProgramUpdateDto.getDelPtImgList() != null) {
             List<String> delImgList = ptProgramUpdateDto.getDelPtImgList();
 
             // pt program id하고, 삭제될 이미지를 통해, PtImg 조회 (사용자의 이메일로 우선 조회했기 때문에, 본인만 가능)
@@ -89,7 +91,9 @@ public class PtProgramService {
         }
 
         // 자격사항 이미지 저장
-        savePtProgramImg(ptProgram, ptProgramUpdateDto.getAddPtImgList());
+        if (ptProgramUpdateDto.getAddPtImgList() != null) {
+            savePtProgramImg(ptProgram, ptProgramUpdateDto.getAddPtImgList());
+        }
     }
 
     private void savePtProgramImg(PtProgram ptProgram, List<MultipartFile> addPtImgList) {
@@ -115,12 +119,14 @@ public class PtProgramService {
 
         List<PtProgramResDto> ptProgramResDtoList = this.getPtProgramList(memberEmail);
 
+
         // 사용자 프로필 이미지
-        ImgResDto imgResDto = new ImgResDto(member.getProfileOriginalImageName(),
-                fileService.getImgUrl(member.getProfileImageName(), member.getProfileOriginalImageName()));
+        ImgResDto imgResDto = ImgResDto.create(member.getProfileOriginalImageName(),
+                    fileService.getImgUrl(member.getProfileImageName(), member.getProfileOriginalImageName()));
 
         return ptProgramConverter.toPtProgramManageResDto(ptProgramResDtoList, member, imgResDto);
     }
+
 
     public List<PtProgramResDto> getPtProgramList(String memberEmail) {
         List<PtProgram> ptProgramList = ptProgramRepository.findByMemberEmailWithPtImg(memberEmail);
@@ -130,7 +136,7 @@ public class PtProgramService {
             // 각 프로그램에 대한 이미지 리스트
             List<ImgResDto> imgResDtoList = ptProgram.getPtImgList()
                     .stream().map(ptImg -> {
-                return new ImgResDto(ptImg.getFile().getFileName(),
+                return ImgResDto.create(ptImg.getFile().getFileName(),
                         fileService.getImgUrl(ptImg.getFile().getFilePath(), ptImg.getFile().getFileName())
                 );
             }).toList();

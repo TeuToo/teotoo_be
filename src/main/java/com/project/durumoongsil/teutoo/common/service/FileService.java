@@ -64,6 +64,9 @@ public class FileService {
          path: bucket에 저장될 디렉토리 경로
      */
     public String getImgUrl(String path, String imgFileName) {
+        if (path == null || imgFileName == null)
+            return null;
+
         String savedFileFullName = path + "/" + imgFileName;
 
         return amazonS3.getUrl(bucketName, savedFileFullName).toString();

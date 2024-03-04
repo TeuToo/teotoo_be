@@ -52,8 +52,9 @@ public class TrainerInfoService {
             trainerInfo.updateGymName(trainerUpdateInfoDto.getGymName());
             trainerInfo.updateIntroContent(trainerUpdateInfoDto.getIntroContent());
 
+
             // 사용자가 삭제한 이미지가 존재한다면,
-            if (!trainerUpdateInfoDto.getDeletedImgList().isEmpty()) {
+            if (trainerUpdateInfoDto.getDeletedImgList() != null) {
                 // 삭제 될 CareerImg 조회
                 // 이 부분 수정해야함
                 List<CareerImg> delCareerImgList = careerImgRepository.findByFileNameWithCareerImg(trainerInfo.getId(), trainerUpdateInfoDto.getDeletedImgList());
@@ -67,15 +68,17 @@ public class TrainerInfoService {
             }
         }
 
-        // 자격사항 이미지 저장
-        for (MultipartFile file : trainerUpdateInfoDto.getCareerImgList()) {
-            // 익셉션 핸들링 제어 필요
-            try {
-                File savedFile = fileService.saveImgToDB("trainer_info", file);
-                CareerImg careerImg = new CareerImg(trainerInfo, savedFile);
-                careerImgRepository.save(careerImg);
-            } catch (IOException e) {
-                throw new RuntimeException("자격사항 이미지 저장에 실패 하였습니다. 다시 시도 해주세요.");
+        if (trainerUpdateInfoDto.getCareerImgList() != null) {
+            // 자격사항 이미지 저장
+            for (MultipartFile file : trainerUpdateInfoDto.getCareerImgList()) {
+                // 익셉션 핸들링 제어 필요
+                try {
+                    File savedFile = fileService.saveImgToDB("trainer_info", file);
+                    CareerImg careerImg = new CareerImg(trainerInfo, savedFile);
+                    careerImgRepository.save(careerImg);
+                } catch (IOException e) {
+                    throw new RuntimeException("자격사항 이미지 저장에 실패 하였습니다. 다시 시도 해주세요.");
+                }
             }
         }
     }
@@ -98,7 +101,7 @@ public class TrainerInfoService {
             String imgName = careerImg.getFile().getFileName();
             String imgUrl = fileService.getImgUrl(careerImg.getFile().getFilePath(), careerImg.getFile().getFileName());
 
-            careerImgList.add(new ImgResDto(imgName, imgUrl));
+            careerImgList.add(ImgResDto.create(imgName, imgUrl));
         }
 
         // 트레이너 프로필 이미지
@@ -106,7 +109,7 @@ public class TrainerInfoService {
         if (member.getProfileImageName() != null && member.getProfileOriginalImageName() != null)
             trainerImgUrl = fileService.getImgUrl(member.getProfileImageName(), member.getProfileOriginalImageName());
 
-        ImgResDto imgResDto = new ImgResDto("trainer_info", trainerImgUrl);
+        ImgResDto imgResDto = ImgResDto.create("trainer_info", trainerImgUrl);
 
         // 트레이너 PT 프로그램 리스트
         List<PtProgramResDto> ptProgramResDtoList = ptProgramService.getPtProgramList(member.getEmail());
@@ -122,7 +125,7 @@ public class TrainerInfoService {
         return trainerInfoPage.map(trainerInfo -> {
             Member member = trainerInfo.getMember();
 
-            ImgResDto imgResDto = new ImgResDto(
+            ImgResDto imgResDto = ImgResDto.create(
                     member.getProfileOriginalImageName(),
                     fileService.getImgUrl(
                             member.getProfileImageName(), member.getProfileOriginalImageName())

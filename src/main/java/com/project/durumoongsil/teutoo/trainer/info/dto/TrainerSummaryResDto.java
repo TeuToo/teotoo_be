@@ -29,4 +29,6 @@ public class TrainerSummaryResDto {
 
     @Schema(description = "리뷰 점수")
     private double reviewScore;
+
+    // 프로그램 가격 추가
 }
