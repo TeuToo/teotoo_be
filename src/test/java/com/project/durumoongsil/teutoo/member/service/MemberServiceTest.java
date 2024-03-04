@@ -5,10 +5,9 @@ import com.project.durumoongsil.teutoo.exception.NotFoundUserException;
 import com.project.durumoongsil.teutoo.member.domain.Member;
 import com.project.durumoongsil.teutoo.member.domain.Role;
 import com.project.durumoongsil.teutoo.member.dto.MemberJoinDto;
-import com.project.durumoongsil.teutoo.member.dto.MemberSearchDto;
 import com.project.durumoongsil.teutoo.member.dto.MemberUpdateDto;
 import com.project.durumoongsil.teutoo.member.repository.MemberRepository;
-import org.assertj.core.api.Assertions;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,6 +20,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@Slf4j
 class MemberServiceTest {
 
     @Mock
@@ -120,10 +120,10 @@ class MemberServiceTest {
         when(memberRepository.findMemberByEmail("test@naver.com")).thenReturn(Optional.of(member));
 
         //when
-        MemberSearchDto memberSearchDto = memberService.findMember("test@naver.com");
+        Member finedMember = memberService.findMember("test@naver.com");
 
         // then
-        assertThat(memberSearchDto.getName()).isEqualTo("변주환");
-        assertThat(memberSearchDto.getAddress()).isEqualTo("경기도 성남시 분당구");
+        assertThat(finedMember.getName()).isEqualTo("변주환");
+        assertThat(finedMember.getAddress()).isEqualTo("경기도 성남시 분당구");
     }
 }

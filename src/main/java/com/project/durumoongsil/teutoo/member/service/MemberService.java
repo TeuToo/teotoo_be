@@ -1,6 +1,7 @@
 package com.project.durumoongsil.teutoo.member.service;
 
 import com.project.durumoongsil.teutoo.common.service.FileService;
+import com.project.durumoongsil.teutoo.exception.DuplicateEmailException;
 import com.project.durumoongsil.teutoo.exception.NotFoundUserException;
 import com.project.durumoongsil.teutoo.member.domain.Member;
 import com.project.durumoongsil.teutoo.member.domain.Role;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.swing.*;
 import java.io.IOException;
 
 import static com.project.durumoongsil.teutoo.member.domain.Role.*;
@@ -29,10 +31,13 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final FileService fileService;
 
-    private static final String MEMBER_IMAGE_PATH = "member_profile";
+    private final String MEMBER_IMAGE_PATH = "member_profile";
 
 
     public void signUp(MemberJoinDto memberJoinDto) {
+        // 이메일 중복 확인
+        checkEmailAvailable(memberJoinDto.getEmail());
+
         Member member = Member.toEntity(memberJoinDto);
 
         //  회원 엔티티 세팅 (권한, 패스워드 암호화, 프로필 이미지 설정)
@@ -44,16 +49,9 @@ public class MemberService {
         memberRepository.save(member);
     }
 
-    public MemberSearchDto findMember(String userEmail) {
-        Member member = memberRepository.findMemberByEmail(userEmail)
+    public Member findMember(String userEmail) {
+        return memberRepository.findMemberByEmail(userEmail)
                 .orElseThrow(() -> new NotFoundUserException("사용자를 찾을 수 없습니다."));
-
-        return MemberSearchDto.builder()
-                .name(member.getName())
-                .address(member.getAddress())
-                .profileImageName(member.getProfileOriginalImageName())
-                .profileImagePath(fileService.getImgUrl(MEMBER_IMAGE_PATH,member.getProfileImageName()))
-                .build();
     }
 
     public Member updateInfo(String userEmail, MemberUpdateDto memberUpdateDto) {
@@ -96,6 +94,13 @@ public class MemberService {
             }
         } catch (IOException e) {
             throw new RuntimeException("이미지 저장에 실패했습니다. 다시 시도해 주세요");
+        }
+    }
+
+
+    private void checkEmailAvailable(String email) {
+        if (memberRepository.findMemberByEmail(email).isPresent()) {
+            throw new DuplicateEmailException("이미 가입한 이메일 입니다.");
         }
     }
 }
