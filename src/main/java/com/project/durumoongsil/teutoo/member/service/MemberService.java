@@ -87,13 +87,9 @@ public class MemberService {
      * @param file 기본이미지 혹은, 회원이 올린 프로필 사진
      */
     private void setProfileImageAndPath(Member member, MultipartFile file) {
-        try {
-            if (file != null && !file.isEmpty()) {
-                String fileName = fileService.saveImg(MEMBER_IMAGE_PATH, file);
-                member.setProfileImageAndPath(fileName, file.getOriginalFilename());
-            }
-        } catch (IOException e) {
-            throw new RuntimeException("이미지 저장에 실패했습니다. 다시 시도해 주세요");
+        if (file != null && !file.isEmpty()) {
+            String fileName = fileService.saveImg(MEMBER_IMAGE_PATH, file);
+            member.setProfileImageAndPath(fileName, file.getOriginalFilename());
         }
     }
 

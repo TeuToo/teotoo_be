@@ -48,7 +48,7 @@ public class FileService {
         try {
             amazonS3.putObject(bucketName, savedFileFullName, imgFile.getInputStream(), objectMetadata);
         } catch (IOException e) {
-            throw new FileSaveException("파일을 저장 할 수 없습니다.");
+            throw new RuntimeException("이미지 저장에 실패했습니다. 다시 시도해 주세요");
         }
 
         return savedFileName;
