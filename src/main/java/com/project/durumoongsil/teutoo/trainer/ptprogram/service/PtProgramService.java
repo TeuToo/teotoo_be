@@ -98,14 +98,9 @@ public class PtProgramService {
 
     private void savePtProgramImg(PtProgram ptProgram, List<MultipartFile> addPtImgList) {
         for (MultipartFile file : addPtImgList) {
-            // 익셉션 핸들링 제어 필요
-            try {
-                File savedFile = fileService.saveImgToDB("pt_program", file);
-                PtImg ptImg = new PtImg(ptProgram, savedFile);
-                ptImgRepository.save(ptImg);
-            } catch (IOException e) {
-                throw new RuntimeException("자격사항 이미지 저장에 실패 하였습니다. 다시 시도 해주세요.");
-            }
+            File savedFile = fileService.saveImgToDB("pt_program", file);
+            PtImg ptImg = new PtImg(ptProgram, savedFile);
+            ptImgRepository.save(ptImg);
         }
     }
 

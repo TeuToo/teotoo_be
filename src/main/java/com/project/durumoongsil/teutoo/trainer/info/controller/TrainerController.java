@@ -36,19 +36,31 @@ public class TrainerController {
         return trainerInfoService.getInfo(trainerId);
     }
 
+    @GetMapping("info/me")
+    @Operation(summary = "트레이너 관리 페이지 조회 API", description = "트레이너 관리 페이지 데이터를 얻기 위한 API 입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "트레이너 관리 페이지 조회 성공"),
+            @ApiResponse(responseCode = "400", description = "클라이언트의 잘못된 요청")
+    })
+    public TrainerInfoResDto getTrainerIntroForManagement() {
+        String memberEmail = securityService.getLoginedUserEmail();
+
+        return trainerInfoService.getInfoForManagement(memberEmail);
+    }
+
 
     @PostMapping(value = "info", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "트레이너 소개 페이지 등록 API", description = "트레이너 소개 페이지에 데이터 갱신 하기 위한 API 입니다.")
+    @Operation(summary = "트레이너 소개 페이지 등록/업데이트 API", description = "트레이너 소개 페이지에 데이터 갱신/업데이트 하기 위한 API 입니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "트레이너 소개 페이지 갱신 성공"),
             @ApiResponse(responseCode = "400", description = "클라이언트의 잘못된 요청")
     })
     public String saveTrainerIntro(@Valid TrainerUpdateInfoDto trainerUpdateInfoDto) {
 
-        String userEmail = securityService.getLoginedUserEmail();
+        String memberEmail = securityService.getLoginedUserEmail();
 
         // 갱신하려는 trainer가 아직 credential 확인 전이라고 감안하고, trainer id를 받고 갱신.
-        trainerInfoService.saveOrUpdate(userEmail, trainerUpdateInfoDto);
+        trainerInfoService.saveOrUpdate(memberEmail, trainerUpdateInfoDto);
 
         return "트레이너 소개 데이터 갱신 성공";
     }

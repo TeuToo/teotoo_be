@@ -53,7 +53,10 @@ public class TrainerInfoCustomRepositoryImpl implements TrainerInfoCustomReposit
     public Optional<Member> findMemberByIdWithTrainerInfo(Long id) {
 
         Member member = queryFactory.selectFrom(qMember)
-                .where(qMember.id.eq(id))
+                .where(
+                        qMember.id.eq(id),
+                        qMember.role.eq(Role.TRAINER)
+                )
                 .leftJoin(qMember.trainerInfo, qTrainerInfo).fetchJoin()
                 .fetchFirst();
 
@@ -62,7 +65,6 @@ public class TrainerInfoCustomRepositoryImpl implements TrainerInfoCustomReposit
 
         return Optional.of(member);
     }
-
 
     @Override
     @Transactional(readOnly = true)

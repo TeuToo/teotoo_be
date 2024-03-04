@@ -46,7 +46,7 @@ public class PtProgramController {
             @ApiResponse(responseCode = "200", description = "트레이너 PT 프로그램 리스트 조회 성공"),
             @ApiResponse(responseCode = "400", description = "클라이언트의 잘못된 요청")
     })
-    @GetMapping("/program")
+    @GetMapping("/program/me")
     public PtProgramManageResDto getProgramListForManagement() {
         return  ptProgramService.getPtProgramListForManagement();
     }
