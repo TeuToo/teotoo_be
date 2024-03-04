@@ -1,6 +1,7 @@
 package com.project.durumoongsil.teutoo.trainer.info.dto;
 
 import com.project.durumoongsil.teutoo.common.dto.ImgResDto;
+import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.PtProgramResDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,8 +21,7 @@ public class TrainerInfoResDto {
     @Schema(description = "트레이너 이름", examples = "김헬창")
     private String trainerName;
 
-    @Schema(description = "s3 버킷 이미지 주소")
-    private String trainerImgUrl;
+    private ImgResDto imgResDto;
 
     @Schema(description = "트레이너의 지역", examples = "서울시 강서구 화곡동")
     private String trainerAddress;
@@ -43,5 +43,5 @@ public class TrainerInfoResDto {
 
     private double reviewScore;
 
-    // 프로그램 리스트도...
+    private List<PtProgramResDto> ptProgramResDtoList;
 }

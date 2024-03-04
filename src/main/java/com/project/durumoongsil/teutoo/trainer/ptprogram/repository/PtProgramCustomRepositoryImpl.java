@@ -51,7 +51,7 @@ public class PtProgramCustomRepositoryImpl implements PtProgramCustomRepository 
                 .innerJoin(qPtProgram.trainerInfo, qTrainerInfo)
                 .innerJoin(qTrainerInfo.member, qMember)
                 .leftJoin(qPtProgram.ptImgList, qPtImg).fetchJoin()
-                .innerJoin(qPtImg.file, qFile).fetchJoin()
+                .leftJoin(qPtImg.file, qFile).fetchJoin()
                 .where(qMember.email.eq(email))
                 .fetch();
     }

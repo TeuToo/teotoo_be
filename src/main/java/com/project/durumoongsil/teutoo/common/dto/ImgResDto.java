@@ -18,4 +18,10 @@ public class ImgResDto {
         this.imgName = imgName;
         this.imgUrl = imgUrl;
     }
+
+    public static ImgResDto create(String imgName, String imgUrl) {
+        if (imgName == null || imgUrl == null)
+            return null;
+        return new ImgResDto(imgName, imgUrl);
+    }
 }

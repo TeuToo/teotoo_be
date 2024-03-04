@@ -10,6 +10,9 @@ import com.project.durumoongsil.teutoo.trainer.info.domain.TrainerInfo;
 import com.project.durumoongsil.teutoo.trainer.info.dto.*;
 import com.project.durumoongsil.teutoo.trainer.info.repository.CareerImgRepository;
 import com.project.durumoongsil.teutoo.trainer.info.repository.TrainerInfoRepository;
+import com.project.durumoongsil.teutoo.trainer.info.util.TrainerInfoConverter;
+import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.PtProgramResDto;
+import com.project.durumoongsil.teutoo.trainer.ptprogram.service.PtProgramService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -27,6 +30,8 @@ public class TrainerInfoService {
     private final TrainerInfoRepository trainerInfoRepository;
     private final CareerImgRepository careerImgRepository;
     private final FileService fileService;
+    private final PtProgramService ptProgramService;
+    private final TrainerInfoConverter converter = new TrainerInfoConverter();
 
     // 트레이너 소개 페이지 등록 및 갱신
     @Transactional
@@ -38,12 +43,7 @@ public class TrainerInfoService {
         TrainerInfo trainerInfo = member.getTrainerInfo();
         if (trainerInfo == null) {
             // trainerInfo 가 없을 때,
-            trainerInfo = TrainerInfo.builder()
-                    .introContent(trainerUpdateInfoDto.getIntroContent())
-                    .gymName(trainerUpdateInfoDto.getGymName())
-                    .simpleIntro(trainerUpdateInfoDto.getSimpleIntro())
-                    .member(member)
-                    .build();
+            trainerInfo = converter.toTrainerInfo(trainerUpdateInfoDto, member);
             // 저장
             trainerInfoRepository.save(trainerInfo);
         } else {
@@ -54,7 +54,7 @@ public class TrainerInfoService {
 
 
             // 사용자가 삭제한 이미지가 존재한다면,
-            if (!trainerUpdateInfoDto.getDeletedImgList().isEmpty()) {
+            if (trainerUpdateInfoDto.getDeletedImgList() != null) {
                 // 삭제 될 CareerImg 조회
                 // 이 부분 수정해야함
                 List<CareerImg> delCareerImgList = careerImgRepository.findByFileNameWithCareerImg(trainerInfo.getId(), trainerUpdateInfoDto.getDeletedImgList());
@@ -68,21 +68,22 @@ public class TrainerInfoService {
             }
         }
 
-        // 자격사항 이미지 저장
-        for (MultipartFile file : trainerUpdateInfoDto.getCareerImgList()) {
-            // 익셉션 핸들링 제어 필요
-            try {
-                File savedFile = fileService.saveImgToDB("trainer_info", file);
-                CareerImg careerImg = new CareerImg(trainerInfo, savedFile);
-                careerImgRepository.save(careerImg);
-            } catch (IOException e) {
-                throw new RuntimeException("자격사항 이미지 저장에 실패 하였습니다. 다시 시도 해주세요.");
+        if (trainerUpdateInfoDto.getCareerImgList() != null) {
+            // 자격사항 이미지 저장
+            for (MultipartFile file : trainerUpdateInfoDto.getCareerImgList()) {
+                // 익셉션 핸들링 제어 필요
+                try {
+                    File savedFile = fileService.saveImgToDB("trainer_info", file);
+                    CareerImg careerImg = new CareerImg(trainerInfo, savedFile);
+                    careerImgRepository.save(careerImg);
+                } catch (IOException e) {
+                    throw new RuntimeException("자격사항 이미지 저장에 실패 하였습니다. 다시 시도 해주세요.");
+                }
             }
         }
     }
 
     // 트레이너 소개 페이지 데이터 조회
-    @Transactional(readOnly = true)
     public TrainerInfoResDto getInfo(Long trainerId) {
         Member member = trainerInfoRepository.findMemberByIdWithTrainerInfo(trainerId)
                 .orElseThrow(() -> new NotFoundUserException("사용자를 찾을 수 없습니다."));
@@ -100,7 +101,7 @@ public class TrainerInfoService {
             String imgName = careerImg.getFile().getFileName();
             String imgUrl = fileService.getImgUrl(careerImg.getFile().getFilePath(), careerImg.getFile().getFileName());
 
-            careerImgList.add(new ImgResDto(imgName, imgUrl));
+            careerImgList.add(ImgResDto.create(imgName, imgUrl));
         }
 
         // 트레이너 프로필 이미지
@@ -108,38 +109,29 @@ public class TrainerInfoService {
         if (member.getProfileImageName() != null && member.getProfileOriginalImageName() != null)
             trainerImgUrl = fileService.getImgUrl(member.getProfileImageName(), member.getProfileOriginalImageName());
 
-        return TrainerInfoResDto.builder()
-                .trainerInfoId(trainerInfo.getId())
-                .trainerAddress(member.getAddress())
-                .trainerName(member.getName())
-                .trainerImgUrl(trainerImgUrl)
-                .gymName(trainerInfo.getGymName())
-                .simpleIntro(trainerInfo.getSimpleIntro())
-                .introContent(trainerInfo.getIntroContent())
-                .careerImgList(careerImgList)
-                .build();
+        ImgResDto imgResDto = ImgResDto.create("trainer_info", trainerImgUrl);
+
+        // 트레이너 PT 프로그램 리스트
+        List<PtProgramResDto> ptProgramResDtoList = ptProgramService.getPtProgramList(member.getEmail());
+
+        return converter.toTrainerInfoResDto(trainerInfo, member, imgResDto, careerImgList, ptProgramResDtoList);
     }
 
+
+    // 페이지네이션 방식으로, 트레이너 목록 조회
     public Page<TrainerSummaryResDto> getTrainerList(TrainerListReqDto TrainerListReqDto) {
         Page<TrainerInfo> trainerInfoPage = trainerInfoRepository.findBySearchCondition(TrainerListReqDto);
 
         return trainerInfoPage.map(trainerInfo -> {
             Member member = trainerInfo.getMember();
 
-            return TrainerSummaryResDto.builder()
-                    .trainerInfoId(trainerInfo.getId())
-                    .trainerName(member.getName())
-                    .reviewScore(trainerInfo.getReviewScore())
-                    .reviewCnt(trainerInfo.getReviewCnt())
-                    .simpleIntro(trainerInfo.getSimpleIntro())
-                    .gymName(trainerInfo.getGymName())
-                    .imgResDto(new ImgResDto(
-                            member.getProfileOriginalImageName(),
-                            fileService.getImgUrl(
-                                    member.getProfileImageName(), member.getProfileOriginalImageName())
-                            )
-                    )
-                    .build();
+            ImgResDto imgResDto = ImgResDto.create(
+                    member.getProfileOriginalImageName(),
+                    fileService.getImgUrl(
+                            member.getProfileImageName(), member.getProfileOriginalImageName())
+            );
+
+            return converter.toTrainerSummaryResDto(trainerInfo, member, imgResDto);
         });
     }
 }
