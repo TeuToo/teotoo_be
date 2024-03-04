@@ -1,6 +1,7 @@
 package com.project.durumoongsil.teutoo.trainer.ptprogram.service;
 
 import com.project.durumoongsil.teutoo.common.domain.File;
+import com.project.durumoongsil.teutoo.common.domain.FilePath;
 import com.project.durumoongsil.teutoo.common.dto.ImgResDto;
 import com.project.durumoongsil.teutoo.common.service.FileService;
 import com.project.durumoongsil.teutoo.exception.NotFoundUserException;
@@ -87,7 +88,7 @@ public class PtProgramService {
             ptImgRepository.deleteAllById(delImgIdList);
 
             List<String> savedDelImgList = ptImgList.stream().map(ptImg -> ptImg.getFile().getFileName()).toList();
-            fileService.deleteImgListToDB("pt_program", savedDelImgList);
+            fileService.deleteImgListToDB(FilePath.PT_PROGRAM.getPath(), savedDelImgList);
         }
 
         // 자격사항 이미지 저장
@@ -98,7 +99,7 @@ public class PtProgramService {
 
     private void savePtProgramImg(PtProgram ptProgram, List<MultipartFile> addPtImgList) {
         for (MultipartFile file : addPtImgList) {
-            File savedFile = fileService.saveImgToDB("pt_program", file);
+            File savedFile = fileService.saveImgToDB(FilePath.PT_PROGRAM.getPath(), file);
             PtImg ptImg = new PtImg(ptProgram, savedFile);
             ptImgRepository.save(ptImg);
         }
@@ -117,7 +118,7 @@ public class PtProgramService {
 
         // 사용자 프로필 이미지
         ImgResDto imgResDto = ImgResDto.create(member.getProfileOriginalImageName(),
-                    fileService.getImgUrl(member.getProfileImageName(), member.getProfileOriginalImageName()));
+                    fileService.getImgUrl(FilePath.MEMBER_PROFILE.getPath(), member.getProfileImageName()));
 
         return ptProgramConverter.toPtProgramManageResDto(ptProgramResDtoList, member, imgResDto);
     }
