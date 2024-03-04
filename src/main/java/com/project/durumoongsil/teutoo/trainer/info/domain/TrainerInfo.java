@@ -18,7 +18,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TrainerInfo {
 
-    @Id @GeneratedValue
+    @Id
     private Long id;
 
     @Column(nullable = false)
