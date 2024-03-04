@@ -55,14 +55,12 @@ public class TrainerController {
             @ApiResponse(responseCode = "200", description = "트레이너 소개 페이지 갱신 성공"),
             @ApiResponse(responseCode = "400", description = "클라이언트의 잘못된 요청")
     })
-    public String saveTrainerIntro(@Valid TrainerUpdateInfoDto trainerUpdateInfoDto) {
+    public void saveTrainerIntro(@Valid TrainerUpdateInfoDto trainerUpdateInfoDto) {
 
         String memberEmail = securityService.getLoginedUserEmail();
 
         // 갱신하려는 trainer가 아직 credential 확인 전이라고 감안하고, trainer id를 받고 갱신.
         trainerInfoService.saveOrUpdate(memberEmail, trainerUpdateInfoDto);
-
-        return "트레이너 소개 데이터 갱신 성공";
     }
 
     @GetMapping("list")

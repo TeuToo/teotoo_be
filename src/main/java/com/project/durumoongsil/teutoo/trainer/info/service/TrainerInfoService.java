@@ -1,6 +1,7 @@
 package com.project.durumoongsil.teutoo.trainer.info.service;
 
 import com.project.durumoongsil.teutoo.common.domain.File;
+import com.project.durumoongsil.teutoo.common.domain.FilePath;
 import com.project.durumoongsil.teutoo.common.dto.ImgResDto;
 import com.project.durumoongsil.teutoo.common.service.FileService;
 import com.project.durumoongsil.teutoo.exception.NotFoundUserException;
@@ -64,7 +65,7 @@ public class TrainerInfoService {
                 List<String> delFileNameList = delCareerImgList.stream().map(careerImg -> careerImg.getFile().getFileName()).toList();
 
                 careerImgRepository.deleteAllById(delCareerImgIdList);
-                fileService.deleteImgListToDB("trainer_info", delFileNameList);
+                fileService.deleteImgListToDB(FilePath.TRAINER_INFO.getPath(), delFileNameList);
             }
         }
 
@@ -72,7 +73,7 @@ public class TrainerInfoService {
             // 자격사항 이미지 저장
             for (MultipartFile file : trainerUpdateInfoDto.getCareerImgList()) {
 
-                File savedFile = fileService.saveImgToDB("trainer_info", file);
+                File savedFile = fileService.saveImgToDB(FilePath.TRAINER_INFO.getPath(), file);
                 CareerImg careerImg = new CareerImg(trainerInfo, savedFile);
                 careerImgRepository.save(careerImg);
             }
@@ -113,9 +114,9 @@ public class TrainerInfoService {
         }
 
         // 트레이너 프로필 이미지
-        String trainerImgUrl = fileService.getImgUrl(member.getProfileImageName(), member.getProfileOriginalImageName());
+        String trainerImgUrl = fileService.getImgUrl(FilePath.MEMBER_PROFILE.getPath(), member.getProfileImageName());
 
-        ImgResDto imgResDto = ImgResDto.create("trainer_info", trainerImgUrl);
+        ImgResDto imgResDto = ImgResDto.create(FilePath.TRAINER_INFO.getPath(), trainerImgUrl);
 
         // 트레이너 PT 프로그램 리스트
         List<PtProgramResDto> ptProgramResDtoList = ptProgramService.getPtProgramList(member.getEmail());
@@ -134,8 +135,8 @@ public class TrainerInfoService {
 
             ImgResDto imgResDto = ImgResDto.create(
                     member.getProfileOriginalImageName(),
-                    fileService.getImgUrl(
-                            member.getProfileImageName(), member.getProfileOriginalImageName())
+                    fileService
+                            .getImgUrl(FilePath.MEMBER_PROFILE.getPath(), member.getProfileImageName())
             );
 
             return converter.toTrainerSummaryResDto(trainerInfo, member, imgResDto);
