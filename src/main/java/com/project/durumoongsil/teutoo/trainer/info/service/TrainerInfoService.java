@@ -71,14 +71,10 @@ public class TrainerInfoService {
         if (trainerUpdateInfoDto.getCareerImgList() != null) {
             // 자격사항 이미지 저장
             for (MultipartFile file : trainerUpdateInfoDto.getCareerImgList()) {
-                // 익셉션 핸들링 제어 필요
-                try {
-                    File savedFile = fileService.saveImgToDB("trainer_info", file);
-                    CareerImg careerImg = new CareerImg(trainerInfo, savedFile);
-                    careerImgRepository.save(careerImg);
-                } catch (IOException e) {
-                    throw new RuntimeException("자격사항 이미지 저장에 실패 하였습니다. 다시 시도 해주세요.");
-                }
+
+                File savedFile = fileService.saveImgToDB("trainer_info", file);
+                CareerImg careerImg = new CareerImg(trainerInfo, savedFile);
+                careerImgRepository.save(careerImg);
             }
         }
     }

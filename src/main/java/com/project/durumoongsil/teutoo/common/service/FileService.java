@@ -37,7 +37,7 @@ public class FileService {
 
          return 시, 버킷에 저장 된 파일명 반환
      */
-    public String saveImg(String path, MultipartFile imgFile) throws IOException {
+    public String saveImg(String path, MultipartFile imgFile) {
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentType(imgFile.getContentType());
         objectMetadata.setContentLength(imgFile.getSize());
@@ -45,13 +45,17 @@ public class FileService {
         String savedFileName = convertUniqueName(imgFile.getOriginalFilename());
         String savedFileFullName = path + "/" + savedFileName;
 
-        amazonS3.putObject(bucketName, savedFileFullName, imgFile.getInputStream(), objectMetadata);
+        try {
+            amazonS3.putObject(bucketName, savedFileFullName, imgFile.getInputStream(), objectMetadata);
+        } catch (IOException e) {
+            throw new FileSaveException("파일을 저장 할 수 없습니다.");
+        }
 
         return savedFileName;
     }
 
     @Transactional
-    public File saveImgToDB(String path, MultipartFile imgFile) throws IOException {
+    public File saveImgToDB(String path, MultipartFile imgFile) {
         String savedFileName = saveImg(path, imgFile);
 
         // 저장 성공시, 레포지터리에 파일 정보 저장
