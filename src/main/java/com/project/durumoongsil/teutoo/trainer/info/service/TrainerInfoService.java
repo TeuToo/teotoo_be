@@ -35,9 +35,9 @@ public class TrainerInfoService {
 
     // 트레이너 소개 페이지 등록 및 갱신
     @Transactional
-    public void saveOrUpdate(String userEmail, TrainerUpdateInfoDto trainerUpdateInfoDto) {
+    public void saveOrUpdate(String memberEmail, TrainerUpdateInfoDto trainerUpdateInfoDto) {
 
-        Member member = trainerInfoRepository.findMemberByIdWithTrainerInfo(userEmail)
+        Member member = trainerInfoRepository.findMemberByIdWithTrainerInfo(memberEmail)
                 .orElseThrow(() -> new NotFoundUserException("해당 트레이너를 찾을 수 없습니다."));
 
         TrainerInfo trainerInfo = member.getTrainerInfo();
@@ -84,6 +84,18 @@ public class TrainerInfoService {
         Member member = trainerInfoRepository.findMemberByIdWithTrainerInfo(trainerId)
                 .orElseThrow(() -> new NotFoundUserException("사용자를 찾을 수 없습니다."));
 
+        return this.getTrainerInfoDto(member);
+    }
+
+    // 트레이너 관리 페이지 데이터 조회
+    public TrainerInfoResDto getInfoForManagement(String memberEmail) {
+        Member member = trainerInfoRepository.findMemberByIdWithTrainerInfo(memberEmail)
+                .orElseThrow(() -> new NotFoundUserException("해당 트레이너를 찾을 수 없습니다."));
+
+        return this.getTrainerInfoDto(member);
+    }
+
+    private TrainerInfoResDto getTrainerInfoDto(Member member) {
         // 만약, 트레이너 소개 페이지가 등록되어있지 않다면,
         TrainerInfo trainerInfo = member.getTrainerInfo();
         if (trainerInfo == null) {
@@ -93,7 +105,7 @@ public class TrainerInfoService {
         List<ImgResDto> careerImgList = new ArrayList<>();
 
         // 자격사항 이미지 불러옴
-        for (CareerImg careerImg : careerImgRepository.findByTrainerIdWithFile(trainerId)) {
+        for (CareerImg careerImg : careerImgRepository.findByTrainerIdWithFile(trainerInfo.getId())) {
             String imgName = careerImg.getFile().getFileName();
             String imgUrl = fileService.getImgUrl(careerImg.getFile().getFilePath(), careerImg.getFile().getFileName());
 
@@ -101,9 +113,7 @@ public class TrainerInfoService {
         }
 
         // 트레이너 프로필 이미지
-        String trainerImgUrl = null;
-        if (member.getProfileImageName() != null && member.getProfileOriginalImageName() != null)
-            trainerImgUrl = fileService.getImgUrl(member.getProfileImageName(), member.getProfileOriginalImageName());
+        String trainerImgUrl = fileService.getImgUrl(member.getProfileImageName(), member.getProfileOriginalImageName());
 
         ImgResDto imgResDto = ImgResDto.create("trainer_info", trainerImgUrl);
 
@@ -112,6 +122,7 @@ public class TrainerInfoService {
 
         return converter.toTrainerInfoResDto(trainerInfo, member, imgResDto, careerImgList, ptProgramResDtoList);
     }
+
 
 
     // 페이지네이션 방식으로, 트레이너 목록 조회

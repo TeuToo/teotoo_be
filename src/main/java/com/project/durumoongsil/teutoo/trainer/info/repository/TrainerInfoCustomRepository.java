@@ -14,6 +14,5 @@ public interface TrainerInfoCustomRepository {
 
     Page<TrainerInfo> findBySearchCondition(TrainerListReqDto trainerListReqDto);
     Optional<Member> findMemberByIdWithTrainerInfo(Long id);
-
     OptionalLong findTrainerInfoIdByMemberEmail(String email);
 }
