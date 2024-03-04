@@ -38,7 +38,7 @@ public class TrainerController {
 
 
     @PostMapping(value = "info", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "트레이너 소개 페이지 등록 API", description = "트레이너 소개 페이지에 데이터 갱신 하기 위한 API 입니다.")
+    @Operation(summary = "트레이너 소개 페이지 등록/업데이트 API", description = "트레이너 소개 페이지에 데이터 갱신/업데이트 하기 위한 API 입니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "트레이너 소개 페이지 갱신 성공"),
             @ApiResponse(responseCode = "400", description = "클라이언트의 잘못된 요청")
