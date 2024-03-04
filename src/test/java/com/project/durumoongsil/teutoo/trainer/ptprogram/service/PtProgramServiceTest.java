@@ -199,6 +199,8 @@ class PtProgramServiceTest {
 
         when(ptProgramRepository.findByMemberEmailWithPtImg(memberEmail)).thenReturn(testPtProgramList);
 
+        when(fileService.getImgUrl(anyString(), anyString())).thenReturn("testUrl");
+
         PtProgramManageResDto ptProgramManageResDto = ptProgramService.getPtProgramListForManagement();
 
         assertEquals(ptProgramManageResDto.getTrainerName(), testMember.getName());
