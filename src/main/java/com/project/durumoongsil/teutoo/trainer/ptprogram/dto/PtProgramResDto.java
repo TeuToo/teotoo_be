@@ -16,14 +16,19 @@ public class PtProgramResDto {
 
     @Schema(description = "프로그램 ID")
     private long ptProgramId;
+
     @Schema(description = "프로그램 제목")
     private String title;
+
     @Schema(description = "프로그램 내용")
     private String content;
+
     @Schema(description = "프로그램 가격")
     private int price;
+
     @Schema(description = "프로그램 횟수")
     private int ptCnt;
+
     @Schema(description = "PT 프로그램 이미지 리스트")
     private List<ImgResDto> ptProgramImgList;
 }

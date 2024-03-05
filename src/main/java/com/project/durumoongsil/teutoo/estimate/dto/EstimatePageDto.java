@@ -5,6 +5,7 @@ import lombok.Data;
 @Data
 public class EstimatePageDto {
 
+    private Long id;
     private String name;
     private Long price;
 }
