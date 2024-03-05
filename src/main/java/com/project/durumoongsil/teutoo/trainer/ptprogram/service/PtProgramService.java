@@ -38,7 +38,6 @@ public class PtProgramService {
     private final FileService fileService;
     private final PtProgramConverter ptProgramConverter = new PtProgramConverter();
 
-
     // PT Program 등록
     @Transactional
     public void register(PtProgramRegDto ptProgramRegDto) {
@@ -65,12 +64,12 @@ public class PtProgramService {
 
     // PT Program 업데이트
     @Transactional
-    public void update(Long trainerId, PtProgramUpdateDto ptProgramUpdateDto) {
+    public void update(Long programId, PtProgramUpdateDto ptProgramUpdateDto) {
         String userEmail = securityService.getLoginedUserEmail();
 
 
         // 프로그램과 이미지,파일 엔티티 한번에 조회
-        PtProgram ptProgram = ptProgramRepository.findByIdAndMemberEmailWithPtImgAndFile(trainerId, userEmail)
+        PtProgram ptProgram = ptProgramRepository.findByIdAndMemberEmailWithPtImgAndFile(programId, userEmail)
                 .orElseThrow(() -> new NotFoundUserException("트레이너 프로그램 등록 정보를 찾을 수 없습니다."));
 
         // PtProgram 수정
