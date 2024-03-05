@@ -24,7 +24,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -66,10 +65,12 @@ public class PtProgramService {
 
     // PT Program 업데이트
     @Transactional
-    public void update(PtProgramUpdateDto ptProgramUpdateDto) {
+    public void update(Long trainerId, PtProgramUpdateDto ptProgramUpdateDto) {
         String userEmail = securityService.getLoginedUserEmail();
 
-        PtProgram ptProgram = ptProgramRepository.findByPtProgramByIdAndMemberEmail(ptProgramUpdateDto.getProgramId(), userEmail)
+
+        // 프로그램과 이미지,파일 엔티티 한번에 조회
+        PtProgram ptProgram = ptProgramRepository.findByIdAndMemberEmailWithPtImgAndFile(trainerId, userEmail)
                 .orElseThrow(() -> new NotFoundUserException("트레이너 프로그램 등록 정보를 찾을 수 없습니다."));
 
         // PtProgram 수정
@@ -80,15 +81,12 @@ public class PtProgramService {
 
         // 사용자가 삭제한 이미지가 존재한다면,
         if (ptProgramUpdateDto.getDelPtImgList() != null) {
-            List<String> delImgList = ptProgramUpdateDto.getDelPtImgList();
+            List<String> reqDelImgList = ptProgramUpdateDto.getDelPtImgList();
 
-            // pt program id하고, 삭제될 이미지를 통해, PtImg 조회 (사용자의 이메일로 우선 조회했기 때문에, 본인만 가능)
-            List<PtImg> ptImgList = ptImgRepository.findAllByProgramIdAndImgNameListWithFile(ptProgram.getId(), delImgList);
-            List<Long> delImgIdList = ptImgList.stream().map(PtImg::getId).toList();
-            ptImgRepository.deleteAllById(delImgIdList);
+            List<PtImg> delPtImgList = ptProgram.getPtImgList().stream()
+                    .filter(ptImg -> reqDelImgList.contains(ptImg.getFile().getFileName())).toList();
 
-            List<String> savedDelImgList = ptImgList.stream().map(ptImg -> ptImg.getFile().getFileName()).toList();
-            fileService.deleteImgListToDB(FilePath.PT_PROGRAM.getPath(), savedDelImgList);
+            deletePtProgramImg(delPtImgList);
         }
 
         // 자격사항 이미지 저장
@@ -103,6 +101,14 @@ public class PtProgramService {
             PtImg ptImg = new PtImg(ptProgram, savedFile);
             ptImgRepository.save(ptImg);
         }
+    }
+
+    private void deletePtProgramImg(List<PtImg> delPtImgList) {
+        List<Long> delImgIdList = delPtImgList.stream().map(PtImg::getId).toList();
+        ptImgRepository.deleteAllById(delImgIdList);
+
+        List<String> savedDelImgList = delPtImgList.stream().map(ptImg -> ptImg.getFile().getFileName()).toList();
+        fileService.deleteImgListToDB(FilePath.PT_PROGRAM.getPath(), savedDelImgList);
     }
 
 
@@ -124,6 +130,7 @@ public class PtProgramService {
     }
 
 
+    // PT 프로그램 리스트 조회
     public List<PtProgramResDto> getPtProgramList(String memberEmail) {
         List<PtProgram> ptProgramList = ptProgramRepository.findByMemberEmailWithPtImg(memberEmail);
 
@@ -140,4 +147,24 @@ public class PtProgramService {
             return ptProgramConverter.toPtProgramResDto(ptProgram, imgResDtoList);
         }).toList();
     }
+
+    @Transactional
+    public void deletePtProgram(Long programId) {
+        String memberEmail = securityService.getLoginedUserEmail();
+
+        /*
+            사용자 email에 대응되는 PT 프로그램을 조회한다, 만약 없다면, 해당 사용자의 프로그램을 찾을 수 없습니다.
+            1. 이미지 삭제 ( file 및 ptImg 삭제..)
+            2. 프로그램 삭제
+         */
+        PtProgram ptProgram = ptProgramRepository.findByIdAndMemberEmailWithPtImgAndFile(programId, memberEmail)
+                .orElseThrow(() -> new NotFoundUserException("트레이너 프로그램 등록 정보를 찾을 수 없습니다."));
+
+        // pt program 이미지 삭제 및 엔티티 삭제
+        deletePtProgramImg(ptProgram.getPtImgList());
+
+        ptProgramRepository.delete(ptProgram);
+    }
+
+
 }
