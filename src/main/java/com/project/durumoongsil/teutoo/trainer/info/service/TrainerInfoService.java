@@ -116,7 +116,7 @@ public class TrainerInfoService {
         // 트레이너 프로필 이미지
         String trainerImgUrl = fileService.getImgUrl(FilePath.MEMBER_PROFILE.getPath(), member.getProfileImageName());
 
-        ImgResDto imgResDto = ImgResDto.create(FilePath.TRAINER_INFO.getPath(), trainerImgUrl);
+        ImgResDto imgResDto = ImgResDto.create(member.getProfileImageName(), trainerImgUrl);
 
         // 트레이너 PT 프로그램 리스트
         List<PtProgramResDto> ptProgramResDtoList = ptProgramService.getPtProgramList(member.getEmail());
