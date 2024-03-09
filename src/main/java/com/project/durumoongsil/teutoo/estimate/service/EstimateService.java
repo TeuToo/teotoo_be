@@ -1,8 +1,8 @@
 package com.project.durumoongsil.teutoo.estimate.service;
 
 import com.project.durumoongsil.teutoo.estimate.domain.Estimate;
-import com.project.durumoongsil.teutoo.estimate.dto.CreateEstimateDto;
-import com.project.durumoongsil.teutoo.estimate.dto.UpdateEstimateDto;
+import com.project.durumoongsil.teutoo.estimate.dto.user.CreateEstimateDto;
+import com.project.durumoongsil.teutoo.estimate.dto.user.UpdateEstimateDto;
 import com.project.durumoongsil.teutoo.estimate.repository.EstimateRepository;
 import com.project.durumoongsil.teutoo.exception.DuplicateEstimateException;
 import com.project.durumoongsil.teutoo.exception.UnauthorizedActionException;

@@ -2,17 +2,15 @@ package com.project.durumoongsil.teutoo.estimate.service.front;
 
 import com.project.durumoongsil.teutoo.common.RestResult;
 import com.project.durumoongsil.teutoo.estimate.domain.Estimate;
-import com.project.durumoongsil.teutoo.estimate.dto.CreateEstimateDto;
-import com.project.durumoongsil.teutoo.estimate.dto.EstimatePageDto;
-import com.project.durumoongsil.teutoo.estimate.dto.EstimateSearchDto;
-import com.project.durumoongsil.teutoo.estimate.dto.UpdateEstimateDto;
+import com.project.durumoongsil.teutoo.estimate.dto.user.CreateEstimateDto;
+import com.project.durumoongsil.teutoo.estimate.dto.user.EstimatePageDto;
+import com.project.durumoongsil.teutoo.estimate.dto.user.EstimateSearchDto;
+import com.project.durumoongsil.teutoo.estimate.dto.user.UpdateEstimateDto;
 import com.project.durumoongsil.teutoo.estimate.service.EstimateService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Service;
 
 
