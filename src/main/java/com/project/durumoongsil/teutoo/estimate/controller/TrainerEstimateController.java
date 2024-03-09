@@ -5,6 +5,7 @@ import com.project.durumoongsil.teutoo.common.RestResult;
 import com.project.durumoongsil.teutoo.estimate.dto.trainer.CreateTrainerEstimateDto;
 import com.project.durumoongsil.teutoo.estimate.dto.user.UpdateEstimateDto;
 import com.project.durumoongsil.teutoo.estimate.service.front.TrainerEstimateFrontService;
+import com.project.durumoongsil.teutoo.security.util.SecurityUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -38,6 +39,14 @@ public class TrainerEstimateController {
         return frontService.createEstimateResult(createTrainerEstimateDto);
     }
 
+    @Operation(summary = "트레이너 견적서 작성 시 프로그램, 이름 정보 API", description = "트레이너 견적서 작성 기본 정보 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "견적서 프로그램 조회 성공")
+    })
+    @GetMapping("/estimates/programs")
+    public RestResult getPtPrograms() {
+        return frontService.getTrainerPtPrograms(LoginEmail.getLoginUserEmail());
+    }
 
     @Operation(summary = "트레이너 견적서 전체 조회", description = "일반 유저 입장에서 견적서 버튼 클릭시 트레이너가 작성한 견적서 목록")
     @ApiResponses(value = {
@@ -64,7 +73,7 @@ public class TrainerEstimateController {
     })
     @PatchMapping("/estimates/{estimateId}")
     public RestResult updateEstimate(@Parameter(name = "견적서 ID") @PathVariable Long estimateId, UpdateEstimateDto updateEstimateDto) {
-        return frontService.updateEstimateResult(estimateId, updateEstimateDto,LoginEmail.getLoginUserEmail());
+        return frontService.updateEstimateResult(estimateId, updateEstimateDto);
     }
 
     @Operation(summary = "트레이너 견적서 삭제", description = "자기가 작성한 견적서 삭제")
