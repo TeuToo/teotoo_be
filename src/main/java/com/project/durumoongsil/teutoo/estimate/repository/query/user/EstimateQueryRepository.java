@@ -1,4 +1,4 @@
-package com.project.durumoongsil.teutoo.estimate.repository.query;
+package com.project.durumoongsil.teutoo.estimate.repository.query.user;
 
 import com.project.durumoongsil.teutoo.estimate.domain.Estimate;
 import org.springframework.data.domain.Page;

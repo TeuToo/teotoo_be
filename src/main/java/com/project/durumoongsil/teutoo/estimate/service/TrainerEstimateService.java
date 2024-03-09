@@ -35,9 +35,8 @@ public class TrainerEstimateService {
         trainerEstimateRepository.save(trainerEstimate);
     }
 
-    // TODO fetchJoin
     public TrainerEstimate searchTrainerEstimate(Long estimateId) {
-        return trainerEstimateRepository.findById(estimateId).orElseThrow(()-> new IllegalStateException("견적서가 없습니다."));
+        return trainerEstimateRepository.findByPtProgramIdWithFetch(estimateId);
     }
 
     public Object updateTrainerEstimate() {
@@ -46,13 +45,6 @@ public class TrainerEstimateService {
 
     public void deleteTrainerEstimate(Long estimateId) {
         trainerEstimateRepository.deleteById(estimateId);
-    }
-
-    /**
-     * 트레이너의 프로그램을 가져온다.
-     */
-    private void getTrainerProgram(Member member) {
-
     }
 
     private Member getLoginMember(String loginUserEmail) {

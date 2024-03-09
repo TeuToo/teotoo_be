@@ -1,7 +1,10 @@
 package com.project.durumoongsil.teutoo.estimate.service.front;
 
 import com.project.durumoongsil.teutoo.common.RestResult;
+import com.project.durumoongsil.teutoo.estimate.domain.TrainerEstimate;
 import com.project.durumoongsil.teutoo.estimate.dto.trainer.CreateTrainerEstimateDto;
+import com.project.durumoongsil.teutoo.estimate.dto.trainer.SearchEstimateProgramDto;
+import com.project.durumoongsil.teutoo.estimate.dto.trainer.SearchTrainerEstimateDto;
 import com.project.durumoongsil.teutoo.estimate.dto.user.UpdateEstimateDto;
 import com.project.durumoongsil.teutoo.estimate.service.TrainerEstimateService;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +36,10 @@ public class TrainerEstimateFrontService {
      * 트레이너 견적서 단건조회
      */
     public RestResult searchEstimateResult(Long estimateId) {
-        return new RestResult(estimateService.searchTrainerEstimate(estimateId));
+        TrainerEstimate trainerEstimate = estimateService.searchTrainerEstimate(estimateId);
+        SearchEstimateProgramDto searchEstimateProgramDto = new SearchEstimateProgramDto(trainerEstimate.getPtProgram().getId(), trainerEstimate.getPtProgram().getTitle());
+        SearchTrainerEstimateDto searchTrainerEstimateDto = new SearchTrainerEstimateDto(trainerEstimate.getPrice(), trainerEstimate.getPtCenterAddress(),searchEstimateProgramDto,trainerEstimate.getMember().getName());
+        return new RestResult(searchTrainerEstimateDto);
     }
 
     public RestResult updateEstimateResult(Long estimateId, UpdateEstimateDto updateEstimateDto, String loginUserEmail) {
