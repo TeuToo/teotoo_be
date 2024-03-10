@@ -1,4 +1,4 @@
-package com.project.durumoongsil.teutoo.estimate.dto;
+package com.project.durumoongsil.teutoo.estimate.dto.user;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
@@ -11,7 +11,7 @@ public class UpdateEstimateDto {
     @NotNull
     @Min(0)
     @Schema(description = "PT 가격")
-    private Long price;
+    private int price;
     @NotNull
     @Min(0)
     @Schema(description = "PT 횟수")
