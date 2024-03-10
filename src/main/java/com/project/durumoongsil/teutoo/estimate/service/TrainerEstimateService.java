@@ -1,5 +1,6 @@
 package com.project.durumoongsil.teutoo.estimate.service;
 
+import com.project.durumoongsil.teutoo.common.LoginEmail;
 import com.project.durumoongsil.teutoo.estimate.domain.Estimate;
 import com.project.durumoongsil.teutoo.estimate.domain.TrainerEstimate;
 import com.project.durumoongsil.teutoo.estimate.dto.trainer.CreateTrainerEstimateDto;
@@ -7,6 +8,7 @@ import com.project.durumoongsil.teutoo.estimate.dto.trainer.UpdateTrainerEstimat
 import com.project.durumoongsil.teutoo.estimate.repository.EstimateRepository;
 import com.project.durumoongsil.teutoo.estimate.repository.TrainerEstimateRepository;
 import com.project.durumoongsil.teutoo.exception.NotFoundUserException;
+import com.project.durumoongsil.teutoo.exception.UnauthorizedActionException;
 import com.project.durumoongsil.teutoo.member.domain.Member;
 import com.project.durumoongsil.teutoo.member.repository.MemberRepository;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.domain.PtProgram;
@@ -33,6 +35,7 @@ public class TrainerEstimateService {
      *  처음 트레이너가 견적석, 신청서 버튼을 눌렀을대 이름은 그냥 표기, 프로그램 select 박스로 하기 위해서
      *  @GetMapping("/estimates/programs")
      */
+    @Transactional(readOnly = true)
     public List<Member>  getPtProgramsAndName(String currentLoginId) {
         return memberRepository.findAllPtProgramByEmail(currentLoginId);
     }
@@ -59,6 +62,7 @@ public class TrainerEstimateService {
      * 트레이너 입장에서 견적서를 들어감녀 일반 유저의 견적서, 신청서가 보여야한다.
      * 여기서는 No-offset 사용
      */
+    @Transactional(readOnly = true)
     public List<Estimate> searchAllUserEstimate(Long cursorId, int size) {
         return estimateRepository.findEstimateAfterCursor(cursorId, size);
     }
@@ -81,7 +85,7 @@ public class TrainerEstimateService {
      * @return 수정된 트레이너 견적서 객체
      */
     public TrainerEstimate updateTrainerEstimate(Long estimateId, UpdateTrainerEstimateDto updateEstimateDto) {
-        TrainerEstimate trainerEstimate = trainerEstimateRepository.findById(estimateId).orElseThrow(() -> new IllegalStateException("견적서가 없습니다."));
+        TrainerEstimate trainerEstimate = hasAuthority(estimateId, LoginEmail.getLoginUserEmail());
         if (updateEstimateDto.getProgramId() != null) {
             PtProgram ptProgram = ptProgramRepository.findById(updateEstimateDto.getProgramId()).orElseThrow(() -> new IllegalStateException("프로그램이 없습니다."));
             trainerEstimate.setPtProgram(ptProgram);
@@ -91,11 +95,13 @@ public class TrainerEstimateService {
         return trainerEstimate;
     }
 
+
     /**
      * 트레이너 견적서 삭제
      * @DeleteMapping("/estimates/{estimateId}")
      */
     public void deleteTrainerEstimate(Long estimateId) {
+        hasAuthority(estimateId, LoginEmail.getLoginUserEmail());
         trainerEstimateRepository.deleteById(estimateId);
     }
 
@@ -105,5 +111,13 @@ public class TrainerEstimateService {
 
     private PtProgram getPtProgram(Long trainerEstimateId) {
         return ptProgramRepository.findById(trainerEstimateId).orElseThrow(()-> new IllegalStateException("프로그램이 없습니다."));
+    }
+
+    private TrainerEstimate hasAuthority(Long estimateId, String loginUserEmail) {
+        TrainerEstimate trainerEstimate = trainerEstimateRepository.findByEstimateIdWithMember(estimateId).orElseThrow(()-> new IllegalStateException("견적서가 없습니다."));
+        if (!trainerEstimate.getMember().getEmail().equals(loginUserEmail)) {
+            throw new UnauthorizedActionException("권한이 없습니다");
+        }
+        return trainerEstimate;
     }
 }

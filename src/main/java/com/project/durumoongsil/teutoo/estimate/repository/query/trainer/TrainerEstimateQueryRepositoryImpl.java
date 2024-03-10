@@ -1,9 +1,6 @@
 package com.project.durumoongsil.teutoo.estimate.repository.query.trainer;
 
-import com.project.durumoongsil.teutoo.estimate.domain.Estimate;
 import com.project.durumoongsil.teutoo.estimate.domain.TrainerEstimate;
-import com.project.durumoongsil.teutoo.trainer.ptprogram.domain.PtProgram;
-import com.project.durumoongsil.teutoo.trainer.ptprogram.domain.QPtProgram;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -12,8 +9,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
-import static com.project.durumoongsil.teutoo.estimate.domain.QEstimate.estimate;
 import static com.project.durumoongsil.teutoo.member.domain.QMember.*;
 import static com.project.durumoongsil.teutoo.estimate.domain.QTrainerEstimate.*;
 import static com.project.durumoongsil.teutoo.trainer.ptprogram.domain.QPtProgram.ptProgram;
@@ -49,5 +46,13 @@ public class TrainerEstimateQueryRepositoryImpl implements TrainerEstimateQueryR
                 .fetchOne();
 
         return new PageImpl<>(estimates, pageable, totalCount);
+    }
+
+    @Override
+    public Optional<TrainerEstimate> findByEstimateIdWithMember(Long estimateId) {
+        return Optional.ofNullable(factory.selectFrom(trainerEstimate)
+                .join(trainerEstimate.member, member).fetchJoin()
+                .where(trainerEstimate.id.eq(estimateId))
+                .fetchOne());
     }
 }

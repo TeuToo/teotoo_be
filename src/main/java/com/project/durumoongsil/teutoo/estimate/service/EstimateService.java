@@ -57,7 +57,7 @@ public class EstimateService {
      * 견적서 수정
      */
     public Estimate updateEstimate(Long estimateId, UpdateEstimateDto updateEstimateDto, String currentLoginId) {
-        Estimate estimate = isEstimateDeleteAvailable(estimateId, currentLoginId);
+        Estimate estimate = hasAuthority(estimateId, currentLoginId);
         estimate.setPrice(updateEstimateDto.getPrice());
         estimate.setPtCount(updateEstimateDto.getPtCount());
         estimate.setPtAddress(updateEstimateDto.getPtAddress());
@@ -68,11 +68,11 @@ public class EstimateService {
      * 견적서 삭제 -> 자가가 작성한 건지 확인 후 삭제
      */
     public void deleteEstimate(Long estimateId, String currentLoginId) {
-        Estimate estimate = isEstimateDeleteAvailable(estimateId, currentLoginId);
+        Estimate estimate = hasAuthority(estimateId, currentLoginId);
         estimateRepository.delete(estimate);
     }
 
-    private Estimate isEstimateDeleteAvailable(Long estimateId, String currentLoginId) {
+    private Estimate hasAuthority(Long estimateId, String currentLoginId) {
         Estimate estimateWithMember = estimateRepository.findEstimateWithMemberName(estimateId);
 
         if(!estimateWithMember.getMember().getEmail().equals(currentLoginId))
