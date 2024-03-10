@@ -1,7 +1,8 @@
 package com.project.durumoongsil.teutoo.estimate.repository.query.trainer;
 
 import com.project.durumoongsil.teutoo.estimate.domain.TrainerEstimate;
-import com.project.durumoongsil.teutoo.trainer.ptprogram.domain.PtProgram;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -9,5 +10,5 @@ public interface TrainerEstimateQueryRepository {
 
     TrainerEstimate findByPtProgramIdWithFetch(Long trainerEstimateId);
 
-    List<TrainerEstimate> findTrainerEstimateAfterCursor(Long cursorId, int size);
+    Page<TrainerEstimate> pageTrainerEstimateWithPtAddress(Pageable pageable, String ptAddress);
 }

@@ -30,26 +30,6 @@ public class EstimateQueryRepositoryImpl implements EstimateQueryRepository{
                 .where(estimate.id.eq(estimateId))
                 .fetchOne();
     }
-
-    @Override
-    public Page<Estimate> findAllWithPtAddressPage(Pageable pageable, String ptAddress) {
-        log.info("ptAddress = {}", ptAddress);
-        List<Estimate> estimates = factory.selectFrom(estimate)
-                .join(estimate.member, member).fetchJoin()
-                .where(estimate.ptAddress.like("%" + ptAddress + "%"))
-                .orderBy(estimate.createdAt.desc())
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
-
-
-        Long totalCount = factory.select(estimate.count())
-                .from(estimate)
-                .fetchOne();
-
-        return new PageImpl<>(estimates, pageable, totalCount);
-    }
-
     @Override
     public List<Estimate> findEstimateAfterCursor(Long cursorId, int size) {
         return  factory.selectFrom(estimate)

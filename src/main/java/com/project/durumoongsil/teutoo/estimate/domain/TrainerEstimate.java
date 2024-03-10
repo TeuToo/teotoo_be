@@ -1,5 +1,6 @@
 package com.project.durumoongsil.teutoo.estimate.domain;
 
+import com.project.durumoongsil.teutoo.common.BaseTimeEntity;
 import com.project.durumoongsil.teutoo.member.domain.Member;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.domain.PtProgram;
 import jakarta.persistence.*;
@@ -10,7 +11,7 @@ import lombok.extern.java.Log;
 @Setter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class TrainerEstimate {
+public class TrainerEstimate extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

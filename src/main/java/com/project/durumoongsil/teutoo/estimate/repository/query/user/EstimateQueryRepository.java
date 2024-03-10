@@ -10,8 +10,6 @@ public interface EstimateQueryRepository {
 
     Estimate findEstimateWithMemberName(Long estimateId);
 
-    Page<Estimate> findAllWithPtAddressPage(Pageable pageable, String ptAddress);
-
     List<Estimate> findEstimateAfterCursor(Long cursorId, int size);
 
 }
