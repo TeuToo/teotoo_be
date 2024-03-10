@@ -18,4 +18,6 @@ public class MemberSearchDto {
     private String address;
     private String profileImagePath;
     private String profileImageName;
+    private String email;
+    private String setRole;
 }
