@@ -35,7 +35,7 @@ public class EstimateQueryRepositoryImpl implements EstimateQueryRepository{
         return  factory.selectFrom(estimate)
                 .join(estimate.member, member).fetchJoin()
                 .where(estimate.id.gt(cursorId))
-                .orderBy(estimate.id.asc())
+                .orderBy(estimate.createdAt.asc())
                 .limit(size)
                 .fetch();
     }
