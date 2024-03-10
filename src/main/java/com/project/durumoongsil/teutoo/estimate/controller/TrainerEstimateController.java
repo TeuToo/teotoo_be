@@ -3,6 +3,7 @@ package com.project.durumoongsil.teutoo.estimate.controller;
 import com.project.durumoongsil.teutoo.common.LoginEmail;
 import com.project.durumoongsil.teutoo.common.RestResult;
 import com.project.durumoongsil.teutoo.estimate.dto.trainer.CreateTrainerEstimateDto;
+import com.project.durumoongsil.teutoo.estimate.dto.trainer.UpdateTrainerEstimateDto;
 import com.project.durumoongsil.teutoo.estimate.dto.user.UpdateEstimateDto;
 import com.project.durumoongsil.teutoo.estimate.service.front.TrainerEstimateFrontService;
 import com.project.durumoongsil.teutoo.security.util.SecurityUtil;
@@ -28,17 +29,6 @@ public class TrainerEstimateController {
     private final TrainerEstimateFrontService frontService;
 
 
-    @Operation(summary = "트레이너 견적서 작성 API", description = "트레이너 견적서 작성")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "견적서 작성 성공"),
-            @ApiResponse(responseCode = "409", description = "중복 견적서 작성")
-    })
-    @PostMapping("/estimates")
-    public RestResult createEstimate(@Validated @RequestBody CreateTrainerEstimateDto createTrainerEstimateDto) {
-        log.info("CreateEstimateDto = {}", createTrainerEstimateDto);
-        return frontService.createEstimateResult(createTrainerEstimateDto);
-    }
-
     @Operation(summary = "트레이너 견적서 작성 시 프로그램, 이름 정보 API", description = "트레이너 견적서 작성 기본 정보 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "견적서 프로그램 조회 성공")
@@ -46,6 +36,17 @@ public class TrainerEstimateController {
     @GetMapping("/estimates/programs")
     public RestResult getPtPrograms() {
         return frontService.getTrainerPtPrograms(LoginEmail.getLoginUserEmail());
+    }
+
+    @Operation(summary = "트레이너 견적서 작성 API", description = "트레이너 견적서 작성")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "견적서 작성 성공"),
+            @ApiResponse(responseCode = "409", description = "중복 견적서 작성")
+    })
+    @PostMapping("/estimates")
+    public RestResult createEstimate(@Validated CreateTrainerEstimateDto createTrainerEstimateDto) {
+        log.info("CreateEstimateDto = {}", createTrainerEstimateDto);
+        return frontService.createEstimateResult(createTrainerEstimateDto);
     }
 
     @Operation(summary = "트레이너 견적서 전체 조회", description = "일반 유저 입장에서 견적서 버튼 클릭시 트레이너가 작성한 견적서 목록")
@@ -72,8 +73,8 @@ public class TrainerEstimateController {
             @ApiResponse(responseCode = "403", description = "자기가 작성한게 아닌 타인이 수정하려할때 권한 제어")
     })
     @PatchMapping("/estimates/{estimateId}")
-    public RestResult updateEstimate(@Parameter(name = "견적서 ID") @PathVariable Long estimateId, UpdateEstimateDto updateEstimateDto) {
-        return frontService.updateEstimateResult(estimateId, updateEstimateDto);
+    public RestResult updateEstimate(@Parameter(name = "견적서 ID") @PathVariable Long estimateId, UpdateTrainerEstimateDto updateTrainerEstimateDto) {
+        return frontService.updateEstimateResult(estimateId, updateTrainerEstimateDto);
     }
 
     @Operation(summary = "트레이너 견적서 삭제", description = "자기가 작성한 견적서 삭제")

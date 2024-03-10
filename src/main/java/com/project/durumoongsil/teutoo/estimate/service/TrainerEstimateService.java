@@ -1,8 +1,10 @@
 package com.project.durumoongsil.teutoo.estimate.service;
 
+import com.amazonaws.services.kms.model.NotFoundException;
 import com.project.durumoongsil.teutoo.common.RestResult;
 import com.project.durumoongsil.teutoo.estimate.domain.TrainerEstimate;
 import com.project.durumoongsil.teutoo.estimate.dto.trainer.CreateTrainerEstimateDto;
+import com.project.durumoongsil.teutoo.estimate.dto.trainer.UpdateTrainerEstimateDto;
 import com.project.durumoongsil.teutoo.estimate.dto.user.UpdateEstimateDto;
 import com.project.durumoongsil.teutoo.estimate.repository.TrainerEstimateRepository;
 import com.project.durumoongsil.teutoo.exception.NotFoundUserException;
@@ -27,13 +29,22 @@ public class TrainerEstimateService {
     private final MemberRepository memberRepository;
     private final PtProgramRepository ptProgramRepository;
 
+    /**
+     *  처음 트레이너가 견적석, 신청서 버튼을 눌렀을대 이름은 그냥 표기, 프로그램 select 박스로 하기 위해서
+     *  @GetMapping("/estimates/programs")
+     */
     public List<Member>  getPtProgramsAndName(String currentLoginId) {
-        List<Member> allPtProgramByEmail = memberRepository.findAllPtProgramByEmail(currentLoginId);
-        return allPtProgramByEmail;
+        return memberRepository.findAllPtProgramByEmail(currentLoginId);
     }
 
+
+    /**
+     * 신청서, 견적서 save
+     * @PostMapping("/estimates")
+     * @param createEstimateDto pt 가격, pt 주소, pt 프로그램 Id (select 박스 라서 value 로 program Id 가 넘어올거임)
+     */
     public void createTrainerEstimate(CreateTrainerEstimateDto createEstimateDto) {
-        PtProgram ptProgram = getPtProgram(createEstimateDto.getPtProgram().getId());
+        PtProgram ptProgram = getPtProgram(createEstimateDto.getProgramId());
         TrainerEstimate trainerEstimate = TrainerEstimate
                 .builder()
                 .price(createEstimateDto.getPrice())
@@ -44,14 +55,38 @@ public class TrainerEstimateService {
         trainerEstimateRepository.save(trainerEstimate);
     }
 
+    /**
+     * 사용자 입장에서 프로그램 단건조회
+     * @GetMapping("/estimates")
+     * @param estimateId 신청서 ID
+     */
+    @Transactional(readOnly = true)
     public TrainerEstimate searchTrainerEstimate(Long estimateId) {
         return trainerEstimateRepository.findByPtProgramIdWithFetch(estimateId);
     }
 
-    public Object updateTrainerEstimate(Long estimateId, UpdateEstimateDto updateEstimateDto) {
-        return null;
+    /**
+     * 트레이너가 견적서, 신청서 수정할때 사용
+     * @PatchMapping("/estimates/{estimateId}")
+     * @param estimateId 신청서 Id
+     * @param updateEstimateDto pt 가격, pt 주소, pt 프로그램 Id
+     * @return 수정된 트레이너 견적서 객체
+     */
+    public TrainerEstimate updateTrainerEstimate(Long estimateId, UpdateTrainerEstimateDto updateEstimateDto) {
+        TrainerEstimate trainerEstimate = trainerEstimateRepository.findById(estimateId).orElseThrow(() -> new IllegalStateException("견적서가 없습니다."));
+        if (updateEstimateDto.getProgramId() != null) {
+            PtProgram ptProgram = ptProgramRepository.findById(updateEstimateDto.getProgramId()).orElseThrow(() -> new IllegalStateException("프로그램이 없습니다."));
+            trainerEstimate.setPtProgram(ptProgram);
+        }
+        trainerEstimate.setPrice(updateEstimateDto.getPrice());
+        trainerEstimate.setPtCenterAddress(updateEstimateDto.getPtAddress());
+        return trainerEstimate;
     }
 
+    /**
+     * 트레이너 견적서 삭제
+     * @DeleteMapping("/estimates/{estimateId}")
+     */
     public void deleteTrainerEstimate(Long estimateId) {
         trainerEstimateRepository.deleteById(estimateId);
     }

@@ -13,7 +13,7 @@ public class CreateEstimateDto {
     @NotNull
     @Min(0)
     @Schema(description = "PT 가격")
-    private Long price;
+    private Integer price;
     @NotNull
     @Min(0)
     @Schema(description = "PT 횟수")

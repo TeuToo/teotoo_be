@@ -19,6 +19,6 @@ public class CreateTrainerEstimateDto {
     @Schema(description = "PT 주소")
     private String ptAddress;
 
-    @Schema(description = "PT 프로그램")
-    private SearchEstimateProgramDto ptProgram;
+    @Schema(description = "PT 프로그램 ID")
+    private Long programId;
 }
