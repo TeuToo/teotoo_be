@@ -4,9 +4,7 @@ import com.project.durumoongsil.teutoo.common.LoginEmail;
 import com.project.durumoongsil.teutoo.common.RestResult;
 import com.project.durumoongsil.teutoo.estimate.dto.trainer.CreateTrainerEstimateDto;
 import com.project.durumoongsil.teutoo.estimate.dto.trainer.UpdateTrainerEstimateDto;
-import com.project.durumoongsil.teutoo.estimate.dto.user.UpdateEstimateDto;
 import com.project.durumoongsil.teutoo.estimate.service.front.TrainerEstimateFrontService;
-import com.project.durumoongsil.teutoo.security.util.SecurityUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -14,8 +12,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,8 +50,8 @@ public class TrainerEstimateController {
             @ApiResponse(responseCode = "200", description = "견적서 목록 조회 성공")
     })
     @GetMapping("/estimates")
-    public RestResult getEstimates(@PageableDefault Pageable pageable, @Parameter(name = "PT 검색 주소") String ptAddress) {
-        return frontService.searchAllEstimateResult(pageable, ptAddress);
+    public RestResult getEstimates(@RequestParam Long cursorId, @RequestParam int size) {
+        return frontService.searchAllEstimateResult(cursorId, size);
     }
 
     @Operation(summary = "트레이너 견적서 단건 조회", description = "견적서 단건 조회(본인, 타인)")

@@ -1,11 +1,10 @@
 package com.project.durumoongsil.teutoo.estimate.service;
 
-import com.amazonaws.services.kms.model.NotFoundException;
-import com.project.durumoongsil.teutoo.common.RestResult;
+import com.project.durumoongsil.teutoo.estimate.domain.Estimate;
 import com.project.durumoongsil.teutoo.estimate.domain.TrainerEstimate;
 import com.project.durumoongsil.teutoo.estimate.dto.trainer.CreateTrainerEstimateDto;
 import com.project.durumoongsil.teutoo.estimate.dto.trainer.UpdateTrainerEstimateDto;
-import com.project.durumoongsil.teutoo.estimate.dto.user.UpdateEstimateDto;
+import com.project.durumoongsil.teutoo.estimate.repository.EstimateRepository;
 import com.project.durumoongsil.teutoo.estimate.repository.TrainerEstimateRepository;
 import com.project.durumoongsil.teutoo.exception.NotFoundUserException;
 import com.project.durumoongsil.teutoo.member.domain.Member;
@@ -28,6 +27,7 @@ public class TrainerEstimateService {
     private final TrainerEstimateRepository trainerEstimateRepository;
     private final MemberRepository memberRepository;
     private final PtProgramRepository ptProgramRepository;
+    private final EstimateRepository estimateRepository;
 
     /**
      *  처음 트레이너가 견적석, 신청서 버튼을 눌렀을대 이름은 그냥 표기, 프로그램 select 박스로 하기 위해서
@@ -53,6 +53,14 @@ public class TrainerEstimateService {
                 .ptProgram(ptProgram)
                 .build();
         trainerEstimateRepository.save(trainerEstimate);
+    }
+
+    /**
+     * 트레이너 입장에서 견적서를 들어감녀 일반 유저의 견적서, 신청서가 보여야한다.
+     * 여기서는 No-offset 사용
+     */
+    public List<Estimate> searchAllUserEstimate(Long cursorId, int size) {
+        return estimateRepository.findEstimateAfterCursor(cursorId, size);
     }
 
     /**

@@ -1,15 +1,16 @@
 package com.project.durumoongsil.teutoo.estimate.service.front;
 
 import com.project.durumoongsil.teutoo.common.RestResult;
+import com.project.durumoongsil.teutoo.common.service.FileService;
+import com.project.durumoongsil.teutoo.estimate.domain.Estimate;
 import com.project.durumoongsil.teutoo.estimate.domain.TrainerEstimate;
 import com.project.durumoongsil.teutoo.estimate.dto.trainer.*;
-import com.project.durumoongsil.teutoo.estimate.dto.user.UpdateEstimateDto;
+import com.project.durumoongsil.teutoo.estimate.dto.user.PageUserEstimateDto;
 import com.project.durumoongsil.teutoo.estimate.service.TrainerEstimateService;
 import com.project.durumoongsil.teutoo.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,6 +23,7 @@ public class TrainerEstimateFrontService {
 
     private final ModelMapper modelMapper;
     private final TrainerEstimateService estimateService;
+    private final FileService fileService;
     public RestResult getTrainerPtPrograms(String currentLoginId) {
         List<Member> ptProgramsAndName = estimateService.getPtProgramsAndName(currentLoginId);
         List<SearchPtPrograms> list = ptProgramsAndName.stream()
@@ -36,11 +38,14 @@ public class TrainerEstimateFrontService {
     }
 
     /**
-     *  사용자입장에서 트레이너 견적서 No-offset
+     *  트레이너입장에서 사용자 견적서 No-offset
      */
-    public RestResult searchAllEstimateResult(Pageable pageable, String ptAddress) {
-
-        return null;
+    public RestResult searchAllEstimateResult(Long cursorId, int size) {
+        List<Estimate> allUserEstimate = estimateService.searchAllUserEstimate(cursorId, size);
+        List<PageUserEstimateDto> userEstimateDtoList = allUserEstimate.stream()
+                .map(estimate -> new PageUserEstimateDto(estimate.getPrice(), estimate.getMember().getName(), fileService.getImgUrl("member_profile", estimate.getMember().getProfileImageName())))
+                .toList();
+        return new RestResult(userEstimateDtoList);
     }
 
     /**

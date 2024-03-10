@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static com.project.durumoongsil.teutoo.estimate.domain.QEstimate.*;
+import static com.project.durumoongsil.teutoo.estimate.domain.QTrainerEstimate.trainerEstimate;
 import static com.project.durumoongsil.teutoo.member.domain.QMember.*;
 
 @Slf4j
@@ -47,5 +48,15 @@ public class EstimateQueryRepositoryImpl implements EstimateQueryRepository{
                 .fetchOne();
 
         return new PageImpl<>(estimates, pageable, totalCount);
+    }
+
+    @Override
+    public List<Estimate> findEstimateAfterCursor(Long cursorId, int size) {
+        return  factory.selectFrom(estimate)
+                .join(estimate.member, member).fetchJoin()
+                .where(estimate.id.gt(cursorId))
+                .orderBy(estimate.id.asc())
+                .limit(size)
+                .fetch();
     }
 }
