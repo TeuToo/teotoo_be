@@ -60,10 +60,8 @@ public class TrainerEstimateFrontService {
 
     public RestResult updateEstimateResult(Long estimateId, UpdateTrainerEstimateDto updateEstimateDto) {
         TrainerEstimate updatedTrainerEstimate = estimateService.updateTrainerEstimate(estimateId,updateEstimateDto);
-        SearchEstimateProgramDto searchEstimateProgramDto = new SearchEstimateProgramDto(updatedTrainerEstimate.getPtProgram().getId(), updatedTrainerEstimate.getPtProgram().getTitle());
-//        SearchTrainerEstimateDto searchTrainerEstimateDto = new SearchTrainerEstimateDto(updatedTrainerEstimate.getPrice(), updatedTrainerEstimate.getPtCenterAddress(),searchEstimateProgramDto,updatedTrainerEstimate.getMember().getName());
-//        return new RestResult(searchTrainerEstimateDto);
-        return null;
+        //RestResult restResult = searchEstimateResult(updatedTrainerEstimate.getId()); 수정완료 띄울거라면 사용
+        return new RestResult("견적서 수정 완료");
     }
 
     public RestResult deleteEstimateResult(Long estimateId) {
