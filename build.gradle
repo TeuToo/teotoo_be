@@ -62,6 +62,12 @@ dependencies {
 	// 테스트도 lombok 사용
 	testCompileOnly 'org.projectlombok:lombok'
 	testAnnotationProcessor 'org.projectlombok:lombok'
+
+	// 웹소켓, Stomp
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	implementation 'org.springframework.security:spring-security-messaging:6.2.2'
+	implementation 'org.springframework:spring-messaging:6.1.4'
+
 }
 
 tasks.named('test') {
