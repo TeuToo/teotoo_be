@@ -1,7 +1,7 @@
 package com.project.durumoongsil.teutoo.chat.dto.response;
 
-import com.project.durumoongsil.teutoo.chat.domain.MsgAction;
-import com.project.durumoongsil.teutoo.chat.domain.MsgType;
+import com.project.durumoongsil.teutoo.chat.constants.MsgAction;
+import com.project.durumoongsil.teutoo.chat.constants.MsgType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 

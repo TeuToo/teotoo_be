@@ -2,7 +2,7 @@ package com.project.durumoongsil.teutoo.chat.service;
 
 import com.project.durumoongsil.teutoo.chat.domain.Chat;
 import com.project.durumoongsil.teutoo.chat.domain.ChatMsg;
-import com.project.durumoongsil.teutoo.chat.domain.MsgType;
+import com.project.durumoongsil.teutoo.chat.constants.MsgType;
 import com.project.durumoongsil.teutoo.chat.dto.request.ChatReadReqDto;
 import com.project.durumoongsil.teutoo.chat.dto.request.ChatSendTextMsgDto;
 import com.project.durumoongsil.teutoo.chat.dto.response.ChatMsgResDTO;
@@ -11,10 +11,13 @@ import com.project.durumoongsil.teutoo.chat.repository.ChatMsgRepository;
 import com.project.durumoongsil.teutoo.chat.repository.ChatRepository;
 import com.project.durumoongsil.teutoo.common.domain.FilePath;
 import com.project.durumoongsil.teutoo.common.service.FileService;
+import com.project.durumoongsil.teutoo.exception.ChatNotFoundException;
+import com.project.durumoongsil.teutoo.exception.InvalidActionException;
 import com.project.durumoongsil.teutoo.exception.UnauthorizedActionException;
 import com.project.durumoongsil.teutoo.member.domain.Member;
 import com.project.durumoongsil.teutoo.security.service.SecurityService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,6 +26,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ChatWebSocketService {
 
     private final ChatRepository chatRepository;
@@ -37,6 +41,7 @@ public class ChatWebSocketService {
      * @param roomId 채팅방 ID
      * @param sendTextMsgDto 메시지 정보를 담고 있는 DTO
      * @return 텍스트 관련 메시지 DTO
+     * @throws ChatNotFoundException UnauthorizedActionException
      */
     @Transactional
     public ChatMsgResDTO saveMsgAndReturnChatTextMsg(String roomId, ChatSendTextMsgDto sendTextMsgDto) {
@@ -67,7 +72,7 @@ public class ChatWebSocketService {
 
     private Chat getChatByRoomId(String roomId) {
         return chatRepository.findByRoomIdWithAMemberAndBMember(roomId)
-                .orElseThrow(() -> new RuntimeException("Chat not found"));
+                .orElseThrow(() -> new ChatNotFoundException("해당 채팅방을 찾을 수 없습니다."));
     }
 
 
@@ -103,6 +108,7 @@ public class ChatWebSocketService {
      * @param roomId 채팅방 ID
      * @param chatReadReqDto 읽은 사용자의 갱신할 메시지 index
      * @return sender id와 sender 메시지 index, receiver id와 receiver 메시지 index 를 포함한 DTO
+     * @throws InvalidActionException
      */
     @Transactional
     public ChatReadResDto readMsgAndReturnChatReadResponse(String roomId, ChatReadReqDto chatReadReqDto) {
@@ -128,7 +134,7 @@ public class ChatWebSocketService {
 
     private void validateAndUpdateMsgIdx(Chat chat, Long updatedMsgIdx, Long currentMsgIdx, Long otherMsgIdx) {
         if (updatedMsgIdx < currentMsgIdx || updatedMsgIdx > otherMsgIdx) {
-            throw new RuntimeException("Invalid message index");
+            throw new InvalidActionException("유효하지 않은 MsgIdx 갱신 요청 입니다.");
         }
         if (isAMember(chat, updatedMsgIdx)) {
             chat.updateAMsgIdx(updatedMsgIdx);

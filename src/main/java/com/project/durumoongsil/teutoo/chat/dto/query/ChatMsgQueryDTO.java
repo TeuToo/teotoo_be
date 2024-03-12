@@ -1,6 +1,6 @@
 package com.project.durumoongsil.teutoo.chat.dto.query;
 
-import com.project.durumoongsil.teutoo.chat.domain.MsgType;
+import com.project.durumoongsil.teutoo.chat.constants.MsgType;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Getter;
 import lombok.Setter;

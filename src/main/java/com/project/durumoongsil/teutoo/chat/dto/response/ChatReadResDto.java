@@ -1,9 +1,8 @@
 package com.project.durumoongsil.teutoo.chat.dto.response;
 
-import com.project.durumoongsil.teutoo.chat.domain.MsgAction;
+import com.project.durumoongsil.teutoo.chat.constants.MsgAction;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
 public class ChatReadResDto {

@@ -1,6 +1,7 @@
 package com.project.durumoongsil.teutoo.chat.domain;
 
 
+import com.project.durumoongsil.teutoo.chat.constants.MsgType;
 import com.project.durumoongsil.teutoo.common.BaseTimeEntity;
 import com.project.durumoongsil.teutoo.member.domain.Member;
 import jakarta.persistence.*;
