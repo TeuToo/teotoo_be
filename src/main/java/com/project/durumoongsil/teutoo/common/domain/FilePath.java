@@ -4,7 +4,9 @@ public enum FilePath {
 
     MEMBER_PROFILE("member_profile"),
     TRAINER_INFO("trainer_info"),
-    PT_PROGRAM("pt_program");
+    PT_PROGRAM("pt_program"),
+
+    CHAT_IMG("chat_img");
 
     private final String path;
 
