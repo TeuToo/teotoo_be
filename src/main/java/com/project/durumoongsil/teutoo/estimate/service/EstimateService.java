@@ -1,9 +1,11 @@
 package com.project.durumoongsil.teutoo.estimate.service;
 
 import com.project.durumoongsil.teutoo.estimate.domain.Estimate;
-import com.project.durumoongsil.teutoo.estimate.dto.CreateEstimateDto;
-import com.project.durumoongsil.teutoo.estimate.dto.UpdateEstimateDto;
+import com.project.durumoongsil.teutoo.estimate.domain.TrainerEstimate;
+import com.project.durumoongsil.teutoo.estimate.dto.user.CreateEstimateDto;
+import com.project.durumoongsil.teutoo.estimate.dto.user.UpdateEstimateDto;
 import com.project.durumoongsil.teutoo.estimate.repository.EstimateRepository;
+import com.project.durumoongsil.teutoo.estimate.repository.TrainerEstimateRepository;
 import com.project.durumoongsil.teutoo.exception.DuplicateEstimateException;
 import com.project.durumoongsil.teutoo.exception.UnauthorizedActionException;
 import com.project.durumoongsil.teutoo.member.domain.Member;
@@ -24,6 +26,7 @@ public class EstimateService {
 
     private final EstimateRepository estimateRepository;
     private final MemberRepository memberRepository;
+    private final TrainerEstimateRepository trainerEstimateRepository;
 
     /**
      * 우선 기획상 한사람당 한개의 견적서만 할 수 있다.
@@ -38,8 +41,8 @@ public class EstimateService {
      * 전체 견적서 페이징
      */
     @Transactional(readOnly = true)
-    public Page<Estimate> searchEstimates(Pageable pageable, String ptAddress) {
-        return estimateRepository.findAllWithPtAddressPage(pageable, ptAddress); // Pageable 객체를 사용
+    public Page<TrainerEstimate> searchEstimates(Pageable pageable, String ptAddress) {
+        return trainerEstimateRepository.pageTrainerEstimateWithPtAddress(pageable, ptAddress); // Pageable 객체를 사용
     }
 
     /**
@@ -54,7 +57,7 @@ public class EstimateService {
      * 견적서 수정
      */
     public Estimate updateEstimate(Long estimateId, UpdateEstimateDto updateEstimateDto, String currentLoginId) {
-        Estimate estimate = isEstimateDeleteAvailable(estimateId, currentLoginId);
+        Estimate estimate = hasAuthority(estimateId, currentLoginId);
         estimate.setPrice(updateEstimateDto.getPrice());
         estimate.setPtCount(updateEstimateDto.getPtCount());
         estimate.setPtAddress(updateEstimateDto.getPtAddress());
@@ -65,11 +68,11 @@ public class EstimateService {
      * 견적서 삭제 -> 자가가 작성한 건지 확인 후 삭제
      */
     public void deleteEstimate(Long estimateId, String currentLoginId) {
-        Estimate estimate = isEstimateDeleteAvailable(estimateId, currentLoginId);
+        Estimate estimate = hasAuthority(estimateId, currentLoginId);
         estimateRepository.delete(estimate);
     }
 
-    private Estimate isEstimateDeleteAvailable(Long estimateId, String currentLoginId) {
+    private Estimate hasAuthority(Long estimateId, String currentLoginId) {
         Estimate estimateWithMember = estimateRepository.findEstimateWithMemberName(estimateId);
 
         if(!estimateWithMember.getMember().getEmail().equals(currentLoginId))
