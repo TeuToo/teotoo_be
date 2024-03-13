@@ -14,7 +14,7 @@ public class ChatActivationResDTO {
     private String roomId;
     @Schema(description = "자신의 메시지 index")
     private Long senderIdx;
-    @Schema(description = "자신의 메시지 index")
+    @Schema(description = "상대방의 메시지 index")
     private Long receiverIdx;
     @Schema(description = "메시지 목록")
     private List<ChatMsgResDTO> messages;

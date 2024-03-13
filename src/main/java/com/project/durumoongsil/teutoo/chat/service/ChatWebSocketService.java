@@ -1,5 +1,6 @@
 package com.project.durumoongsil.teutoo.chat.service;
 
+import com.project.durumoongsil.teutoo.chat.constants.MsgAction;
 import com.project.durumoongsil.teutoo.chat.domain.Chat;
 import com.project.durumoongsil.teutoo.chat.domain.ChatMsg;
 import com.project.durumoongsil.teutoo.chat.constants.MsgType;
@@ -62,6 +63,7 @@ public class ChatWebSocketService {
         this.updateSenderMsgIdx(chat, sender.getId(), savedChatMsg.getId());
 
         return ChatMsgResDTO.builder()
+                .msgAction(MsgAction.SEND)
                 .contentType(savedChatMsg.getMsgType())
                 .msgIdx(savedChatMsg.getId())
                 .content(savedChatMsg.getTextContent())
