@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -58,5 +59,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UnauthorizedActionException.class)
     public RestError handlingDuplicateEstimateException(UnauthorizedActionException ex) {
         return new RestError(HttpStatus.FORBIDDEN.toString(), ex.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public RestError handlingMissingServletRequestParameterException(MissingServletRequestParameterException ex) {
+        return new RestError(HttpStatus.BAD_REQUEST.toString(), ex.getMessage());
     }
 }

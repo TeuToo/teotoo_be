@@ -38,10 +38,11 @@ public class TrainerInfoResDto {
     @Schema(description = "자격사항 이미지")
     private List<ImgResDto> careerImgList;
 
+    @Schema(description = "PT 프로그램 리스트")
+    private List<PtProgramResDto> ptProgramResDtoList;
+
     // 후기는 나중에...
     private int reviewCnt;
-
     private double reviewScore;
 
-    private List<PtProgramResDto> ptProgramResDtoList;
 }

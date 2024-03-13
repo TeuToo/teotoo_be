@@ -15,9 +15,6 @@ import java.util.List;
 @Setter
 public class PtProgramUpdateDto {
 
-    @Schema(description = "프로그램 id")
-    private long programId;
-
     @Schema(description = "프로그램 제목")
     @NotBlank(message = "프로그램 제목을 입력 해 주셔야 합니다.")
     private String title;

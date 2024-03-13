@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PtProgramCustomRepository {
-
-    Optional<PtProgram> findByPtProgramByIdAndMemberEmail(Long ptProgramId, String email);
     List<PtProgram> findByMemberEmailWithPtImg(String email);
+    Optional<PtProgram> findByIdAndMemberEmailWithPtImgAndFile(Long ptProgramId, String email);
 }

@@ -39,9 +39,11 @@ public class MemberFrontService {
         String MEMBER_IMAGE_PATH = "member_profile";
         return MemberSearchDto.builder()
                 .name(member.getName())
+                .email(member.getEmail())
                 .address(member.getAddress())
                 .profileImagePath(fileService.getImgUrl(MEMBER_IMAGE_PATH, member.getProfileImageName()))
                 .profileImageName(member.getProfileOriginalImageName())
+                .setRole(member.getRole().toString())
                 .build();
     }
 }

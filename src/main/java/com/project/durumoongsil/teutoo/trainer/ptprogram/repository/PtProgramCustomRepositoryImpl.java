@@ -26,24 +26,6 @@ public class PtProgramCustomRepositoryImpl implements PtProgramCustomRepository 
     QFile qFile = QFile.file;
 
     @Override
-    public Optional<PtProgram> findByPtProgramByIdAndMemberEmail(Long ptProgramId, String email) {
-
-        PtProgram ptProgram = queryFactory
-                    .selectFrom(qPtProgram)
-                    .innerJoin(qPtProgram.trainerInfo, qTrainerInfo)
-                    .innerJoin(qTrainerInfo.member, qMember)
-                    .where(
-                            qMember.email.eq(email),
-                            qPtProgram.id.eq(ptProgramId)
-                            )
-                    .fetchFirst();
-
-        if (ptProgram == null)
-            return Optional.empty();
-
-        return Optional.of(ptProgram);
-    }
-
     public List<PtProgram> findByMemberEmailWithPtImg(String email) {
 
         return queryFactory
@@ -55,5 +37,25 @@ public class PtProgramCustomRepositoryImpl implements PtProgramCustomRepository 
                 .where(qMember.email.eq(email))
                 .fetch();
     }
+
+    public Optional<PtProgram> findByIdAndMemberEmailWithPtImgAndFile(Long ptProgramId, String email) {
+        PtProgram ptProgram = queryFactory
+                .selectFrom(qPtProgram)
+                .innerJoin(qPtProgram.trainerInfo, qTrainerInfo)
+                .innerJoin(qTrainerInfo.member, qMember)
+                .leftJoin(qPtProgram.ptImgList, qPtImg).fetchJoin()
+                .leftJoin(qPtImg.file, qFile).fetchJoin()
+                .where(
+                        qMember.email.eq(email),
+                        qPtProgram.id.eq(ptProgramId)
+                )
+                .fetchFirst();
+
+        if (ptProgram == null)
+            return Optional.empty();
+
+        return Optional.of(ptProgram);
+    }
+
 
 }

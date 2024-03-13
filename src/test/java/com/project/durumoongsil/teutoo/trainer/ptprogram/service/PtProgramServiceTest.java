@@ -32,7 +32,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.OptionalLong;
-import java.util.stream.LongStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -111,6 +110,7 @@ class PtProgramServiceTest {
     public void updatePtProgramTest() {
 
         String memberEmail = "aaa@aaa.com";
+        Long reqTrainerId = 1L;
 
         // 삭제 될 이미지 리스트
         List<String> delPtImgList = List.of("a.png", "b.png", "c.png");
@@ -119,18 +119,16 @@ class PtProgramServiceTest {
 
         PtProgram ptProgramMock = mock(PtProgram.class);
 
-        when(ptProgramMock.getId()).thenReturn(1L);
         when(securityService.getLoginedUserEmail()).thenReturn(memberEmail);
-        when(ptProgramRepository.findByPtProgramByIdAndMemberEmail(ptProgramUpdateDto.getProgramId(), memberEmail))
+        when(ptProgramRepository.findByIdAndMemberEmailWithPtImgAndFile(reqTrainerId, memberEmail))
                 .thenReturn(Optional.of(ptProgramMock));
 
         // 이미지 리스트 설정
-        List<PtImg> ptImgList = getTestPtImgList(ptProgramUpdateDto.getProgramId(), delPtImgList);
-        when(ptImgRepository.findAllByProgramIdAndImgNameListWithFile(ptProgramUpdateDto.getProgramId(), delPtImgList))
-                .thenReturn(ptImgList);
+        List<PtImg> ptImgList = getTestPtImgList(reqTrainerId, delPtImgList);
+        when(ptProgramMock.getPtImgList()).thenReturn(ptImgList);
 
         // 테스트 실행
-        ptProgramService.update(ptProgramUpdateDto);
+        ptProgramService.update(1L, ptProgramUpdateDto);
 
         // 검증
         verifyPtProgramUpdate(ptProgramMock, ptProgramUpdateDto);
@@ -139,7 +137,6 @@ class PtProgramServiceTest {
 
     private PtProgramUpdateDto getPtProgramUpdateDto(List<String> delPtImgList) {
         PtProgramUpdateDto ptProgramUpdateDto = new PtProgramUpdateDto();
-        ptProgramUpdateDto.setProgramId(1L);
         ptProgramUpdateDto.setTitle("nice");
         ptProgramUpdateDto.setContent("nice");
         ptProgramUpdateDto.setPrice(99);
@@ -153,7 +150,7 @@ class PtProgramServiceTest {
     private List<PtImg> getTestPtImgList(Long programId, List<String> imgNames) {
         List<PtImg> imgList = new ArrayList<>();
         for (String imgName : imgNames) {
-            imgList.add(new PtImg(null, new File("a", imgName)));
+            imgList.add(new PtImg(null, new File(null, imgName)));
         }
         return imgList;
     }
