@@ -32,16 +32,21 @@ public class JwtAuthenticationInterceptor implements ChannelInterceptor {
         StompCommand command = accessor.getCommand();
 
         if (StompCommand.CONNECT.equals(accessor.getCommand())) {
-            String authToken = accessor.getFirstNativeHeader(AUTHORIZATION_HEADER);
+            String token = accessor.getFirstNativeHeader(AUTHORIZATION_HEADER);
+            if (StringUtils.hasText(token) && token.startsWith("Bearer ")) {
+                String authToken = token.substring(7);
 
-            if (StringUtils.hasText(authToken) && tokenProvider.validateToken(authToken)) {
-                Authentication authentication = tokenProvider.getAuthentication(authToken);
+                if (StringUtils.hasText(authToken) && tokenProvider.validateToken(authToken)) {
+                    Authentication authentication = tokenProvider.getAuthentication(authToken);
 
-                myLogger.info("name is " + authentication.getName() + " auth? : " + authentication.isAuthenticated());
+                    myLogger.info("name is " + authentication.getName() + " auth? : " + authentication.isAuthenticated());
 
-                // 시큐리티에서 참조하기 위함,
-                accessor.setUser(authentication);
+                    // 시큐리티에서 참조하기 위함,
+                    accessor.setUser(authentication);
+                }
             }
+
+
         }
         return message;
     }
