@@ -12,10 +12,10 @@ import com.project.durumoongsil.teutoo.trainer.info.domain.TrainerInfo;
 import com.project.durumoongsil.teutoo.trainer.info.repository.TrainerInfoRepository;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.domain.PtImg;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.domain.PtProgram;
-import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.PtProgramManageResDto;
-import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.PtProgramRegDto;
-import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.PtProgramResDto;
-import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.PtProgramUpdateDto;
+import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.response.PtProgramManageResDto;
+import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.request.PtProgramRegDto;
+import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.response.PtProgramResDto;
+import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.request.PtProgramUpdateDto;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.repository.PtImgRepository;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.repository.PtProgramRepository;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.util.PtProgramConverter;
@@ -42,15 +42,8 @@ public class PtProgramService {
     @Transactional
     public void register(PtProgramRegDto ptProgramRegDto) {
 
-        String userEmail = securityService.getLoginedUserEmail();
-
-        // trainer info id 만 조회,
-        Long trainerInfoId = trainerInfoRepository.findTrainerInfoIdByMemberEmail(userEmail)
-                .orElseThrow(() -> new NotFoundUserException("트레이너 소개 등록 정보를 찾을 수 없습니다."));
-
-        TrainerInfo trainerInfo = TrainerInfo.builder()
-                .id(trainerInfoId)
-                .build();
+        // TraineInfo id 값만 존재하는 객체 획득
+        TrainerInfo trainerInfo = this.getTrainerInfoForMapping();
 
         PtProgram ptProgram = ptProgramConverter.toPtProgram(ptProgramRegDto, trainerInfo);
 
@@ -62,26 +55,35 @@ public class PtProgramService {
         }
     }
 
+    private TrainerInfo getTrainerInfoForMapping() {
+        String userEmail = securityService.getLoginedUserEmail();
+
+        // trainer info id 만 조회,
+        Long trainerInfoId = trainerInfoRepository.findTrainerInfoIdByMemberEmail(userEmail)
+                .orElseThrow(() -> new NotFoundUserException("트레이너 소개 등록 정보를 찾을 수 없습니다."));
+
+        return TrainerInfo.builder()
+                .id(trainerInfoId)
+                .build();
+    }
+
     // PT Program 업데이트
     @Transactional
     public void update(Long programId, PtProgramUpdateDto ptProgramUpdateDto) {
         String userEmail = securityService.getLoginedUserEmail();
 
-
         // 프로그램과 이미지,파일 엔티티 한번에 조회
         PtProgram ptProgram = ptProgramRepository.findByIdAndMemberEmailWithPtImgAndFile(programId, userEmail)
                 .orElseThrow(() -> new NotFoundUserException("트레이너 프로그램 등록 정보를 찾을 수 없습니다."));
 
-        // PtProgram 수정
-        ptProgram.updatePrice(ptProgramUpdateDto.getPrice());
-        ptProgram.updatePtCnt(ptProgramUpdateDto.getPtCnt());
-        ptProgram.updateTitle(ptProgramUpdateDto.getTitle());
-        ptProgram.updateContent(ptProgramUpdateDto.getContent());
+        // PtProgram 프로퍼티 값 업데이트
+        this.updatePtProgram(ptProgramUpdateDto, ptProgram);
 
         // 사용자가 삭제한 이미지가 존재한다면,
         if (ptProgramUpdateDto.getDelPtImgList() != null) {
             List<String> reqDelImgList = ptProgramUpdateDto.getDelPtImgList();
 
+            // DB에 저장된 파일명만 필터링하여 획득
             List<PtImg> delPtImgList = ptProgram.getPtImgList().stream()
                     .filter(ptImg -> reqDelImgList.contains(ptImg.getFile().getFileName())).toList();
 
@@ -92,6 +94,15 @@ public class PtProgramService {
         if (ptProgramUpdateDto.getAddPtImgList() != null) {
             savePtProgramImg(ptProgram, ptProgramUpdateDto.getAddPtImgList());
         }
+    }
+
+    private void updatePtProgram(PtProgramUpdateDto ptProgramUpdateDto, PtProgram ptProgram) {
+        ptProgram.updatePrice(ptProgramUpdateDto.getPrice());
+        ptProgram.updateTitle(ptProgramUpdateDto.getTitle());
+        ptProgram.updateContent(ptProgramUpdateDto.getContent());
+        ptProgram.updateAvailableStartTime(ptProgramUpdateDto.getAvailableStartTime());
+        ptProgram.updateAvailableEndTime(ptProgramUpdateDto.getAvailableEndTime());
+
     }
 
     private void savePtProgramImg(PtProgram ptProgram, List<MultipartFile> addPtImgList) {
@@ -113,29 +124,33 @@ public class PtProgramService {
 
     // PT 프로그램 관리페이지 데이터 조회
     public PtProgramManageResDto getPtProgramListForManagement() {
-        String memberEmail = securityService.getLoginedUserEmail();
 
-        Member member = memberRepository.findMemberByEmail(memberEmail)
-                .orElseThrow(() -> new NotFoundUserException("사용자를 찾을 수 없습니다."));
+        Member member = this.getMember();
 
-        List<PtProgramResDto> ptProgramResDtoList = this.getPtProgramList(memberEmail);
+        List<PtProgramResDto> ptProgramResDtoList = this.getPtProgramListFromMember(member);
 
-
-        // 사용자 프로필 이미지
+        // 사용자 프로필 이미지 생성
         ImgResDto imgResDto = ImgResDto.create(member.getProfileOriginalImageName(),
                     fileService.getImgUrl(FilePath.MEMBER_PROFILE.getPath(), member.getProfileImageName()));
 
         return ptProgramConverter.toPtProgramManageResDto(ptProgramResDtoList, member, imgResDto);
     }
 
+    private Member getMember() {
+        String memberEmail = securityService.getLoginedUserEmail();
+
+        return memberRepository.findMemberByEmail(memberEmail)
+                .orElseThrow(() -> new NotFoundUserException("사용자를 찾을 수 없습니다."));
+    }
+
 
     // PT 프로그램 리스트 조회
-    public List<PtProgramResDto> getPtProgramList(String memberEmail) {
-        List<PtProgram> ptProgramList = ptProgramRepository.findByMemberEmailWithPtImg(memberEmail);
+    public List<PtProgramResDto> getPtProgramListFromMember(Member member) {
+        List<PtProgram> ptProgramList = ptProgramRepository.findByMemberEmailWithPtImg(member.getEmail());
 
         return ptProgramList.stream().map(ptProgram -> {
 
-            // 각 프로그램에 대한 이미지 리스트
+            // 각 프로그램에 대한 이미지 리스트를 ImgResDto로 획득
             List<ImgResDto> imgResDtoList = ptProgram.getPtImgList()
                     .stream().map(ptImg -> {
                 return ImgResDto.create(ptImg.getFile().getFileName(),

@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalTime;
 import java.util.List;
 
 @Entity
@@ -23,7 +24,9 @@ public class PtProgram {
 
     private int price;
 
-    private int ptCnt;
+    private LocalTime availableStartTime;
+
+    private LocalTime availableEndTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id2")
@@ -33,11 +36,13 @@ public class PtProgram {
     private List<PtImg> ptImgList;
 
     @Builder
-    public PtProgram(String title, String content, int price, int ptCnt, TrainerInfo trainerInfo) {
+    public PtProgram(String title, String content, int price, LocalTime availableStartTime,
+                     LocalTime availableEndTime, TrainerInfo trainerInfo) {
         this.title = title;
         this.content = content;
         this.price = price;
-        this.ptCnt = ptCnt;
+        this.availableStartTime = availableStartTime;
+        this.availableEndTime = availableEndTime;
         this.trainerInfo = trainerInfo;
     }
 
@@ -53,7 +58,11 @@ public class PtProgram {
         this.price = price;
     }
 
-    public void updatePtCnt(int ptCnt) {
-        this.ptCnt = ptCnt;
+    public void updateAvailableStartTime(LocalTime availableStartTime) {
+        this.availableStartTime = availableStartTime;
+    }
+
+    public void updateAvailableEndTime(LocalTime availableEndTime) {
+        this.availableEndTime = availableEndTime;
     }
 }

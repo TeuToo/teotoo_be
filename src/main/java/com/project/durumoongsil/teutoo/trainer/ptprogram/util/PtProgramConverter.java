@@ -4,9 +4,9 @@ import com.project.durumoongsil.teutoo.common.dto.ImgResDto;
 import com.project.durumoongsil.teutoo.member.domain.Member;
 import com.project.durumoongsil.teutoo.trainer.info.domain.TrainerInfo;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.domain.PtProgram;
-import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.PtProgramManageResDto;
-import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.PtProgramRegDto;
-import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.PtProgramResDto;
+import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.response.PtProgramManageResDto;
+import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.request.PtProgramRegDto;
+import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.response.PtProgramResDto;
 
 import java.util.List;
 
@@ -15,8 +15,9 @@ public class PtProgramConverter {
     public PtProgram toPtProgram(PtProgramRegDto ptProgramRegDto, TrainerInfo trainerInfo) {
         return PtProgram.builder()
                 .content(ptProgramRegDto.getContent())
+                .availableStartTime(ptProgramRegDto.getAvailableStartTime())
+                .availableEndTime(ptProgramRegDto.getAvailableEndTime())
                 .price(ptProgramRegDto.getPrice())
-                .ptCnt(ptProgramRegDto.getPtCnt())
                 .title(ptProgramRegDto.getTitle())
                 .trainerInfo(trainerInfo)
                 .build();
@@ -36,7 +37,8 @@ public class PtProgramConverter {
                 .title(ptProgram.getTitle())
                 .content(ptProgram.getContent())
                 .price(ptProgram.getPrice())
-                .ptCnt(ptProgram.getPtCnt())
+                .availableStartTime(ptProgram.getAvailableStartTime())
+                .availableEndTime(ptProgram.getAvailableEndTime())
                 .ptProgramImgList(imgResDtoList)
                 .build();
     }

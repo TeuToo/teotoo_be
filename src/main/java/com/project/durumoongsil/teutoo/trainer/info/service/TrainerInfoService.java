@@ -12,7 +12,7 @@ import com.project.durumoongsil.teutoo.trainer.info.dto.*;
 import com.project.durumoongsil.teutoo.trainer.info.repository.CareerImgRepository;
 import com.project.durumoongsil.teutoo.trainer.info.repository.TrainerInfoRepository;
 import com.project.durumoongsil.teutoo.trainer.info.util.TrainerInfoConverter;
-import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.PtProgramResDto;
+import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.response.PtProgramResDto;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.service.PtProgramService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -119,7 +118,7 @@ public class TrainerInfoService {
         ImgResDto imgResDto = ImgResDto.create(member.getProfileImageName(), trainerImgUrl);
 
         // 트레이너 PT 프로그램 리스트
-        List<PtProgramResDto> ptProgramResDtoList = ptProgramService.getPtProgramList(member.getEmail());
+        List<PtProgramResDto> ptProgramResDtoList = ptProgramService.getPtProgramListFromMember(member);
 
         return converter.toTrainerInfoResDto(trainerInfo, member, imgResDto, careerImgList, ptProgramResDtoList);
     }
