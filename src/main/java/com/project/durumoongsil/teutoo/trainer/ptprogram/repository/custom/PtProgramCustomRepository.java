@@ -1,4 +1,4 @@
-package com.project.durumoongsil.teutoo.trainer.ptprogram.repository;
+package com.project.durumoongsil.teutoo.trainer.ptprogram.repository.custom;
 
 import com.project.durumoongsil.teutoo.trainer.ptprogram.domain.PtProgram;
 
