@@ -2,7 +2,6 @@ package com.project.durumoongsil.teutoo.trainer.info.service;
 
 import com.project.durumoongsil.teutoo.common.domain.File;
 import com.project.durumoongsil.teutoo.common.dto.ImgResDto;
-import com.project.durumoongsil.teutoo.common.repository.FileRepository;
 import com.project.durumoongsil.teutoo.common.service.FileService;
 import com.project.durumoongsil.teutoo.exception.NotFoundUserException;
 import com.project.durumoongsil.teutoo.member.domain.Member;
@@ -12,7 +11,7 @@ import com.project.durumoongsil.teutoo.trainer.info.domain.TrainerInfo;
 import com.project.durumoongsil.teutoo.trainer.info.dto.*;
 import com.project.durumoongsil.teutoo.trainer.info.repository.CareerImgRepository;
 import com.project.durumoongsil.teutoo.trainer.info.repository.TrainerInfoRepository;
-import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.PtProgramResDto;
+import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.response.PtProgramResDto;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.service.PtProgramService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -148,7 +147,7 @@ class TrainerInfoServiceTest {
         }
 
         when(careerImgRepository.findByTrainerIdWithFile(1L)).thenReturn(mockCareerImgList);
-        when(ptProgramService.getPtProgramList(testMember.getEmail())).thenReturn(mockPtProgramImgList);
+        when(ptProgramService.getPtProgramListFromMember(testMember)).thenReturn(mockPtProgramImgList);
 
         // 호출
         TrainerInfoResDto trainerInfoResDto = trainerInfoService.getInfo(1L);

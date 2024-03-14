@@ -1,8 +1,8 @@
 package com.project.durumoongsil.teutoo.trainer.ptprogram.controller;
 
-import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.PtProgramManageResDto;
-import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.PtProgramRegDto;
-import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.PtProgramUpdateDto;
+import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.response.PtProgramManageResDto;
+import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.request.PtProgramRegDto;
+import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.request.PtProgramUpdateDto;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.service.PtProgramService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

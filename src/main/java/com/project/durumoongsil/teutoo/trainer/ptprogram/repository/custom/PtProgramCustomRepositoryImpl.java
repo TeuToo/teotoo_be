@@ -1,4 +1,4 @@
-package com.project.durumoongsil.teutoo.trainer.ptprogram.repository;
+package com.project.durumoongsil.teutoo.trainer.ptprogram.repository.custom;
 
 import com.project.durumoongsil.teutoo.common.domain.QFile;
 import com.project.durumoongsil.teutoo.member.domain.QMember;
@@ -51,10 +51,7 @@ public class PtProgramCustomRepositoryImpl implements PtProgramCustomRepository 
                 )
                 .fetchFirst();
 
-        if (ptProgram == null)
-            return Optional.empty();
-
-        return Optional.of(ptProgram);
+        return Optional.ofNullable(ptProgram);
     }
 
 

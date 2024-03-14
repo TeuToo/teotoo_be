@@ -172,9 +172,14 @@ public class ChatService {
     }
 
     private void setUnReadChatCnt(ChatPreviewResDto chatPreviewResDto, ChatPreviewQueryDto chatPreviewQueryDto, boolean isOtherUserBMember) {
-        long unReadMsgCnt = isOtherUserBMember ?
-                chatPreviewQueryDto.getAMemberChatIdx() - chatPreviewQueryDto.getBMemberChatIdx() :
-                chatPreviewQueryDto.getBMemberChatIdx() - chatPreviewQueryDto.getAMemberChatIdx();
+
+        // 본인이 A member 일 때, 안읽은 메시지 개수
+        long unReadMsgCntFromBMember = chatPreviewQueryDto.getAMemberChatIdx() - chatPreviewQueryDto.getBMemberChatIdx();
+        // 본인이 B member 일 때, 안읽은 메시지 개수
+        long unReadMsgCntFromAMember = chatPreviewQueryDto.getBMemberChatIdx() - chatPreviewQueryDto.getAMemberChatIdx();
+
+        long unReadMsgCnt = isOtherUserBMember ? unReadMsgCntFromBMember : unReadMsgCntFromAMember;
+        // 0보다 작으면, 0으로 초기화
         chatPreviewResDto.setUnReadChatCnt(Math.max(unReadMsgCnt, 0));
     }
 

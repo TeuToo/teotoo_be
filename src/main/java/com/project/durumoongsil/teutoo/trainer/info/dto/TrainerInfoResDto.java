@@ -1,7 +1,7 @@
 package com.project.durumoongsil.teutoo.trainer.info.dto;
 
 import com.project.durumoongsil.teutoo.common.dto.ImgResDto;
-import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.PtProgramResDto;
+import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.response.PtProgramResDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
