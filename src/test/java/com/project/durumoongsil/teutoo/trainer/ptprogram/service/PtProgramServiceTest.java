@@ -10,10 +10,10 @@ import com.project.durumoongsil.teutoo.security.service.SecurityService;
 import com.project.durumoongsil.teutoo.trainer.info.repository.TrainerInfoRepository;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.domain.PtImg;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.domain.PtProgram;
-import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.PtProgramManageResDto;
-import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.PtProgramRegDto;
-import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.PtProgramResDto;
-import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.PtProgramUpdateDto;
+import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.response.PtProgramManageResDto;
+import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.request.PtProgramRegDto;
+import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.response.PtProgramResDto;
+import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.request.PtProgramUpdateDto;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.repository.PtImgRepository;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.repository.PtProgramRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -28,6 +28,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -68,7 +69,7 @@ class PtProgramServiceTest {
             imgList.add(mockMultipartFile);
         }
 
-        PtProgramRegDto ptProgramRegDto = getTestPtProgramRegDto(imgList);
+        PtProgramRegDto ptProgramRegDto = this.getTestPtProgramRegDto(imgList);
 
         when(securityService.getLoginedUserEmail()).thenReturn("aaa@aaa.com");
         when(trainerInfoRepository.findTrainerInfoIdByMemberEmail("aaa@aaa.com"))
@@ -87,7 +88,8 @@ class PtProgramServiceTest {
     private PtProgramRegDto getTestPtProgramRegDto(List<MultipartFile> addImgList) {
         PtProgramRegDto ptProgramRegDto = new PtProgramRegDto();
         ptProgramRegDto.setPrice(99999);
-        ptProgramRegDto.setPtCnt(9999);
+        ptProgramRegDto.setAvailableStartTime(LocalTime.MIN);
+        ptProgramRegDto.setAvailableStartTime(LocalTime.MAX);
         ptProgramRegDto.setContent("abc");
         ptProgramRegDto.setTitle("abc");
         ptProgramRegDto.setAddPtImgList(addImgList);
@@ -97,7 +99,8 @@ class PtProgramServiceTest {
 
     private void verifyPtProgram(PtProgram savePtProgram, PtProgramRegDto ptProgramRegDto) {
         assertEquals(savePtProgram.getPrice(), ptProgramRegDto.getPrice());
-        assertEquals(savePtProgram.getPtCnt(), ptProgramRegDto.getPtCnt());
+        assertEquals(savePtProgram.getAvailableStartTime(), ptProgramRegDto.getAvailableStartTime());
+        assertEquals(savePtProgram.getAvailableEndTime(), ptProgramRegDto.getAvailableEndTime());
         assertEquals(savePtProgram.getTitle(), ptProgramRegDto.getTitle());
         assertEquals(savePtProgram.getContent(), ptProgramRegDto.getContent());
         assertEquals(savePtProgram.getTrainerInfo().getId(), 1L);
@@ -140,7 +143,8 @@ class PtProgramServiceTest {
         ptProgramUpdateDto.setTitle("nice");
         ptProgramUpdateDto.setContent("nice");
         ptProgramUpdateDto.setPrice(99);
-        ptProgramUpdateDto.setPtCnt(99);
+        ptProgramUpdateDto.setAvailableStartTime(LocalTime.MIDNIGHT);
+        ptProgramUpdateDto.setAvailableStartTime(LocalTime.NOON);
         ptProgramUpdateDto.setDelPtImgList(delPtImgList);
         ptProgramUpdateDto.setAddPtImgList(new ArrayList<>());;
 
@@ -157,19 +161,22 @@ class PtProgramServiceTest {
 
     private void verifyPtProgramUpdate(PtProgram ptProgramMock, PtProgramUpdateDto ptProgramUpdateDto) {
         ArgumentCaptor<Integer> priceCaptor = ArgumentCaptor.forClass(Integer.class);
-        ArgumentCaptor<Integer> ptCntCaptor = ArgumentCaptor.forClass(Integer.class);
+        ArgumentCaptor<LocalTime> startTimeCaptor = ArgumentCaptor.forClass(LocalTime.class);
+        ArgumentCaptor<LocalTime> endTimeCaptor = ArgumentCaptor.forClass(LocalTime.class);
         ArgumentCaptor<String> titleCaptor = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<String> contentCaptor = ArgumentCaptor.forClass(String.class);
 
         verify(ptProgramMock).updatePrice(priceCaptor.capture());
-        verify(ptProgramMock).updatePtCnt(ptCntCaptor.capture());
+        verify(ptProgramMock).updateAvailableStartTime(startTimeCaptor.capture());
+        verify(ptProgramMock).updateAvailableEndTime(endTimeCaptor.capture());
         verify(ptProgramMock).updateTitle(titleCaptor.capture());
         verify(ptProgramMock).updateContent(contentCaptor.capture());
 
-        assertEquals(ptCntCaptor.getValue(), ptProgramUpdateDto.getPtCnt());
         assertEquals(priceCaptor.getValue(), ptProgramUpdateDto.getPrice());
         assertEquals(titleCaptor.getValue(), ptProgramUpdateDto.getTitle());
         assertEquals(contentCaptor.getValue(), ptProgramUpdateDto.getContent());
+        assertEquals(startTimeCaptor.getValue(), ptProgramUpdateDto.getAvailableStartTime());
+        assertEquals(endTimeCaptor.getValue(), ptProgramUpdateDto.getAvailableEndTime());
     }
 
     private void verifyImgDeletion(List<PtImg> ptImgList, List<String> delPtImgList) {
@@ -186,20 +193,24 @@ class PtProgramServiceTest {
     @Test
     @DisplayName("PT 프로그램 관리 페이지 데이터 조회")
     public void getPtProgramListForManagementTest() {
-        String memberEmail = "aaa@aaa.com";
 
-        when(securityService.getLoginedUserEmail()).thenReturn(memberEmail);
-        Member testMember = getTestMember();
+        // mock 설정
 
-        when(memberRepository.findMemberByEmail(memberEmail)).thenReturn(Optional.of(testMember));
-        List<PtProgram> testPtProgramList = getTestPtProgramList();
+        Member testMember = this.getTestMember();
+        when(securityService.getLoginedUserEmail()).thenReturn(testMember.getEmail());
 
-        when(ptProgramRepository.findByMemberEmailWithPtImg(memberEmail)).thenReturn(testPtProgramList);
+
+        when(memberRepository.findMemberByEmail(getTestMember().getEmail())).thenReturn(Optional.of(testMember));
+        List<PtProgram> testPtProgramList = this.getTestPtProgramList();
+
+        when(ptProgramRepository.findByMemberEmailWithPtImg(getTestMember().getEmail())).thenReturn(testPtProgramList);
 
         when(fileService.getImgUrl(anyString(), anyString())).thenReturn("testUrl");
 
+        // 테스트 호출
         PtProgramManageResDto ptProgramManageResDto = ptProgramService.getPtProgramListForManagement();
 
+        // 검증
         assertEquals(ptProgramManageResDto.getTrainerName(), testMember.getName());
         List<PtProgramResDto> ptProgramResDtoList = ptProgramManageResDto.getPtProgramResList();
         for (int i = 1; i <= 3; i++) {
@@ -208,7 +219,8 @@ class PtProgramServiceTest {
             assertEquals(ptProgramResDto.getContent(), "good" + i);
             assertEquals(ptProgramResDto.getPtProgramId(), i);
             assertEquals(ptProgramResDto.getPrice(), i);
-            assertEquals(ptProgramResDto.getPtCnt(), i);
+            assertEquals(ptProgramResDto.getAvailableStartTime(), LocalTime.MIN);
+            assertEquals(ptProgramResDto.getAvailableEndTime(), LocalTime.MAX);
 
             List<ImgResDto> imgResDtoList = ptProgramResDto.getPtProgramImgList();
             String[] nameStr = {"a", "b", "c"};
@@ -238,7 +250,8 @@ class PtProgramServiceTest {
                     .title("good" + i)
                     .content("good" + i)
                     .price((int) i)
-                    .ptCnt((int) i)
+                    .availableStartTime(LocalTime.MIN)
+                    .availableEndTime(LocalTime.MAX)
                     .build();
             ReflectionTestUtils.setField(testPtProgram, "id", (long) i);
 
