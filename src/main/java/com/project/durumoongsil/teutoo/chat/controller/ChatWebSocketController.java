@@ -2,7 +2,6 @@ package com.project.durumoongsil.teutoo.chat.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.project.durumoongsil.teutoo.chat.constants.ChatErrorCode;
 import com.project.durumoongsil.teutoo.chat.dto.request.ChatReadReqDto;
 import com.project.durumoongsil.teutoo.chat.dto.request.ChatSendTextMsgDto;
@@ -40,7 +39,7 @@ public class ChatWebSocketController {
     private final SimpMessagingTemplate template;
     private final ChatWebSocketService chatWebSocketService;
 
-    private ObjectMapper om = new ObjectMapper().registerModule(new JavaTimeModule());
+    private final ObjectMapper om;
 
     @Operation(summary = "채팅 중 이미지 메시지 전송", description = "채팅 중 상대방 에게 이미지 메시지 전송하기 위한 API입니다.")
     @ApiResponses({

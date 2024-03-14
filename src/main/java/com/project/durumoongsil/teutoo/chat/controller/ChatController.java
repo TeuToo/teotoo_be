@@ -22,8 +22,6 @@ public class ChatController {
 
     private final ChatService chatService;
 
-    private ObjectMapper om = new ObjectMapper().registerModule(new JavaTimeModule());
-
     @GetMapping("/activation")
     @Operation(summary = "대화방 데이터 조회", description = "채팅을 하기전 상대방과의 대화방 관련 데이터를 얻기 위한 API 입니다.")
     @ApiResponses({
