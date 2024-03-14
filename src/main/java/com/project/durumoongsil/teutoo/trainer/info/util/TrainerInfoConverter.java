@@ -6,7 +6,7 @@ import com.project.durumoongsil.teutoo.trainer.info.domain.TrainerInfo;
 import com.project.durumoongsil.teutoo.trainer.info.dto.TrainerInfoResDto;
 import com.project.durumoongsil.teutoo.trainer.info.dto.TrainerSummaryResDto;
 import com.project.durumoongsil.teutoo.trainer.info.dto.TrainerUpdateInfoDto;
-import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.PtProgramResDto;
+import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.response.PtProgramResDto;
 
 import java.util.List;
 
