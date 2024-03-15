@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class ChatMsgQueryDTO {
+public class ChatMsgQueryDto {
     private Long msgIdx;
 
     private Long senderId;
@@ -31,7 +31,7 @@ public class ChatMsgQueryDTO {
     private Boolean programConfirm;
 
     @QueryProjection
-    public ChatMsgQueryDTO(Long msgIdx, Long senderId, MsgType contentType, LocalDateTime createdAt, String textContent,
+    public ChatMsgQueryDto(Long msgIdx, Long senderId, MsgType contentType, LocalDateTime createdAt, String textContent,
                            String imgPath, String imgName, String programName, String programSchedule, Boolean programConfirm) {
         this.msgIdx = msgIdx;
         this.senderId = senderId;
