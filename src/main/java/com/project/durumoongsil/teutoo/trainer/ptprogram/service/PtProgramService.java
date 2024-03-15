@@ -5,6 +5,8 @@ import com.project.durumoongsil.teutoo.common.domain.FilePath;
 import com.project.durumoongsil.teutoo.common.dto.ImgResDto;
 import com.project.durumoongsil.teutoo.common.service.FileService;
 import com.project.durumoongsil.teutoo.exception.NotFoundUserException;
+import com.project.durumoongsil.teutoo.exception.PtProgramNotFoundException;
+import com.project.durumoongsil.teutoo.exception.TrainerInfoNotFoundException;
 import com.project.durumoongsil.teutoo.member.domain.Member;
 import com.project.durumoongsil.teutoo.member.repository.MemberRepository;
 import com.project.durumoongsil.teutoo.security.service.SecurityService;
@@ -60,7 +62,7 @@ public class PtProgramService {
 
         // trainer info id 만 조회,
         Long trainerInfoId = trainerInfoRepository.findTrainerInfoIdByMemberEmail(userEmail)
-                .orElseThrow(() -> new NotFoundUserException("트레이너 소개 등록 정보를 찾을 수 없습니다."));
+                .orElseThrow(TrainerInfoNotFoundException::new);
 
         return TrainerInfo.builder()
                 .id(trainerInfoId)
@@ -74,7 +76,7 @@ public class PtProgramService {
 
         // 프로그램과 이미지,파일 엔티티 한번에 조회
         PtProgram ptProgram = ptProgramRepository.findByIdAndMemberEmailWithPtImgAndFile(programId, userEmail)
-                .orElseThrow(() -> new NotFoundUserException("트레이너 프로그램 등록 정보를 찾을 수 없습니다."));
+                .orElseThrow(PtProgramNotFoundException::new);
 
         // PtProgram 프로퍼티 값 업데이트
         this.updatePtProgram(ptProgramUpdateDto, ptProgram);
@@ -140,7 +142,7 @@ public class PtProgramService {
         String memberEmail = securityService.getLoginedUserEmail();
 
         return memberRepository.findMemberByEmail(memberEmail)
-                .orElseThrow(() -> new NotFoundUserException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(NotFoundUserException::new);
     }
 
 
@@ -148,19 +150,52 @@ public class PtProgramService {
     public List<PtProgramResDto> getPtProgramListFromMember(Member member) {
         List<PtProgram> ptProgramList = ptProgramRepository.findByMemberEmailWithPtImg(member.getEmail());
 
-        return ptProgramList.stream().map(ptProgram -> {
-
-            // 각 프로그램에 대한 이미지 리스트를 ImgResDto로 획득
-            List<ImgResDto> imgResDtoList = ptProgram.getPtImgList()
-                    .stream().map(ptImg -> {
-                return ImgResDto.create(ptImg.getFile().getFileName(),
-                        fileService.getImgUrl(ptImg.getFile().getFilePath(), ptImg.getFile().getFileName())
-                );
-            }).toList();
-
-            return ptProgramConverter.toPtProgramResDto(ptProgram, imgResDtoList);
-        }).toList();
+        return ptProgramList
+                .stream()
+                .map(this::toPtProgramToPtProgramResDto)
+                .toList();
     }
+
+    private PtProgramResDto toPtProgramToPtProgramResDto(PtProgram ptProgram) {
+        List<ImgResDto> imgResDtoList = this
+                .toPtImgListToImgResDtoList(ptProgram.getPtImgList());
+        return ptProgramConverter.toPtProgramResDto(ptProgram, imgResDtoList);
+    }
+
+    private List<ImgResDto> toPtImgListToImgResDtoList(List<PtImg> ptImgList) {
+
+        return ptImgList.stream()
+                .map(this::toPtImgToImgResDto)
+                .toList();
+    }
+
+    private ImgResDto toPtImgToImgResDto(PtImg ptImg) {
+        String fileName = ptImg.getFile().getFileName();
+        String imgUrl = fileService.getImgUrl(ptImg.getFile().getFilePath(), fileName);
+        return ImgResDto.create(fileName, imgUrl);
+    }
+
+    public PtProgramResDto getPtProgram(Long ptProgramId) {
+        PtProgram ptProgram = ptProgramRepository
+                .findByIdWithPtImgAndFile(ptProgramId).orElseThrow(PtProgramNotFoundException::new);
+
+        Long trainerId = ptProgramRepository
+                .findTrainerIdById(ptProgramId).orElseThrow(NotFoundUserException::new);
+
+        List<ImgResDto> imgResDtoList =
+                this.toPtImgListToImgResDtoList(ptProgram.getPtImgList());
+
+        return PtProgramResDto
+                .builder()
+                .trainerId(trainerId)
+                .ptProgramId(ptProgram.getId())
+                .title(ptProgram.getTitle())
+                .content(ptProgram.getContent())
+                .price(ptProgram.getPrice())
+                .ptProgramImgList(imgResDtoList)
+                .build();
+    }
+
 
     @Transactional
     public void deletePtProgram(Long programId) {
@@ -172,7 +207,7 @@ public class PtProgramService {
             2. 프로그램 삭제
          */
         PtProgram ptProgram = ptProgramRepository.findByIdAndMemberEmailWithPtImgAndFile(programId, memberEmail)
-                .orElseThrow(() -> new NotFoundUserException("트레이너 프로그램 등록 정보를 찾을 수 없습니다."));
+                .orElseThrow(PtProgramNotFoundException::new);
 
         // pt program 이미지 삭제 및 엔티티 삭제
         deletePtProgramImg(ptProgram.getPtImgList());

@@ -271,6 +271,37 @@ class PtProgramServiceTest {
         return testPtProgramList;
     }
 
+    @Test
+    @DisplayName("PT 프로그램 ID로 조회 결과 테스트")
+    public void getPtProgramTest() {
+        Long testPtProgramId = 123L;
+        Long testTrainerId = 1L;
+
+        PtProgram testPtProgram = this.getTestPtProgramList().get(0);
+
+        when(ptProgramRepository.findByIdWithPtImgAndFile(testPtProgramId))
+                .thenReturn(Optional.of(testPtProgram));
+
+        when(ptProgramRepository.findTrainerIdById(testPtProgramId))
+                .thenReturn(Optional.of(testTrainerId));
+
+        when(fileService.getImgUrl(anyString(), anyString()))
+                .thenReturn("testUrl");
+
+        PtProgramResDto ptProgramResDto = ptProgramService.getPtProgram(testPtProgramId);
+
+        assertEquals(testTrainerId, ptProgramResDto.getTrainerId());
+        assertEquals(testPtProgram.getId(), ptProgramResDto.getPtProgramId());
+        assertEquals(testPtProgram.getPrice(), ptProgramResDto.getPrice());
+        assertEquals(testPtProgram.getTitle(), ptProgramResDto.getTitle());
+        assertEquals(testPtProgram.getContent(), ptProgramResDto.getContent());
+
+        for (ImgResDto imgResDto : ptProgramResDto.getPtProgramImgList()) {
+            assertEquals("testUrl", imgResDto.getImgUrl());
+
+        }
+    }
+
 
 
 }

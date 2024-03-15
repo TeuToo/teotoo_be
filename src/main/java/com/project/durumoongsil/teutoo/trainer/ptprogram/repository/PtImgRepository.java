@@ -15,10 +15,4 @@ public interface PtImgRepository extends JpaRepository<PtImg, Long> {
     @Modifying
     @Query("delete from PtImg pi where pi.id in :idList")
     void deleteAllById(@Param("idList") List<Long> idList);
-
-    @Query("select pi from PtImg pi " +
-            "inner join pi.ptProgram " +
-            "inner join fetch pi.file " +
-            "where pi.ptProgram.id = :ptProgramId and pi.file.fileName in :imgNameList")
-    List<PtImg> findAllByProgramIdAndImgNameListWithFile(@Param("ptProgramId")Long ptProgramId, @Param("imgNameList")List<String> imgNameList);
 }

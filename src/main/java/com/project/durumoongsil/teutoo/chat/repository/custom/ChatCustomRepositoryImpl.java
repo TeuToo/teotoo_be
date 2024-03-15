@@ -96,7 +96,7 @@ public class ChatCustomRepositoryImpl implements ChatCustomRepository {
                                     QbMember.profileImageName,
                                     qChat.aMsgIdx,
                                     qChat.bMsgIdx,
-                                    new QChatMsgQueryDTO(
+                                    new QChatMsgQueryDto(
                                             qChatMsg.id,
                                             qChatMsg.sender.id,
                                             qChatMsg.msgType,

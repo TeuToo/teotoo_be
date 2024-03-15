@@ -16,6 +16,9 @@ import java.util.List;
 @Builder
 public class PtProgramResDto {
 
+    @Schema(description = "트레이너 ID")
+    private long trainerId;
+
     @Schema(description = "프로그램 ID")
     private long ptProgramId;
 

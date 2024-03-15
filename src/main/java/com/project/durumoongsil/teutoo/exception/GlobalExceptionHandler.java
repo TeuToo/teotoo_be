@@ -44,6 +44,18 @@ public class GlobalExceptionHandler {
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(PtProgramNotFoundException.class)
+    public RestError handlingPtProgramNotFoundException(PtProgramNotFoundException ex) {
+        return new RestError(HttpStatus.BAD_REQUEST.toString(), ex.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(TrainerInfoNotFoundException.class)
+    public RestError handlingTrainerInfoNotFoundException(TrainerInfoNotFoundException ex) {
+        return new RestError(HttpStatus.BAD_REQUEST.toString(), ex.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(DuplicateEmailException.class)
     public RestError handlingDuplicationEmailException(DuplicateEmailException ex) {
         return new RestError(HttpStatus.BAD_REQUEST.toString(), ex.getMessage());

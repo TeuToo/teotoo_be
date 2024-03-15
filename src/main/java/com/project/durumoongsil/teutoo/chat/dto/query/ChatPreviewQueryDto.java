@@ -16,11 +16,11 @@ public class ChatPreviewQueryDto {
     private String bMemberImgName;
     private Long aMemberChatIdx;
     private Long bMemberChatIdx;
-    private ChatMsgQueryDTO chatMsgQueryDTO;
+    private ChatMsgQueryDto chatMsgQueryDTO;
 
     @QueryProjection
     public ChatPreviewQueryDto(Long aMemberId, Long bMemberId, String aMemberName, String bMemberName, String aMemberImgName,
-                               String bMemberImgName, Long aMemberChatIdx, Long bMemberChatIdx, ChatMsgQueryDTO chatMsgQueryDTO) {
+                               String bMemberImgName, Long aMemberChatIdx, Long bMemberChatIdx, ChatMsgQueryDto chatMsgQueryDTO) {
         this.aMemberId = aMemberId;
         this.bMemberId = bMemberId;
         this.aMemberName = aMemberName;

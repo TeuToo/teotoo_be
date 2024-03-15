@@ -1,7 +1,7 @@
 package com.project.durumoongsil.teutoo.chat.service;
 
 import com.project.durumoongsil.teutoo.chat.domain.*;
-import com.project.durumoongsil.teutoo.chat.dto.query.ChatMsgQueryDTO;
+import com.project.durumoongsil.teutoo.chat.dto.query.ChatMsgQueryDto;
 import com.project.durumoongsil.teutoo.chat.dto.query.ChatPreviewQueryDto;
 import com.project.durumoongsil.teutoo.chat.dto.response.ChatActivationResDTO;
 import com.project.durumoongsil.teutoo.chat.dto.response.ChatMsgResDTO;
@@ -56,7 +56,7 @@ public class ChatService {
             chat = this.saveChat(sender, receiver);
         } else {
             // 존재하면, 최근 채팅목록 불러옴,
-            List<ChatMsgQueryDTO> chatMsgQueryList =
+            List<ChatMsgQueryDto> chatMsgQueryList =
                     chatMsgRepository.findBySenderIdAndReceiverId(sender.getId(), receiver.getId());
 
             chatMsgList = chatMsgQueryList.stream().map(this::toChatMessageResDTO).toList();
@@ -107,7 +107,7 @@ public class ChatService {
         return UUID.randomUUID().toString();
     }
 
-    private ChatMsgResDTO toChatMessageResDTO(ChatMsgQueryDTO chatMsgQueryDTO) {
+    private ChatMsgResDTO toChatMessageResDTO(ChatMsgQueryDto chatMsgQueryDTO) {
 
         ChatMsgResDTO chatMessageResDTO = new ChatMsgResDTO();
         chatMessageResDTO.setCreatedAt(chatMsgQueryDTO.getCreatedAt());
