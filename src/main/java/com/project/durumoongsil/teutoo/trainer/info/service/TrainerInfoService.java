@@ -5,6 +5,7 @@ import com.project.durumoongsil.teutoo.common.domain.FilePath;
 import com.project.durumoongsil.teutoo.common.dto.ImgResDto;
 import com.project.durumoongsil.teutoo.common.service.FileService;
 import com.project.durumoongsil.teutoo.exception.NotFoundUserException;
+import com.project.durumoongsil.teutoo.exception.TrainerInfoNotFoundException;
 import com.project.durumoongsil.teutoo.member.domain.Member;
 import com.project.durumoongsil.teutoo.trainer.info.domain.CareerImg;
 import com.project.durumoongsil.teutoo.trainer.info.domain.TrainerInfo;
@@ -82,7 +83,7 @@ public class TrainerInfoService {
     // 트레이너 소개 페이지 데이터 조회
     public TrainerInfoResDto getInfo(Long trainerId) {
         Member member = trainerInfoRepository.findMemberByIdWithTrainerInfo(trainerId)
-                .orElseThrow(() -> new NotFoundUserException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(NotFoundUserException::new);
 
         return this.getTrainerInfoDto(member);
     }
@@ -99,7 +100,7 @@ public class TrainerInfoService {
         // 만약, 트레이너 소개 페이지가 등록되어있지 않다면,
         TrainerInfo trainerInfo = member.getTrainerInfo();
         if (trainerInfo == null) {
-            throw new NotFoundUserException("해당 사용자의 소개 데이터를 찾을 수 없습니다.");
+            throw new TrainerInfoNotFoundException();
         }
 
         List<ImgResDto> careerImgList = new ArrayList<>();
