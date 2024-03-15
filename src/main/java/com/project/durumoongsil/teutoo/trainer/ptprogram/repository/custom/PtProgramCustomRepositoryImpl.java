@@ -67,5 +67,18 @@ public class PtProgramCustomRepositoryImpl implements PtProgramCustomRepository 
         return Optional.ofNullable(ptProgram);
     }
 
+    public Optional<Long> findTrainerIdById(Long ptProgramId) {
+        Long trainerId =  queryFactory
+                .select(qMember.id)
+                .from(qPtProgram)
+                .innerJoin(qPtProgram.trainerInfo, qTrainerInfo)
+                .innerJoin(qTrainerInfo.member, qMember)
+                .where(
+                        qPtProgram.id.eq(ptProgramId)
+                ).fetchFirst();
+
+        return Optional.ofNullable(trainerId);
+    }
+
 
 }

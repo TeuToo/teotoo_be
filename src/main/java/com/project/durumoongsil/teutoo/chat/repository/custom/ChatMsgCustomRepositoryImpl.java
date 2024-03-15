@@ -3,7 +3,7 @@ package com.project.durumoongsil.teutoo.chat.repository.custom;
 import com.project.durumoongsil.teutoo.chat.domain.QChat;
 import com.project.durumoongsil.teutoo.chat.domain.QChatMsg;
 import com.project.durumoongsil.teutoo.chat.dto.query.ChatMsgQueryDto;
-import com.project.durumoongsil.teutoo.chat.dto.query.QChatMsgQueryDTO;
+import com.project.durumoongsil.teutoo.chat.dto.query.QChatMsgQueryDto;
 import com.project.durumoongsil.teutoo.member.domain.QMember;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +30,7 @@ public class ChatMsgCustomRepositoryImpl implements ChatMsgCustomRepository{
         Long bMemberId = Math.max(senderId, receiverId);
 
         return queryFactory
-                .select(new QChatMsgQueryDTO(
+                .select(new QChatMsgQueryDto(
                         qChatMsg.id,
                         qChatMsg.sender.id,
                         qChatMsg.msgType,

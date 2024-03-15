@@ -150,19 +150,52 @@ public class PtProgramService {
     public List<PtProgramResDto> getPtProgramListFromMember(Member member) {
         List<PtProgram> ptProgramList = ptProgramRepository.findByMemberEmailWithPtImg(member.getEmail());
 
-        return ptProgramList.stream().map(ptProgram -> {
-
-            // 각 프로그램에 대한 이미지 리스트를 ImgResDto로 획득
-            List<ImgResDto> imgResDtoList = ptProgram.getPtImgList()
-                    .stream().map(ptImg -> {
-                return ImgResDto.create(ptImg.getFile().getFileName(),
-                        fileService.getImgUrl(ptImg.getFile().getFilePath(), ptImg.getFile().getFileName())
-                );
-            }).toList();
-
-            return ptProgramConverter.toPtProgramResDto(ptProgram, imgResDtoList);
-        }).toList();
+        return ptProgramList
+                .stream()
+                .map(this::toPtProgramToPtProgramResDto)
+                .toList();
     }
+
+    private PtProgramResDto toPtProgramToPtProgramResDto(PtProgram ptProgram) {
+        List<ImgResDto> imgResDtoList = this
+                .toPtImgListToImgResDtoList(ptProgram.getPtImgList());
+        return ptProgramConverter.toPtProgramResDto(ptProgram, imgResDtoList);
+    }
+
+    private List<ImgResDto> toPtImgListToImgResDtoList(List<PtImg> ptImgList) {
+
+        return ptImgList.stream()
+                .map(this::toPtImgToImgResDto)
+                .toList();
+    }
+
+    private ImgResDto toPtImgToImgResDto(PtImg ptImg) {
+        String fileName = ptImg.getFile().getFileName();
+        String imgUrl = fileService.getImgUrl(ptImg.getFile().getFilePath(), fileName);
+        return ImgResDto.create(fileName, imgUrl);
+    }
+
+    public PtProgramResDto getPtProgram(Long ptProgramId) {
+        PtProgram ptProgram = ptProgramRepository
+                .findByIdWithPtImgAndFile(ptProgramId).orElseThrow(PtProgramNotFoundException::new);
+
+        Long trainerId = ptProgramRepository
+                .findTrainerIdById(ptProgramId).orElseThrow(NotFoundUserException::new);
+
+        List<ImgResDto> imgResDtoList =
+                this.toPtImgListToImgResDtoList(ptProgram.getPtImgList());
+
+        return PtProgramResDto
+                .builder()
+                .trainerId(trainerId)
+                .ptProgramId(ptProgram.getId())
+                .title(ptProgram.getTitle())
+                .content(ptProgram.getContent())
+                .price(ptProgram.getPrice())
+                .ptProgramImgList(imgResDtoList)
+                .build();
+    }
+
 
     @Transactional
     public void deletePtProgram(Long programId) {

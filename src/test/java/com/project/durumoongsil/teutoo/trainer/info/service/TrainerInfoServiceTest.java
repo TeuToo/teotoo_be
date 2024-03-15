@@ -3,7 +3,7 @@ package com.project.durumoongsil.teutoo.trainer.info.service;
 import com.project.durumoongsil.teutoo.common.domain.File;
 import com.project.durumoongsil.teutoo.common.dto.ImgResDto;
 import com.project.durumoongsil.teutoo.common.service.FileService;
-import com.project.durumoongsil.teutoo.exception.NotFoundUserException;
+import com.project.durumoongsil.teutoo.exception.TrainerInfoNotFoundException;
 import com.project.durumoongsil.teutoo.member.domain.Member;
 import com.project.durumoongsil.teutoo.member.domain.Role;
 import com.project.durumoongsil.teutoo.trainer.info.domain.CareerImg;
@@ -188,7 +188,7 @@ class TrainerInfoServiceTest {
 
         when(trainerInfoRepository.findMemberByIdWithTrainerInfo(1L)).thenReturn(Optional.of(testMember));
 
-        assertThrows(NotFoundUserException.class, () -> trainerInfoService.getInfo(1L));
+        assertThrows(TrainerInfoNotFoundException.class, () -> trainerInfoService.getInfo(1L));
     }
 
     // 삭제될 이미지 존재시 테스트 케이스 작성해야함..
