@@ -54,5 +54,18 @@ public class PtProgramCustomRepositoryImpl implements PtProgramCustomRepository 
         return Optional.ofNullable(ptProgram);
     }
 
+    public Optional<PtProgram> findByIdWithPtImgAndFile(Long ptProgramId) {
+        PtProgram ptProgram = queryFactory
+                .selectFrom(qPtProgram)
+                .leftJoin(qPtProgram.ptImgList, qPtImg).fetchJoin()
+                .leftJoin(qPtImg.file, qFile).fetchJoin()
+                .where(
+                        qPtProgram.id.eq(ptProgramId)
+                )
+                .fetchFirst();
+
+        return Optional.ofNullable(ptProgram);
+    }
+
 
 }

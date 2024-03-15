@@ -8,4 +8,5 @@ import java.util.Optional;
 public interface PtProgramCustomRepository {
     List<PtProgram> findByMemberEmailWithPtImg(String email);
     Optional<PtProgram> findByIdAndMemberEmailWithPtImgAndFile(Long ptProgramId, String email);
+    Optional<PtProgram> findByIdWithPtImgAndFile(Long ptProgramId);
 }
