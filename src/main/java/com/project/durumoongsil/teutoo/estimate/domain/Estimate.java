@@ -28,4 +28,11 @@ public class Estimate extends BaseMemberTimeEntity {
     @ToString.Exclude
     private Member member;
 
+    @Builder
+    public Estimate(Long id, int price, String ptAddress, Member member) {
+        this.id = id;
+        this.price = price;
+        this.ptAddress = ptAddress;
+        this.member = member;
+    }
 }
