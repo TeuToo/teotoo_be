@@ -46,7 +46,7 @@ public class TrainerEstimateController {
         return frontService.createEstimateResult(createTrainerEstimateDto);
     }
 
-    @Operation(summary = "트레이너 견적서 전체 조회", description = "일반 유저 입장에서 견적서 버튼 클릭시 트레이너가 작성한 견적서 목록")
+    @Operation(summary = "유저 견적서 전체 조회", description = "트레이너 입장에서 일반 유저가 작성한 견적서의 전체 목록")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "견적서 목록 조회 성공"),
             @ApiResponse(responseCode = "400", description = "파라미터 오류")
