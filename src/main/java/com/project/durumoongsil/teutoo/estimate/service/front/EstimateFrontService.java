@@ -45,13 +45,13 @@ public class EstimateFrontService {
      * 견적서 단건 조회
      */
     public RestResult searchEstimateResult(Long estimateId) {
-        EntityToDto();
+        EntityToSearchDto();
         Estimate estimate = estimateService.searchEstimate(estimateId);
         return new RestResult(modelMapper.map(estimate, EstimateSearchDto.class));
     }
 
     public RestResult updateEstimateResult(Long estimateId, UpdateEstimateDto updateEstimateDto, String currentLoginId) {
-        EntityToDto();
+        EntityToSearchDto();
         Estimate estimate = estimateService.updateEstimate(estimateId, updateEstimateDto, currentLoginId);
         return new RestResult(modelMapper.map(estimate,EstimateSearchDto.class));
     }
@@ -64,6 +64,12 @@ public class EstimateFrontService {
     private void EntityToDto() {
         modelMapper.typeMap(Estimate.class,EstimatePageDto.class).addMappings(mapper-> {
             mapper.map(estimate -> estimate.getMember().getName(), EstimatePageDto::setName);
+        });
+    }
+
+    private void EntityToSearchDto() {
+        modelMapper.typeMap(Estimate.class,EstimateSearchDto.class).addMappings(mapper-> {
+            mapper.map(estimate -> estimate.getMember().getName(), EstimateSearchDto::setName);
         });
     }
 
