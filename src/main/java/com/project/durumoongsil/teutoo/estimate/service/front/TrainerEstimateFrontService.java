@@ -43,7 +43,7 @@ public class TrainerEstimateFrontService {
     public RestResult searchAllEstimateResult(Long cursorId, int size) {
         List<Estimate> allUserEstimate = estimateService.searchAllUserEstimate(cursorId, size);
         List<PageUserEstimateDto> userEstimateDtoList = allUserEstimate.stream()
-                .map(estimate -> new PageUserEstimateDto(estimate.getPrice(), estimate.getMember().getName(), fileService.getImgUrl("member_profile", estimate.getMember().getProfileImageName())))
+                .map(estimate -> new PageUserEstimateDto(estimate.getId(), estimate.getPrice(), estimate.getMember().getName(), fileService.getImgUrl("member_profile", estimate.getMember().getProfileImageName())))
                 .toList();
         return new RestResult(userEstimateDtoList);
     }
@@ -53,9 +53,7 @@ public class TrainerEstimateFrontService {
      */
     public RestResult searchEstimateResult(Long estimateId) {
         TrainerEstimate trainerEstimate = estimateService.searchTrainerEstimate(estimateId);
-        SearchEstimateProgramDto searchEstimateProgramDto = new SearchEstimateProgramDto(trainerEstimate.getPtProgram().getId(), trainerEstimate.getPtProgram().getTitle());
-        SearchTrainerEstimateDto searchTrainerEstimateDto = new SearchTrainerEstimateDto(trainerEstimate.getId(),trainerEstimate.getPrice(), trainerEstimate.getPtCenterAddress(), searchEstimateProgramDto, trainerEstimate.getMember().getName());
-        return new RestResult(searchTrainerEstimateDto);
+        return new RestResult(SearchTrainerEstimateDto.fromEntity(trainerEstimate, SearchEstimateProgramDto.fromEntity(trainerEstimate)));
     }
 
     public RestResult updateEstimateResult(Long estimateId, UpdateTrainerEstimateDto updateEstimateDto) {

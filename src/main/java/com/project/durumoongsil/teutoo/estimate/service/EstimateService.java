@@ -59,7 +59,6 @@ public class EstimateService {
     public Estimate updateEstimate(Long estimateId, UpdateEstimateDto updateEstimateDto, String currentLoginId) {
         Estimate estimate = hasAuthority(estimateId, currentLoginId);
         estimate.setPrice(updateEstimateDto.getPrice());
-        estimate.setPtCount(updateEstimateDto.getPtCount());
         estimate.setPtAddress(updateEstimateDto.getPtAddress());
         return estimate;
     }
@@ -85,15 +84,8 @@ public class EstimateService {
         return Estimate.builder()
                 .price(createEstimateDto.getPrice())
                 .ptAddress(createEstimateDto.getPtAddress())
-                .ptCount(createEstimateDto.getPtCount())
                 .member(member)
                 .build();
-    }
-
-    private void isEstimateAvailable(Member member) {
-        if (estimateRepository.countEstimateByMember(member) > 0) {
-            throw new DuplicateEstimateException("이미 작성한 견적서가 있습니다.");
-        }
     }
 
     private Member getMember(String loginUserEmail) {

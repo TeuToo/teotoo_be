@@ -38,7 +38,7 @@ public class EstimateController {
     }
 
 
-    @Operation(summary = "견적서 전체 조회", description = "트레이너 입장에서 견적서 버튼 클릭시 일반 유저가 작성한 견적서 목록")
+    @Operation(summary = "트레이너 견적서 전체 조회", description = "유저는 트레이너의 견적서 목록이 보여진다")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "견적서 목록 조회 성공")
     })
