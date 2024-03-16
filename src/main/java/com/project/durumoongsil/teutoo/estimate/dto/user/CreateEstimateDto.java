@@ -14,10 +14,6 @@ public class CreateEstimateDto {
     @Min(0)
     @Schema(description = "PT 가격")
     private Integer price;
-    @NotNull
-    @Min(0)
-    @Schema(description = "PT 횟수")
-    private Integer ptCount;
     @NotEmpty
     @Schema(description = "PT 주소")
     private String ptAddress;
