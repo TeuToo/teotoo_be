@@ -1,6 +1,7 @@
 package com.project.durumoongsil.teutoo.estimate.domain;
 
 
+import com.project.durumoongsil.teutoo.common.BaseMemberTimeEntity;
 import com.project.durumoongsil.teutoo.common.BaseTimeEntity;
 import com.project.durumoongsil.teutoo.member.domain.Member;
 import jakarta.persistence.*;
@@ -15,7 +16,7 @@ import static lombok.AccessLevel.*;
 @Setter
 @ToString
 @NoArgsConstructor(access = PROTECTED)
-public class Estimate extends BaseTimeEntity {
+public class Estimate extends BaseMemberTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
