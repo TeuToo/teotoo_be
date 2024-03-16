@@ -1,9 +1,6 @@
 package com.project.durumoongsil.teutoo.estimate.dto.trainer;
 
 import com.project.durumoongsil.teutoo.member.domain.Member;
-import com.project.durumoongsil.teutoo.trainer.ptprogram.domain.PtProgram;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
