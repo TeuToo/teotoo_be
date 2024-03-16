@@ -69,7 +69,7 @@ public class EstimateFrontService {
 
     private PagedTrainerEstimateDto convertToDto(TrainerEstimate trainerEstimate) {
         return PagedTrainerEstimateDto.builder()
-                .id(trainerEstimate.getId())
+                .estimateId(trainerEstimate.getId())
                 .name(trainerEstimate.getMember().getName())
                 .price(trainerEstimate.getPrice())
                 .profileImagePath(fileService.getImgUrl("member_profile", trainerEstimate.getMember().getProfileImageName()))

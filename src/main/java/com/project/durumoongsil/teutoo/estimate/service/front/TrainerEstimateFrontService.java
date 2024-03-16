@@ -43,7 +43,7 @@ public class TrainerEstimateFrontService {
     public RestResult searchAllEstimateResult(Long cursorId, int size) {
         List<Estimate> allUserEstimate = estimateService.searchAllUserEstimate(cursorId, size);
         List<PageUserEstimateDto> userEstimateDtoList = allUserEstimate.stream()
-                .map(estimate -> new PageUserEstimateDto(estimate.getPrice(), estimate.getMember().getName(), fileService.getImgUrl("member_profile", estimate.getMember().getProfileImageName())))
+                .map(estimate -> new PageUserEstimateDto(estimate.getId(), estimate.getPrice(), estimate.getMember().getName(), fileService.getImgUrl("member_profile", estimate.getMember().getProfileImageName())))
                 .toList();
         return new RestResult(userEstimateDtoList);
     }
