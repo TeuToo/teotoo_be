@@ -61,12 +61,6 @@ public class EstimateFrontService {
         return new RestResult("견적서 삭제 완료");
     }
 
-    private void EntityToDto() {
-        modelMapper.typeMap(Estimate.class,EstimatePageDto.class).addMappings(mapper-> {
-            mapper.map(estimate -> estimate.getMember().getName(), EstimatePageDto::setName);
-        });
-    }
-
     private void EntityToSearchDto() {
         modelMapper.typeMap(Estimate.class,EstimateSearchDto.class).addMappings(mapper-> {
             mapper.map(estimate -> estimate.getMember().getName(), EstimateSearchDto::setName);
