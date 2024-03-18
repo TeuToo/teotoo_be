@@ -4,6 +4,7 @@ package com.project.durumoongsil.teutoo.chat.domain;
 import com.project.durumoongsil.teutoo.chat.constants.MsgType;
 import com.project.durumoongsil.teutoo.common.BaseTimeEntity;
 import com.project.durumoongsil.teutoo.member.domain.Member;
+import com.project.durumoongsil.teutoo.trainer.ptprogram.domain.PtReservation;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -29,12 +30,6 @@ public class ChatMsg extends BaseTimeEntity {
 
     private String imgName;
 
-    private String programName;
-
-    private String programSchedule;
-
-    private Boolean programConfirm;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sender_id")
     private Member sender;
@@ -43,17 +38,19 @@ public class ChatMsg extends BaseTimeEntity {
     @JoinColumn(name = "chat_id")
     private Chat chat;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reservation_id")
+    private PtReservation ptReservation;
+
     @Builder
-    public ChatMsg(MsgType msgType, String textContent, String imgPath, String imgName, String programName,
-                   String programSchedule, Boolean programConfirm, Member sender, Chat chat) {
+    public ChatMsg(MsgType msgType, String textContent, String imgPath, String imgName,
+                   Member sender, Chat chat, PtReservation ptReservation) {
         this.msgType = msgType;
         this.textContent = textContent;
         this.imgPath = imgPath;
         this.imgName = imgName;
-        this.programName = programName;
-        this.programSchedule = programSchedule;
-        this.programConfirm = programConfirm;
         this.sender = sender;
         this.chat = chat;
+        this.ptReservation = ptReservation;
     }
 }

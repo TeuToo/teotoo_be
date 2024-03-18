@@ -35,6 +35,9 @@ public class PtProgram {
     @OneToMany(mappedBy = "ptProgram", fetch = FetchType.LAZY)
     private List<PtImg> ptImgList;
 
+    @OneToMany(mappedBy = "ptProgram", fetch = FetchType.LAZY)
+    private List<PtReservation> ptReservationList;
+
     @Builder
     public PtProgram(String title, String content, int price, LocalTime availableStartTime,
                      LocalTime availableEndTime, TrainerInfo trainerInfo) {
