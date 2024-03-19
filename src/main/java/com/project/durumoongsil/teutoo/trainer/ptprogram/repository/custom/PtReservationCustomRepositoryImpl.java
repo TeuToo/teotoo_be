@@ -1,7 +1,9 @@
 package com.project.durumoongsil.teutoo.trainer.ptprogram.repository.custom;
 
+import com.project.durumoongsil.teutoo.trainer.ptprogram.constants.ReservationStatus;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.domain.QPtProgram;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.domain.QPtReservation;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -29,10 +31,32 @@ public class PtReservationCustomRepositoryImpl implements PtReservationCustomRep
         return queryFactory.select(qPtReservation.count())
                 .from(qPtProgram)
                 .innerJoin(qPtProgram.ptReservationList, qPtReservation)
-                .where(qPtProgram.id.eq(programId).and(
-                        qPtReservation.startDateTime.loe(startDateTime)).and(
-                        qPtReservation.endDateTime.goe(endDateTime)
+                .where(
+                        qPtProgram.id.eq(programId)
+                        .and(
+                                this.isWithinTimeRange(startDateTime, endDateTime)
+                        .and(
+                                this.isReservedOrPending()
+                        )
                 ))
                 .fetchOne();
+    }
+
+    private BooleanBuilder isWithinTimeRange(LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+
+        booleanBuilder.and(qPtReservation.startDateTime.eq(startDateTime));
+        booleanBuilder.and(qPtReservation.endDateTime.eq(endDateTime));
+
+        return booleanBuilder;
+    }
+
+    private BooleanBuilder isReservedOrPending() {
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+
+        booleanBuilder.or(qPtReservation.status.eq(ReservationStatus.PENDING));
+        booleanBuilder.or(qPtReservation.status.eq(ReservationStatus.RESERVED));
+
+        return booleanBuilder;
     }
 }
