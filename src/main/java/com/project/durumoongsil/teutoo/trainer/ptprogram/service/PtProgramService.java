@@ -14,9 +14,9 @@ import com.project.durumoongsil.teutoo.trainer.info.domain.TrainerInfo;
 import com.project.durumoongsil.teutoo.trainer.info.repository.TrainerInfoRepository;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.domain.PtImg;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.domain.PtProgram;
-import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.response.PtProgramManageResDto;
+import com.project.durumoongsil.teutoo.trainer.ptprogram.domain.PtReservation;
+import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.response.*;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.request.PtProgramRegDto;
-import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.response.PtProgramResDto;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.request.PtProgramUpdateDto;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.repository.PtImgRepository;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.repository.PtProgramRepository;
@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -215,5 +216,23 @@ public class PtProgramService {
         ptProgramRepository.delete(ptProgram);
     }
 
+    @Transactional
+    public PtProgramOverviewResDto getPtProgramInfoListForScheduling(Long trainerId) {
+        List<PtProgram> ptProgramList = ptProgramRepository.findByTrainerIdWithPtReservation(trainerId);
+
+        List<PtProgramInfoDto> ptProgramInfoDtoList = new ArrayList<>();
+        List<PtProgramReservedTimeDto> ptProgramReservedTimeDtoList = new ArrayList<>();
+
+        for (PtProgram ptProgram : ptProgramList) {
+            ptProgramInfoDtoList.add(new PtProgramInfoDto(ptProgram.getTitle(), ptProgram.getId()));
+
+            for (PtReservation ptReservation : ptProgram.getPtReservationList()) {
+                ptProgramReservedTimeDtoList
+                        .add(new PtProgramReservedTimeDto(ptReservation.getStartDateTime(), ptReservation.getEndDateTime()));
+            }
+        }
+
+        return new PtProgramOverviewResDto(ptProgramInfoDtoList, ptProgramReservedTimeDtoList);
+    }
 
 }
