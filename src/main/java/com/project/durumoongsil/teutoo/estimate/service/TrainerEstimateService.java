@@ -15,6 +15,8 @@ import com.project.durumoongsil.teutoo.trainer.ptprogram.domain.PtProgram;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.repository.PtProgramRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -119,5 +121,9 @@ public class TrainerEstimateService {
             throw new UnauthorizedActionException("권한이 없습니다");
         }
         return trainerEstimate;
+    }
+
+    public Page<Estimate> searchEstimates(Pageable pageable, String ptAddress) {
+        return estimateRepository.pageUserEstimateWithPtAddress(pageable, ptAddress);
     }
 }

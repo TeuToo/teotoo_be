@@ -11,10 +11,11 @@ import com.project.durumoongsil.teutoo.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -66,4 +67,23 @@ public class TrainerEstimateFrontService {
         estimateService.deleteTrainerEstimate(estimateId);
         return new RestResult("견적서 삭제 완료");
     }
+
+    /**
+     * 트레이너 입장에서 유저는 페이징으로 전체 조회
+     */
+    public RestResult searchAllEstimateResult(Pageable pageable, String ptAddress) {
+        Page<Estimate> userEstimates = estimateService.searchEstimates(pageable, ptAddress);
+        Page<PageUserEstimateDto> dtoPage = userEstimates.map(this::convertToDto);
+        return new RestResult(dtoPage);
+    }
+
+    private PageUserEstimateDto convertToDto(Estimate estimate) {
+        return PageUserEstimateDto.builder()
+                .estimateId(estimate.getId())
+                .price(estimate.getPrice())
+                .name(estimate.getMember().getName())
+                .profileImagePath(fileService.getImgUrl("member_profile", estimate.getMember().getProfileImageName()))
+                .build();
+    }
+
 }

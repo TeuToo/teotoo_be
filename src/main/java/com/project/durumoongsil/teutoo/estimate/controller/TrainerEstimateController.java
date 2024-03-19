@@ -12,6 +12,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -46,15 +48,27 @@ public class TrainerEstimateController {
         return frontService.createEstimateResult(createTrainerEstimateDto);
     }
 
+//    @Operation(summary = "유저 견적서 전체 조회", description = "트레이너 입장에서 일반 유저가 작성한 견적서의 전체 목록")
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = "200", description = "견적서 목록 조회 성공"),
+//            @ApiResponse(responseCode = "400", description = "파라미터 오류")
+//    })
+//    @GetMapping
+//    public RestResult getEstimates1(@RequestParam Long cursorId, @RequestParam int size) {
+//        return frontService.searchAllEstimateResult(cursorId, size);
+//    }
+
     @Operation(summary = "유저 견적서 전체 조회", description = "트레이너 입장에서 일반 유저가 작성한 견적서의 전체 목록")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "견적서 목록 조회 성공"),
             @ApiResponse(responseCode = "400", description = "파라미터 오류")
     })
     @GetMapping
-    public RestResult getEstimates(@RequestParam Long cursorId, @RequestParam int size) {
-        return frontService.searchAllEstimateResult(cursorId, size);
+    public RestResult getEstimates(@PageableDefault Pageable pageable, String ptAddress) {
+        return frontService.searchAllEstimateResult(pageable, ptAddress);
     }
+
+
 
     @Operation(summary = "트레이너 견적서 단건 조회", description = "견적서 단건 조회(본인, 타인)")
     @ApiResponses(value = {

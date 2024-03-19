@@ -1,9 +1,12 @@
 package com.project.durumoongsil.teutoo.estimate.dto.user;
 
+import com.project.durumoongsil.teutoo.estimate.domain.Estimate;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
+@Builder
 @AllArgsConstructor
 public class PageUserEstimateDto {
     private Long estimateId;

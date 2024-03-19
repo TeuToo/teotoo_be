@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static com.project.durumoongsil.teutoo.estimate.domain.QEstimate.*;
-import static com.project.durumoongsil.teutoo.estimate.domain.QTrainerEstimate.trainerEstimate;
 import static com.project.durumoongsil.teutoo.member.domain.QMember.*;
 
 @Slf4j
@@ -38,5 +37,22 @@ public class EstimateQueryRepositoryImpl implements EstimateQueryRepository{
                 .orderBy(estimate.createdAt.asc())
                 .limit(size)
                 .fetch();
+    }
+
+    @Override
+    public Page<Estimate> pageUserEstimateWithPtAddress(Pageable pageable, String ptAddress) {
+        List<Estimate> estimates = factory.selectFrom(estimate)
+                .join(estimate.member, member).fetchJoin()
+                .where(estimate.ptAddress.like("%" + ptAddress + "%"))
+                .orderBy(estimate.createdAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        Long totalCount = factory.select(estimate.count())
+                .from(estimate)
+                .fetchOne();
+
+        return new PageImpl<>(estimates, pageable, totalCount);
     }
 }
