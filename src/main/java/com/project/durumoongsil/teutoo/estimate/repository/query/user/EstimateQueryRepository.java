@@ -1,6 +1,7 @@
 package com.project.durumoongsil.teutoo.estimate.repository.query.user;
 
 import com.project.durumoongsil.teutoo.estimate.domain.Estimate;
+import com.project.durumoongsil.teutoo.estimate.domain.TrainerEstimate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -10,6 +11,9 @@ public interface EstimateQueryRepository {
 
     Estimate findEstimateWithMemberName(Long estimateId);
 
-    List<Estimate> findEstimateAfterCursor(Long cursorId, int size);
+    Page<Estimate> pageUserEstimateWithPtAddress(Pageable pageable, String ptAddress);
 
+    List<TrainerEstimate> findTrainerEstimateNoOffset(Long cursorId, int size);
+
+    Long getMyEstimateId(String email);
 }

@@ -1,5 +1,6 @@
 package com.project.durumoongsil.teutoo.estimate.service.front;
 
+import com.project.durumoongsil.teutoo.common.RestEstimateResult;
 import com.project.durumoongsil.teutoo.common.RestResult;
 import com.project.durumoongsil.teutoo.common.service.FileService;
 import com.project.durumoongsil.teutoo.estimate.domain.Estimate;
@@ -11,17 +12,17 @@ import com.project.durumoongsil.teutoo.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class TrainerEstimateFrontService {
 
-    private final ModelMapper modelMapper;
     private final TrainerEstimateService estimateService;
     private final FileService fileService;
     public RestResult getTrainerPtPrograms(String currentLoginId) {
@@ -38,14 +39,13 @@ public class TrainerEstimateFrontService {
     }
 
     /**
-     *  트레이너입장에서 사용자 견적서 No-offset
+     * 트레이너 입장에서 유저는 페이징으로 전체 조회
      */
-    public RestResult searchAllEstimateResult(Long cursorId, int size) {
-        List<Estimate> allUserEstimate = estimateService.searchAllUserEstimate(cursorId, size);
-        List<PageUserEstimateDto> userEstimateDtoList = allUserEstimate.stream()
-                .map(estimate -> new PageUserEstimateDto(estimate.getId(), estimate.getPrice(), estimate.getMember().getName(), fileService.getImgUrl("member_profile", estimate.getMember().getProfileImageName())))
-                .toList();
-        return new RestResult(userEstimateDtoList);
+    public RestEstimateResult searchAllEstimateResult(Pageable pageable, String ptAddress) {
+        Page<Estimate> userEstimates = estimateService.searchEstimates(pageable, ptAddress);
+        Page<PageUserEstimateDto> dtoPage = userEstimates.map(this::convertToDto);
+        Long myEstimateId = estimateService.getMyEstimateId();
+        return new RestEstimateResult(dtoPage, myEstimateId);
     }
 
     /**
@@ -66,4 +66,14 @@ public class TrainerEstimateFrontService {
         estimateService.deleteTrainerEstimate(estimateId);
         return new RestResult("견적서 삭제 완료");
     }
+
+    private PageUserEstimateDto convertToDto(Estimate estimate) {
+        return PageUserEstimateDto.builder()
+                .estimateId(estimate.getId())
+                .price(estimate.getPrice())
+                .name(estimate.getMember().getName())
+                .profileImagePath(fileService.getImgUrl("member_profile", estimate.getMember().getProfileImageName()))
+                .build();
+    }
+
 }
