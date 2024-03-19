@@ -59,4 +59,13 @@ public class EstimateQueryRepositoryImpl implements EstimateQueryRepository{
                 .limit(size)
                 .fetch();
     }
+
+    @Override
+    public Long getMyEstimateId(String email) {
+        Estimate findEstimate = factory.selectFrom(estimate)
+                .join(estimate.member, member).fetchJoin()
+                .where(member.email.eq(email))
+                .fetchOne();
+        return findEstimate == null ? null : findEstimate.getId();
+    }
 }

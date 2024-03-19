@@ -11,4 +11,6 @@ public interface TrainerEstimateQueryRepository {
     TrainerEstimate findByPtProgramIdWithFetch(Long trainerEstimateId);
 
     Optional<TrainerEstimate> findByEstimateIdWithMember(Long estimateId);
+
+    Long getMyEstimateId(String email);
 }

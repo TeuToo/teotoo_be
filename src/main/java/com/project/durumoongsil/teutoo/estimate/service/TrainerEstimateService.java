@@ -33,6 +33,14 @@ public class TrainerEstimateService {
     private final PtProgramRepository ptProgramRepository;
     private final EstimateRepository estimateRepository;
 
+    public Page<Estimate> searchEstimates(Pageable pageable, String ptAddress) {
+        return estimateRepository.pageUserEstimateWithPtAddress(pageable, ptAddress);
+    }
+
+    public Long getMyEstimateId() {
+        return trainerEstimateRepository.getMyEstimateId(LoginEmail.getLoginUserEmail());
+    }
+
     /**
      *  처음 트레이너가 견적석, 신청서 버튼을 눌렀을대 이름은 그냥 표기, 프로그램 select 박스로 하기 위해서
      *  @GetMapping("/estimates/programs")
@@ -112,9 +120,5 @@ public class TrainerEstimateService {
             throw new UnauthorizedActionException("권한이 없습니다");
         }
         return trainerEstimate;
-    }
-
-    public Page<Estimate> searchEstimates(Pageable pageable, String ptAddress) {
-        return estimateRepository.pageUserEstimateWithPtAddress(pageable, ptAddress);
     }
 }

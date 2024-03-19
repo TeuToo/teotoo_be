@@ -1,20 +1,18 @@
 package com.project.durumoongsil.teutoo.estimate.service.front;
 
+import com.project.durumoongsil.teutoo.common.RestEstimateResult;
 import com.project.durumoongsil.teutoo.common.RestResult;
 import com.project.durumoongsil.teutoo.common.service.FileService;
 import com.project.durumoongsil.teutoo.estimate.domain.Estimate;
 import com.project.durumoongsil.teutoo.estimate.domain.TrainerEstimate;
 import com.project.durumoongsil.teutoo.estimate.dto.trainer.PagedTrainerEstimateDto;
 import com.project.durumoongsil.teutoo.estimate.dto.user.CreateEstimateDto;
-import com.project.durumoongsil.teutoo.estimate.dto.user.EstimatePageDto;
 import com.project.durumoongsil.teutoo.estimate.dto.user.EstimateSearchDto;
 import com.project.durumoongsil.teutoo.estimate.dto.user.UpdateEstimateDto;
 import com.project.durumoongsil.teutoo.estimate.service.EstimateService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,6 +32,18 @@ public class EstimateFrontService {
         return new RestResult("견적서 작성 성공");
     }
 
+
+    /**
+     * 유저 입장에서는 트레이너 견적서 목록이 no-offset 으로 나와야함
+     */
+    public RestEstimateResult searchAllTrainerEstimatesResult(Long cursorId, int size) {
+        List<TrainerEstimate> allTrainerEstimates = estimateService.searchAllTrainerEstimates(cursorId, size);
+        List<PagedTrainerEstimateDto> noOffsetTrainerSearchDto = allTrainerEstimates.stream()
+                .map(trainerEstimate -> new PagedTrainerEstimateDto(trainerEstimate.getId(), trainerEstimate.getPrice(),
+                        trainerEstimate.getMember().getName(), fileService.getImgUrl("member_profile", trainerEstimate.getMember().getProfileImageName())))
+                .toList();
+        return new RestEstimateResult(noOffsetTrainerSearchDto, estimateService.getMyEstimateId());
+    }
 
     /**
      * 견적서 단건 조회
@@ -68,17 +78,5 @@ public class EstimateFrontService {
                 .price(trainerEstimate.getPrice())
                 .profileImagePath(fileService.getImgUrl("member_profile", trainerEstimate.getMember().getProfileImageName()))
                 .build();
-    }
-
-    /**
-     * 유저 입장에서는 트레이너 견적서 목록이 no-offset 으로 나와야함
-     */
-    public RestResult searchAllTrainerEstimatesResult(Long cursorId, int size) {
-        List<TrainerEstimate> allTrainerEstimates = estimateService.searchAllTrainerEstimates(cursorId, size);
-        List<PagedTrainerEstimateDto> noOffsetTrainerSearchDto = allTrainerEstimates.stream()
-                .map(trainerEstimate -> new PagedTrainerEstimateDto(trainerEstimate.getId(), trainerEstimate.getPrice(),
-                        trainerEstimate.getMember().getName(), fileService.getImgUrl("member_profile", trainerEstimate.getMember().getProfileImageName())))
-                .toList();
-        return new RestResult(noOffsetTrainerSearchDto);
     }
 }

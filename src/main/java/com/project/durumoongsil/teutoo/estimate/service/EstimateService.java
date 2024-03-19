@@ -1,5 +1,6 @@
 package com.project.durumoongsil.teutoo.estimate.service;
 
+import com.project.durumoongsil.teutoo.common.LoginEmail;
 import com.project.durumoongsil.teutoo.estimate.domain.Estimate;
 import com.project.durumoongsil.teutoo.estimate.domain.TrainerEstimate;
 import com.project.durumoongsil.teutoo.estimate.dto.user.CreateEstimateDto;
@@ -28,7 +29,21 @@ public class EstimateService {
 
     private final EstimateRepository estimateRepository;
     private final MemberRepository memberRepository;
-    private final TrainerEstimateRepository trainerEstimateRepository;
+
+    /**
+     *  유저 입장에서는 트레이너 견적서 목록이 no-offset 으로 나와야함
+     */
+    public List<TrainerEstimate> searchAllTrainerEstimates(Long cursorId, int size) {
+        return estimateRepository.findTrainerEstimateNoOffset(cursorId, size);
+    }
+
+    /**
+     * 내가 작성한 견적서 Id 를 리턴한다
+     * @return 견적서 Id / null
+     */
+    public Long getMyEstimateId() {
+        return estimateRepository.getMyEstimateId(LoginEmail.getLoginUserEmail());
+    }
 
     /**
      * 우선 기획상 한사람당 한개의 견적서만 할 수 있다.
@@ -86,12 +101,5 @@ public class EstimateService {
     private Member getMember(String loginUserEmail) {
         log.info("loinEmail ={}", loginUserEmail);
         return memberRepository.findMemberByEmail(loginUserEmail).get();
-    }
-
-    /**
-     *  유저 입장에서는 트레이너 견적서 목록이 no-offset 으로 나와야함
-     */
-    public List<TrainerEstimate> searchAllTrainerEstimates(Long cursorId, int size) {
-        return estimateRepository.findTrainerEstimateNoOffset(cursorId, size);
     }
 }

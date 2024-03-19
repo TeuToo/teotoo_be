@@ -1,5 +1,6 @@
 package com.project.durumoongsil.teutoo.estimate.service.front;
 
+import com.project.durumoongsil.teutoo.common.RestEstimateResult;
 import com.project.durumoongsil.teutoo.common.RestResult;
 import com.project.durumoongsil.teutoo.common.service.FileService;
 import com.project.durumoongsil.teutoo.estimate.domain.Estimate;
@@ -40,10 +41,11 @@ public class TrainerEstimateFrontService {
     /**
      * 트레이너 입장에서 유저는 페이징으로 전체 조회
      */
-    public RestResult searchAllEstimateResult(Pageable pageable, String ptAddress) {
+    public RestEstimateResult searchAllEstimateResult(Pageable pageable, String ptAddress) {
         Page<Estimate> userEstimates = estimateService.searchEstimates(pageable, ptAddress);
         Page<PageUserEstimateDto> dtoPage = userEstimates.map(this::convertToDto);
-        return new RestResult(dtoPage);
+        Long myEstimateId = estimateService.getMyEstimateId();
+        return new RestEstimateResult(dtoPage, myEstimateId);
     }
 
     /**

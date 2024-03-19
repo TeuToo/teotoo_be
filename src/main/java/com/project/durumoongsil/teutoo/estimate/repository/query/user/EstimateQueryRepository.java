@@ -14,4 +14,6 @@ public interface EstimateQueryRepository {
     Page<Estimate> pageUserEstimateWithPtAddress(Pageable pageable, String ptAddress);
 
     List<TrainerEstimate> findTrainerEstimateNoOffset(Long cursorId, int size);
+
+    Long getMyEstimateId(String email);
 }

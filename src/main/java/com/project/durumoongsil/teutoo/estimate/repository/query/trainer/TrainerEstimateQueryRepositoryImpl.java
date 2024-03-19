@@ -37,4 +37,13 @@ public class TrainerEstimateQueryRepositoryImpl implements TrainerEstimateQueryR
                 .where(trainerEstimate.id.eq(estimateId))
                 .fetchOne());
     }
+
+    @Override
+    public Long getMyEstimateId(String email) {
+        TrainerEstimate findTrainerEstimate = factory.selectFrom(trainerEstimate)
+                .join(trainerEstimate.member, member).fetchJoin()
+                .where(trainerEstimate.member.email.eq(email))
+                .fetchOne();
+        return findTrainerEstimate == null ? null : findTrainerEstimate.getId();
+    }
 }
