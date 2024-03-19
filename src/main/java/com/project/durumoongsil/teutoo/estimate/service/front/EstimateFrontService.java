@@ -35,8 +35,8 @@ public class EstimateFrontService {
     /**
      * 모든 견적서 페이징
      */
-    public RestResult searchAllEstimateResult(Pageable pageable, String ptAddress) {
-        Page<TrainerEstimate> trainerEstimates = estimateService.searchEstimates(pageable, ptAddress);
+    public RestResult searchAllEstimateResult(Pageable pageable) {
+        Page<TrainerEstimate> trainerEstimates = estimateService.searchEstimates(pageable);
         Page<PagedTrainerEstimateDto> dtoPage = trainerEstimates.map(this::convertToDto);
         return new RestResult(dtoPage);
     }

@@ -41,8 +41,8 @@ public class EstimateService {
      * 전체 견적서 페이징
      */
     @Transactional(readOnly = true)
-    public Page<TrainerEstimate> searchEstimates(Pageable pageable, String ptAddress) {
-        return trainerEstimateRepository.pageTrainerEstimateWithPtAddress(pageable, ptAddress); // Pageable 객체를 사용
+    public Page<TrainerEstimate> searchEstimates(Pageable pageable) {
+        return trainerEstimateRepository.pageTrainerEstimateWithPtAddress(pageable); // Pageable 객체를 사용
     }
 
     /**

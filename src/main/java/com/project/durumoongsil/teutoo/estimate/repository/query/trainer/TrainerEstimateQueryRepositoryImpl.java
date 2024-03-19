@@ -31,10 +31,9 @@ public class TrainerEstimateQueryRepositoryImpl implements TrainerEstimateQueryR
     }
 
     @Override
-    public Page<TrainerEstimate> pageTrainerEstimateWithPtAddress(Pageable pageable, String ptAddress) {
+    public Page<TrainerEstimate> pageTrainerEstimateWithPtAddress(Pageable pageable) {
         List<TrainerEstimate> estimates = factory.selectFrom(trainerEstimate)
                 .join(trainerEstimate.member, member).fetchJoin()
-                .where(trainerEstimate.ptCenterAddress.like("%" + ptAddress + "%"))
                 .orderBy(trainerEstimate.createdAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
