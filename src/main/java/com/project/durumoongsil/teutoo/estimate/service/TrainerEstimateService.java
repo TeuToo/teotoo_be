@@ -61,15 +61,6 @@ public class TrainerEstimateService {
     }
 
     /**
-     * 트레이너 입장에서 견적서를 들어감녀 일반 유저의 견적서, 신청서가 보여야한다.
-     * 여기서는 No-offset 사용
-     */
-    @Transactional(readOnly = true)
-    public List<Estimate> searchAllUserEstimate(Long cursorId, int size) {
-        return estimateRepository.findEstimateAfterCursor(cursorId, size);
-    }
-
-    /**
      * 사용자 입장에서 프로그램 단건조회
      * @GetMapping("/estimates")
      * @param estimateId 신청서 ID

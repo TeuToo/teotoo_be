@@ -43,8 +43,8 @@ public class EstimateController {
             @ApiResponse(responseCode = "200", description = "견적서 목록 조회 성공")
     })
     @GetMapping
-    public RestResult getEstimates(@PageableDefault Pageable pageable) {
-        return estimateFrontService.searchAllEstimateResult(pageable);
+    public RestResult getEstimates(@RequestParam Long cursorId, @RequestParam int size) {
+        return estimateFrontService.searchAllTrainerEstimatesResult(cursorId, size);
     }
 
     @Operation(summary = "견적서 단건 조회", description = "견적서 단건 조회(본인, 타인)")

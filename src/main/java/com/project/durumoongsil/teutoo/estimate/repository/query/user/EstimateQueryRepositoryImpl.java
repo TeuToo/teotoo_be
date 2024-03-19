@@ -1,6 +1,8 @@
 package com.project.durumoongsil.teutoo.estimate.repository.query.user;
 
 import com.project.durumoongsil.teutoo.estimate.domain.Estimate;
+import com.project.durumoongsil.teutoo.estimate.domain.QTrainerEstimate;
+import com.project.durumoongsil.teutoo.estimate.domain.TrainerEstimate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static com.project.durumoongsil.teutoo.estimate.domain.QEstimate.*;
+import static com.project.durumoongsil.teutoo.estimate.domain.QTrainerEstimate.*;
 import static com.project.durumoongsil.teutoo.member.domain.QMember.*;
 
 @Slf4j
@@ -28,15 +31,6 @@ public class EstimateQueryRepositoryImpl implements EstimateQueryRepository{
                 .join(estimate.member, member).fetchJoin()
                 .where(estimate.id.eq(estimateId))
                 .fetchOne();
-    }
-    @Override
-    public List<Estimate> findEstimateAfterCursor(Long cursorId, int size) {
-        return  factory.selectFrom(estimate)
-                .join(estimate.member, member).fetchJoin()
-                .where(estimate.id.gt(cursorId))
-                .orderBy(estimate.createdAt.asc())
-                .limit(size)
-                .fetch();
     }
 
     @Override
@@ -54,5 +48,15 @@ public class EstimateQueryRepositoryImpl implements EstimateQueryRepository{
                 .fetchOne();
 
         return new PageImpl<>(estimates, pageable, totalCount);
+    }
+
+    @Override
+    public List<TrainerEstimate> findTrainerEstimateNoOffset(Long cursorId, int size) {
+        return factory.selectFrom(trainerEstimate)
+                .join(trainerEstimate.member, member).fetchJoin()
+                .where(trainerEstimate.id.gt(cursorId))
+                .orderBy(trainerEstimate.createdAt.asc())
+                .limit(size)
+                .fetch();
     }
 }

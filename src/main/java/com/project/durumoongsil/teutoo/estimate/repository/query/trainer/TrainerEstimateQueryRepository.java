@@ -10,7 +10,5 @@ public interface TrainerEstimateQueryRepository {
 
     TrainerEstimate findByPtProgramIdWithFetch(Long trainerEstimateId);
 
-    Page<TrainerEstimate> pageTrainerEstimateWithPtAddress(Pageable pageable);
-
     Optional<TrainerEstimate> findByEstimateIdWithMember(Long estimateId);
 }

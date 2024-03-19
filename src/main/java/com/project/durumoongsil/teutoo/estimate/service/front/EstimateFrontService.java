@@ -17,6 +17,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 
 @Slf4j
 @Service
@@ -32,14 +34,6 @@ public class EstimateFrontService {
         return new RestResult("견적서 작성 성공");
     }
 
-    /**
-     * 모든 견적서 페이징
-     */
-    public RestResult searchAllEstimateResult(Pageable pageable) {
-        Page<TrainerEstimate> trainerEstimates = estimateService.searchEstimates(pageable);
-        Page<PagedTrainerEstimateDto> dtoPage = trainerEstimates.map(this::convertToDto);
-        return new RestResult(dtoPage);
-    }
 
     /**
      * 견적서 단건 조회
@@ -74,5 +68,17 @@ public class EstimateFrontService {
                 .price(trainerEstimate.getPrice())
                 .profileImagePath(fileService.getImgUrl("member_profile", trainerEstimate.getMember().getProfileImageName()))
                 .build();
+    }
+
+    /**
+     * 유저 입장에서는 트레이너 견적서 목록이 no-offset 으로 나와야함
+     */
+    public RestResult searchAllTrainerEstimatesResult(Long cursorId, int size) {
+        List<TrainerEstimate> allTrainerEstimates = estimateService.searchAllTrainerEstimates(cursorId, size);
+        List<PagedTrainerEstimateDto> noOffsetTrainerSearchDto = allTrainerEstimates.stream()
+                .map(trainerEstimate -> new PagedTrainerEstimateDto(trainerEstimate.getId(), trainerEstimate.getPrice(),
+                        trainerEstimate.getMember().getName(), fileService.getImgUrl("member_profile", trainerEstimate.getMember().getProfileImageName())))
+                .toList();
+        return new RestResult(noOffsetTrainerSearchDto);
     }
 }

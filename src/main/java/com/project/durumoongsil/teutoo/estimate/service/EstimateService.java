@@ -17,6 +17,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 
 @Slf4j
 @Service
@@ -37,13 +39,6 @@ public class EstimateService {
         estimateRepository.save(createEstimateEntity(createEstimateDto, member));
     }
 
-    /**
-     * 전체 견적서 페이징
-     */
-    @Transactional(readOnly = true)
-    public Page<TrainerEstimate> searchEstimates(Pageable pageable) {
-        return trainerEstimateRepository.pageTrainerEstimateWithPtAddress(pageable); // Pageable 객체를 사용
-    }
 
     /**
      * 견적서 단건 조회
@@ -91,5 +86,12 @@ public class EstimateService {
     private Member getMember(String loginUserEmail) {
         log.info("loinEmail ={}", loginUserEmail);
         return memberRepository.findMemberByEmail(loginUserEmail).get();
+    }
+
+    /**
+     *  유저 입장에서는 트레이너 견적서 목록이 no-offset 으로 나와야함
+     */
+    public List<TrainerEstimate> searchAllTrainerEstimates(Long cursorId, int size) {
+        return estimateRepository.findTrainerEstimateNoOffset(cursorId, size);
     }
 }

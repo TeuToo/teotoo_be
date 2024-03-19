@@ -22,7 +22,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TrainerEstimateFrontService {
 
-    private final ModelMapper modelMapper;
     private final TrainerEstimateService estimateService;
     private final FileService fileService;
     public RestResult getTrainerPtPrograms(String currentLoginId) {
@@ -39,14 +38,12 @@ public class TrainerEstimateFrontService {
     }
 
     /**
-     *  트레이너입장에서 사용자 견적서 No-offset
+     * 트레이너 입장에서 유저는 페이징으로 전체 조회
      */
-    public RestResult searchAllEstimateResult(Long cursorId, int size) {
-        List<Estimate> allUserEstimate = estimateService.searchAllUserEstimate(cursorId, size);
-        List<PageUserEstimateDto> userEstimateDtoList = allUserEstimate.stream()
-                .map(estimate -> new PageUserEstimateDto(estimate.getId(), estimate.getPrice(), estimate.getMember().getName(), fileService.getImgUrl("member_profile", estimate.getMember().getProfileImageName())))
-                .toList();
-        return new RestResult(userEstimateDtoList);
+    public RestResult searchAllEstimateResult(Pageable pageable, String ptAddress) {
+        Page<Estimate> userEstimates = estimateService.searchEstimates(pageable, ptAddress);
+        Page<PageUserEstimateDto> dtoPage = userEstimates.map(this::convertToDto);
+        return new RestResult(dtoPage);
     }
 
     /**
@@ -66,15 +63,6 @@ public class TrainerEstimateFrontService {
     public RestResult deleteEstimateResult(Long estimateId) {
         estimateService.deleteTrainerEstimate(estimateId);
         return new RestResult("견적서 삭제 완료");
-    }
-
-    /**
-     * 트레이너 입장에서 유저는 페이징으로 전체 조회
-     */
-    public RestResult searchAllEstimateResult(Pageable pageable, String ptAddress) {
-        Page<Estimate> userEstimates = estimateService.searchEstimates(pageable, ptAddress);
-        Page<PageUserEstimateDto> dtoPage = userEstimates.map(this::convertToDto);
-        return new RestResult(dtoPage);
     }
 
     private PageUserEstimateDto convertToDto(Estimate estimate) {
