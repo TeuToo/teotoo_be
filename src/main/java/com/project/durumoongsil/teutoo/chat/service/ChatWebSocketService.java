@@ -222,7 +222,7 @@ public class ChatWebSocketService {
 
 
 
-    public ChatMsgResDTO saveAndReturnReservationChat(String roomId, ChatReservationReqDto chatReservationReqDto) {
+    public ChatMsgResDTO saveAndReturnReservationMsg(String roomId, ChatReservationReqDto chatReservationReqDto) {
         Chat chat = this.getChatByRoomId(roomId);
         Member sender = this.getMemberFromChat(chat);
 

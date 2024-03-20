@@ -3,6 +3,7 @@ package com.project.durumoongsil.teutoo.chat.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.durumoongsil.teutoo.chat.constants.ChatErrorCode;
+import com.project.durumoongsil.teutoo.chat.dto.request.ChatAcceptReqDto;
 import com.project.durumoongsil.teutoo.chat.dto.request.ChatReadReqDto;
 import com.project.durumoongsil.teutoo.chat.dto.request.ChatReservationReqDto;
 import com.project.durumoongsil.teutoo.chat.dto.request.ChatSendTextMsgDto;
@@ -68,7 +69,7 @@ public class ChatWebSocketController {
 
     @MessageMapping("/chat/{roomId}/reservation")
     public void reservationMsg(@DestinationVariable String roomId, ChatReservationReqDto chatReservationReqDto) {
-        ChatMsgResDTO chatMsgResDTO = chatWebSocketService.saveAndReturnReservationChat(roomId, chatReservationReqDto);
+        ChatMsgResDTO chatMsgResDTO = chatWebSocketService.saveAndReturnReservationMsg(roomId, chatReservationReqDto);
 
         this.sendMessageToTopic(roomId, chatMsgResDTO);
     }
