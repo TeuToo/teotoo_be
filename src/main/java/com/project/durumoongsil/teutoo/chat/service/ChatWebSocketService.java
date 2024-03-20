@@ -1,22 +1,29 @@
 package com.project.durumoongsil.teutoo.chat.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.project.durumoongsil.teutoo.chat.constants.MsgAction;
 import com.project.durumoongsil.teutoo.chat.domain.Chat;
 import com.project.durumoongsil.teutoo.chat.domain.ChatMsg;
 import com.project.durumoongsil.teutoo.chat.constants.MsgType;
 import com.project.durumoongsil.teutoo.chat.dto.request.ChatReadReqDto;
+import com.project.durumoongsil.teutoo.chat.dto.request.ChatReservationReqDto;
 import com.project.durumoongsil.teutoo.chat.dto.request.ChatSendTextMsgDto;
 import com.project.durumoongsil.teutoo.chat.dto.response.ChatMsgResDTO;
 import com.project.durumoongsil.teutoo.chat.dto.response.ChatReadResDto;
+import com.project.durumoongsil.teutoo.chat.dto.response.PtReservationMsgDto;
 import com.project.durumoongsil.teutoo.chat.repository.ChatMsgRepository;
 import com.project.durumoongsil.teutoo.chat.repository.ChatRepository;
 import com.project.durumoongsil.teutoo.common.domain.FilePath;
 import com.project.durumoongsil.teutoo.common.service.FileService;
-import com.project.durumoongsil.teutoo.exception.ChatNotFoundException;
-import com.project.durumoongsil.teutoo.exception.InvalidActionException;
-import com.project.durumoongsil.teutoo.exception.UnauthorizedActionException;
+import com.project.durumoongsil.teutoo.exception.*;
 import com.project.durumoongsil.teutoo.member.domain.Member;
 import com.project.durumoongsil.teutoo.security.service.SecurityService;
+import com.project.durumoongsil.teutoo.trainer.ptprogram.domain.PtProgram;
+import com.project.durumoongsil.teutoo.trainer.ptprogram.domain.PtReservation;
+import com.project.durumoongsil.teutoo.trainer.ptprogram.repository.PtReservationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -34,6 +41,10 @@ public class ChatWebSocketService {
     private final ChatMsgRepository chatMsgRepository;
     private final FileService fileService;
     private final SecurityService securityService;
+    private final PtReservationRepository ptReservationRepository;
+    private ObjectMapper om = new ObjectMapper()
+            .registerModule(new JavaTimeModule())
+            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
 
     /**
@@ -208,4 +219,64 @@ public class ChatWebSocketService {
                 .createdAt(savedChatMsg.getCreatedAt())
                 .build();
     }
+
+
+
+    public ChatMsgResDTO saveAndReturnReservationChat(String roomId, ChatReservationReqDto chatReservationReqDto) {
+        Chat chat = this.getChatByRoomId(roomId);
+        Member sender = this.getMemberFromChat(chat);
+
+        PtReservation ptReservation = ptReservationRepository.findByIdWithMemberAndPtProgram(chatReservationReqDto.getReservationId())
+                .orElseThrow(() -> new PtReservationNotFoundException("PT 예약 정보를 찾을 수 없습니다."));
+
+        if (ptReservation.getMember().getId() != sender.getId()) {
+            throw new UnauthorizedActionException();
+        }
+
+        ChatMsg savedChatMsg = this.saveReservationChatMsg(chat, sender, ptReservation);
+
+        ChatMsgResDTO chatMsgResDTO = ChatMsgResDTO.builder()
+                .msgIdx(savedChatMsg.getId())
+                .msgAction(MsgAction.SEND)
+                .contentType(MsgType.RESERVATION)
+                .senderId(sender.getId())
+                .createdAt(savedChatMsg.getCreatedAt())
+                .build();
+
+        this.setReservationMsgIntoContent(chatMsgResDTO, ptReservation, ptReservation.getPtProgram());
+
+        return chatMsgResDTO;
+    }
+
+    private void setReservationMsgIntoContent(ChatMsgResDTO chatMsgResDTO, PtReservation ptReservation, PtProgram ptProgram) {
+
+        PtReservationMsgDto ptReservationMsgDto = PtReservationMsgDto.builder()
+                .reservationId(ptReservation.getId())
+                .programId(ptProgram.getId())
+                .programName(ptProgram.getTitle())
+                .status(ptReservation.getStatus())
+                .startDateTime(ptReservation.getStartDateTime())
+                .endDateTime(ptReservation.getEndDateTime())
+                .senderName(ptReservation.getMember().getName())
+                .build();
+
+        try {
+            chatMsgResDTO.setContent(om.writeValueAsString(ptReservationMsgDto));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private ChatMsg saveReservationChatMsg(Chat chat, Member sender, PtReservation ptReservation) {
+
+        ChatMsg chatMsg = ChatMsg.builder()
+                .chat(chat)
+                .sender(sender)
+                .msgType(MsgType.RESERVATION)
+                .ptReservation(ptReservation)
+                .build();
+
+        return chatMsgRepository.save(chatMsg);
+    }
+
 }
