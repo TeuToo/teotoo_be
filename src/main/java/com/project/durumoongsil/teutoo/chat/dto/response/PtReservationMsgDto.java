@@ -11,7 +11,10 @@ import java.time.LocalDateTime;
 public class PtReservationMsgDto {
     private Long reservationId;
     private Long programId;
-    private String senderName;
+    private Long memberId;
+    private String memberName;
+    private Long trainerId;
+    private String trainerName;
     private String programName;
     private LocalDateTime startDateTime;
     private LocalDateTime endDateTime;
