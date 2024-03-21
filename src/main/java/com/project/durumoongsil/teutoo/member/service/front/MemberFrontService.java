@@ -38,6 +38,7 @@ public class MemberFrontService {
     private MemberSearchDto createMemberSearchDto(Member member) {
         String MEMBER_IMAGE_PATH = "member_profile";
         return MemberSearchDto.builder()
+                .memberId(member.getId())
                 .name(member.getName())
                 .email(member.getEmail())
                 .address(member.getAddress())
