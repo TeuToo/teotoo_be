@@ -84,4 +84,11 @@ public class GlobalExceptionHandler {
     public RestError handlingScheduleConflictException(ScheduleConflictException ex) {
         return new RestError(HttpStatus.CONFLICT.toString(), ex.getMessage());
     }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(InvalidActionException.class)
+    public RestError handlingInvalidActionException(InvalidActionException ex) {
+        return new RestError(HttpStatus.BAD_REQUEST.toString(), ex.getMessage());
+    }
+
 }
