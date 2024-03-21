@@ -14,4 +14,7 @@ public interface PtReservationRepository extends JpaRepository<PtReservation, Lo
 
     @Query("select pr from PtReservation pr inner join fetch pr.member inner join fetch pr.ptProgram where pr.id = :ptReservationId")
     Optional<PtReservation> findByIdWithMemberAndPtProgram(@Param("ptReservationId") Long ptReservationId);
+
+    @Query("select pr from PtReservation pr inner join fetch pr.ptProgram ptProgram inner join fetch ptProgram.trainerInfo where pr.id = :ptReservationId")
+    Optional<PtReservation> findByIdWithPtProgramAndTrainerInfo(@Param("ptReservationId") Long ptReservationId);
 }
