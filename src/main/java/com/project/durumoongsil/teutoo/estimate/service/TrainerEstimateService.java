@@ -15,6 +15,8 @@ import com.project.durumoongsil.teutoo.trainer.ptprogram.domain.PtProgram;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.repository.PtProgramRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +32,14 @@ public class TrainerEstimateService {
     private final MemberRepository memberRepository;
     private final PtProgramRepository ptProgramRepository;
     private final EstimateRepository estimateRepository;
+
+    public Page<Estimate> searchEstimates(Pageable pageable, String ptAddress) {
+        return estimateRepository.pageUserEstimateWithPtAddress(pageable, ptAddress);
+    }
+
+    public Long getMyEstimateId() {
+        return trainerEstimateRepository.getMyEstimateId(LoginEmail.getLoginUserEmail());
+    }
 
     /**
      *  처음 트레이너가 견적석, 신청서 버튼을 눌렀을대 이름은 그냥 표기, 프로그램 select 박스로 하기 위해서
@@ -56,15 +66,6 @@ public class TrainerEstimateService {
                 .ptProgram(ptProgram)
                 .build();
         trainerEstimateRepository.save(trainerEstimate);
-    }
-
-    /**
-     * 트레이너 입장에서 견적서를 들어감녀 일반 유저의 견적서, 신청서가 보여야한다.
-     * 여기서는 No-offset 사용
-     */
-    @Transactional(readOnly = true)
-    public List<Estimate> searchAllUserEstimate(Long cursorId, int size) {
-        return estimateRepository.findEstimateAfterCursor(cursorId, size);
     }
 
     /**

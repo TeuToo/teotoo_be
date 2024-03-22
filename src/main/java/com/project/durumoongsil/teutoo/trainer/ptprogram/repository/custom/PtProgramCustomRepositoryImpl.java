@@ -6,6 +6,7 @@ import com.project.durumoongsil.teutoo.trainer.info.domain.QTrainerInfo;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.domain.PtProgram;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.domain.QPtImg;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.domain.QPtProgram;
+import com.project.durumoongsil.teutoo.trainer.ptprogram.domain.QPtReservation;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -24,6 +25,7 @@ public class PtProgramCustomRepositoryImpl implements PtProgramCustomRepository 
     QTrainerInfo qTrainerInfo = QTrainerInfo.trainerInfo;
     QPtImg qPtImg = QPtImg.ptImg;
     QFile qFile = QFile.file;
+    QPtReservation qPtReservation = QPtReservation.ptReservation;
 
     @Override
     public List<PtProgram> findByMemberEmailWithPtImg(String email) {
@@ -38,6 +40,7 @@ public class PtProgramCustomRepositoryImpl implements PtProgramCustomRepository 
                 .fetch();
     }
 
+    @Override
     public Optional<PtProgram> findByIdAndMemberEmailWithPtImgAndFile(Long ptProgramId, String email) {
         PtProgram ptProgram = queryFactory
                 .selectFrom(qPtProgram)
@@ -54,6 +57,7 @@ public class PtProgramCustomRepositoryImpl implements PtProgramCustomRepository 
         return Optional.ofNullable(ptProgram);
     }
 
+    @Override
     public Optional<PtProgram> findByIdWithPtImgAndFile(Long ptProgramId) {
         PtProgram ptProgram = queryFactory
                 .selectFrom(qPtProgram)
@@ -67,6 +71,7 @@ public class PtProgramCustomRepositoryImpl implements PtProgramCustomRepository 
         return Optional.ofNullable(ptProgram);
     }
 
+    @Override
     public Optional<Long> findTrainerIdById(Long ptProgramId) {
         Long trainerId =  queryFactory
                 .select(qMember.id)
@@ -78,6 +83,16 @@ public class PtProgramCustomRepositoryImpl implements PtProgramCustomRepository 
                 ).fetchFirst();
 
         return Optional.ofNullable(trainerId);
+    }
+
+    @Override
+    public List<PtProgram> findByTrainerIdWithPtReservation(Long trainerId) {
+        return queryFactory
+                .selectFrom(qPtProgram)
+                .innerJoin(qPtProgram.trainerInfo, qTrainerInfo)
+                .leftJoin(qPtProgram.ptReservationList, qPtReservation).fetchJoin()
+                .where(qTrainerInfo.id.eq(trainerId))
+                .fetch();
     }
 
 

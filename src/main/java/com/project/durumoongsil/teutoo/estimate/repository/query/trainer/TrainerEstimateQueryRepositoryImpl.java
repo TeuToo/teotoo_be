@@ -31,28 +31,19 @@ public class TrainerEstimateQueryRepositoryImpl implements TrainerEstimateQueryR
     }
 
     @Override
-    public Page<TrainerEstimate> pageTrainerEstimateWithPtAddress(Pageable pageable, String ptAddress) {
-        List<TrainerEstimate> estimates = factory.selectFrom(trainerEstimate)
-                .join(trainerEstimate.member, member).fetchJoin()
-                .where(trainerEstimate.ptCenterAddress.like("%" + ptAddress + "%"))
-                .orderBy(trainerEstimate.createdAt.desc())
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
-
-
-        Long totalCount = factory.select(trainerEstimate.count())
-                .from(trainerEstimate)
-                .fetchOne();
-
-        return new PageImpl<>(estimates, pageable, totalCount);
-    }
-
-    @Override
     public Optional<TrainerEstimate> findByEstimateIdWithMember(Long estimateId) {
         return Optional.ofNullable(factory.selectFrom(trainerEstimate)
                 .join(trainerEstimate.member, member).fetchJoin()
                 .where(trainerEstimate.id.eq(estimateId))
                 .fetchOne());
+    }
+
+    @Override
+    public Long getMyEstimateId(String email) {
+        TrainerEstimate findTrainerEstimate = factory.selectFrom(trainerEstimate)
+                .join(trainerEstimate.member, member).fetchJoin()
+                .where(trainerEstimate.member.email.eq(email))
+                .fetchOne();
+        return findTrainerEstimate == null ? null : findTrainerEstimate.getId();
     }
 }

@@ -1,5 +1,6 @@
 package com.project.durumoongsil.teutoo.config;
 
+import com.project.durumoongsil.teutoo.common.SpringSecurityAuditorAware;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -20,5 +21,10 @@ public class WebConfig {
         return new ObjectMapper()
                 .registerModule(new JavaTimeModule())
                 .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+    }
+
+    @Bean
+    public SpringSecurityAuditorAware auditorProvider() {
+        return new SpringSecurityAuditorAware();
     }
 }

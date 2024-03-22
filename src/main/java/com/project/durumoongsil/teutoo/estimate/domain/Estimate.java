@@ -1,6 +1,7 @@
 package com.project.durumoongsil.teutoo.estimate.domain;
 
 
+import com.project.durumoongsil.teutoo.common.BaseMemberTimeEntity;
 import com.project.durumoongsil.teutoo.common.BaseTimeEntity;
 import com.project.durumoongsil.teutoo.member.domain.Member;
 import jakarta.persistence.*;
@@ -15,13 +16,12 @@ import static lombok.AccessLevel.*;
 @Setter
 @ToString
 @NoArgsConstructor(access = PROTECTED)
-public class Estimate extends BaseTimeEntity {
+public class Estimate extends BaseMemberTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Integer price;
-    private Integer ptCount;
     private String ptAddress;
 
     @ManyToOne(fetch = LAZY)
@@ -29,10 +29,9 @@ public class Estimate extends BaseTimeEntity {
     private Member member;
 
     @Builder
-    public Estimate(Long id, int price, Integer ptCount, String ptAddress, Member member) {
+    public Estimate(Long id, int price, String ptAddress, Member member) {
         this.id = id;
         this.price = price;
-        this.ptCount = ptCount;
         this.ptAddress = ptAddress;
         this.member = member;
     }

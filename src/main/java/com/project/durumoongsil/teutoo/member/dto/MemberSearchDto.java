@@ -10,6 +10,7 @@ import lombok.Data;
 @Data
 @Builder
 public class MemberSearchDto {
+    private Long memberId;
     @NotBlank(message = "이름은 필수 값 입니다.")
     @Schema(description = "사용자 이름")
     private String name;

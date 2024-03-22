@@ -8,7 +8,7 @@ import lombok.Data;
 @Builder
 @AllArgsConstructor
 public class PagedTrainerEstimateDto {
-    private Long id;
+    private Long estimateId;
     private Integer price;
     private String name;
     private String profileImagePath;
