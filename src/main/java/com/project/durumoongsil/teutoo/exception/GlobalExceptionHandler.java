@@ -91,4 +91,10 @@ public class GlobalExceptionHandler {
         return new RestError(HttpStatus.BAD_REQUEST.toString(), ex.getMessage());
     }
 
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(MailSendException.class)
+    public RestError MailSendException(MailSendException ex) {
+        return new RestError(HttpStatus.INTERNAL_SERVER_ERROR.toString(), ex.getMessage());
+    }
+
 }
