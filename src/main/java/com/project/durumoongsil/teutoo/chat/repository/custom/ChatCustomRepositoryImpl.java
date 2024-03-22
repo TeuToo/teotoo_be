@@ -5,6 +5,8 @@ import com.project.durumoongsil.teutoo.chat.domain.QChat;
 import com.project.durumoongsil.teutoo.chat.domain.QChatMsg;
 import com.project.durumoongsil.teutoo.chat.dto.query.*;
 import com.project.durumoongsil.teutoo.member.domain.QMember;
+import com.project.durumoongsil.teutoo.trainer.ptprogram.domain.QPtProgram;
+import com.project.durumoongsil.teutoo.trainer.ptprogram.domain.QPtReservation;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
@@ -26,6 +28,8 @@ public class ChatCustomRepositoryImpl implements ChatCustomRepository {
     QMember QaMember = new QMember("a_member");
     QMember QbMember = new QMember("b_member");
     QChatMsg qChatMsg = QChatMsg.chatMsg;
+    QPtReservation qPtReservation = QPtReservation.ptReservation;
+    QPtProgram qPtProgram = QPtProgram.ptProgram;
 
     @Override
     public Chat findBySenderIdAndReceiverId(Long senderId, Long receiverId) {
@@ -99,14 +103,17 @@ public class ChatCustomRepositoryImpl implements ChatCustomRepository {
                                     new QChatMsgQueryDto(
                                             qChatMsg.id,
                                             qChatMsg.sender.id,
+                                            qChatMsg.sender.name,
                                             qChatMsg.msgType,
                                             qChatMsg.createdAt,
                                             qChatMsg.textContent,
                                             qChatMsg.imgPath,
                                             qChatMsg.imgName,
-                                            qChatMsg.programName,
-                                            qChatMsg.programSchedule,
-                                            qChatMsg.programConfirm
+                                            qPtProgram.id,
+                                            qPtProgram.title,
+                                            qPtReservation.startDateTime,
+                                            qPtReservation.endDateTime,
+                                            qPtReservation.status
                                     )
                             )
                     )
@@ -114,6 +121,8 @@ public class ChatCustomRepositoryImpl implements ChatCustomRepository {
                     .innerJoin(qChat.aMember, QaMember)
                     .innerJoin(qChat.bMember, QbMember)
                     .innerJoin(qChat.chatMsgList, qChatMsg)
+                    .leftJoin(qChatMsg.ptReservation, qPtReservation)
+                    .leftJoin(qPtReservation.ptProgram, qPtProgram)
                     .where(
                             qChatMsg.id.in(subQuery),
                             eqEmailAndLikeSearchMemberName(memberEmail, searchMemberName)

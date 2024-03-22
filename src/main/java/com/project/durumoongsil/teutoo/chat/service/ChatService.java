@@ -1,11 +1,14 @@
 package com.project.durumoongsil.teutoo.chat.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.durumoongsil.teutoo.chat.domain.*;
 import com.project.durumoongsil.teutoo.chat.dto.query.ChatMsgQueryDto;
 import com.project.durumoongsil.teutoo.chat.dto.query.ChatPreviewQueryDto;
 import com.project.durumoongsil.teutoo.chat.dto.response.ChatActivationResDTO;
 import com.project.durumoongsil.teutoo.chat.dto.response.ChatMsgResDTO;
 import com.project.durumoongsil.teutoo.chat.dto.response.ChatPreviewResDto;
+import com.project.durumoongsil.teutoo.chat.dto.response.PtReservationMsgDto;
 import com.project.durumoongsil.teutoo.chat.repository.ChatMsgRepository;
 import com.project.durumoongsil.teutoo.chat.repository.ChatRepository;
 import com.project.durumoongsil.teutoo.common.domain.FilePath;
@@ -31,6 +34,7 @@ public class ChatService {
     private final MemberRepository memberRepository;
     private final FileService fileService;
     private final SecurityService securityService;
+    private final ObjectMapper om;
 
 
     /**
@@ -75,7 +79,7 @@ public class ChatService {
     private ChatInfo getChatInfo(Chat chat, Long senderId, Long receiverId) {
 
         Long senderMsgIdx = (chat.getAMember().getId() == senderId) ? chat.getAMsgIdx() : chat.getBMsgIdx();
-        Long receiverMsgIdx = (chat.getAMember().getId() == receiverId) ? chat.getAMsgIdx() : chat.getBMsgIdx();
+        Long receiverMsgIdx = (chat.getAMember().getId() != senderId) ? chat.getAMsgIdx() : chat.getBMsgIdx();
 
         return ChatInfo.builder()
                 .roomId(chat.getRoomId())
@@ -116,13 +120,45 @@ public class ChatService {
         chatMessageResDTO.setSenderId(chatMsgQueryDTO.getSenderId());
 
         switch (chatMsgQueryDTO.getContentType()) {
-            case TEXT -> chatMessageResDTO.setContent(chatMsgQueryDTO.getTextContent());
-            case IMG -> chatMessageResDTO.setContent(fileService
-                    .getImgUrl(chatMsgQueryDTO.getImgPath(), chatMsgQueryDTO.getImgName()));
-            // case RESERVE ->
+            case TEXT -> this.setTextMsg(chatMessageResDTO, chatMsgQueryDTO);
+            case IMG -> this.setImgMsg(chatMessageResDTO, chatMsgQueryDTO);
+            case RESERVATION -> this.setReservationMsg(chatMessageResDTO, chatMsgQueryDTO);
         }
 
         return chatMessageResDTO;
+    }
+    
+    private ChatMsgResDTO setTextMsg(ChatMsgResDTO chatMsgResDTO, ChatMsgQueryDto chatMsgQueryDto) {
+        chatMsgResDTO.setContent(chatMsgQueryDto.getTextContent());
+
+        return chatMsgResDTO;
+    }
+
+    private ChatMsgResDTO setImgMsg(ChatMsgResDTO chatMsgResDTO, ChatMsgQueryDto chatMsgQueryDto) {
+        chatMsgResDTO.setContent(fileService
+                .getImgUrl(chatMsgQueryDto.getImgPath(), chatMsgQueryDto.getImgName()));
+
+        return chatMsgResDTO;
+    }
+
+    private ChatMsgResDTO setReservationMsg(ChatMsgResDTO chatMsgResDTO, ChatMsgQueryDto chatMsgQueryDto) {
+
+        PtReservationMsgDto ptReservationMsgDto = PtReservationMsgDto.builder()
+                        .programId(chatMsgQueryDto.getProgramId())
+                        .programName(chatMsgQueryDto.getProgramName())
+                        .status(chatMsgQueryDto.getStatus())
+                        .startDateTime(chatMsgQueryDto.getStartDateTime())
+                        .endDateTime(chatMsgQueryDto.getEndDateTime())
+                        .memberName(chatMsgQueryDto.getSenderName())
+                        .build();
+
+        try {
+            chatMsgResDTO.setContent(om.writeValueAsString(ptReservationMsgDto));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        return chatMsgResDTO;
     }
 
 
