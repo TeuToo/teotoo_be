@@ -3,6 +3,7 @@ package com.project.durumoongsil.teutoo.trainer.ptprogram.controller;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.response.PtProgramManageResDto;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.request.PtProgramRegDto;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.request.PtProgramUpdateDto;
+import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.response.PtProgramOverviewResDto;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.response.PtProgramResDto;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.service.PtProgramService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -72,4 +73,13 @@ public class PtProgramController {
         ptProgramService.deletePtProgram(programId);
     }
 
+    @Operation(summary = "트레이너 PT 예약 페이지 프로그램 및 스케쥴 조회", description = "프로그램 예약 페이지에서 프로그램 이름과 스케쥴을 조회 하기 위한 API입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "프로그램 및 스케쥴 조회 성공"),
+            @ApiResponse(responseCode = "400", description = "클라이언트의 잘못된 요청")
+    })
+    @GetMapping("/list/overview")
+    public PtProgramOverviewResDto getPtProgramOverviewForScheduling(@RequestParam("trainerId")Long trainerId) {
+        return ptProgramService.getPtProgramInfoListForScheduling(trainerId);
+    }
 }

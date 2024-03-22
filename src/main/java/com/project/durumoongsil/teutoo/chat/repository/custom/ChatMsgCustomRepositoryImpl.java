@@ -5,6 +5,8 @@ import com.project.durumoongsil.teutoo.chat.domain.QChatMsg;
 import com.project.durumoongsil.teutoo.chat.dto.query.ChatMsgQueryDto;
 import com.project.durumoongsil.teutoo.chat.dto.query.QChatMsgQueryDto;
 import com.project.durumoongsil.teutoo.member.domain.QMember;
+import com.project.durumoongsil.teutoo.trainer.ptprogram.domain.QPtProgram;
+import com.project.durumoongsil.teutoo.trainer.ptprogram.domain.QPtReservation;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -20,6 +22,8 @@ public class ChatMsgCustomRepositoryImpl implements ChatMsgCustomRepository{
     QChat qChat = QChat.chat;
     QMember qMember = QMember.member;
     QChatMsg qChatMsg = QChatMsg.chatMsg;
+    QPtReservation qPtReservation = QPtReservation.ptReservation;
+    QPtProgram qPtProgram = QPtProgram.ptProgram;
 
 
     @Override
@@ -33,17 +37,22 @@ public class ChatMsgCustomRepositoryImpl implements ChatMsgCustomRepository{
                 .select(new QChatMsgQueryDto(
                         qChatMsg.id,
                         qChatMsg.sender.id,
+                        qChatMsg.sender.name,
                         qChatMsg.msgType,
                         qChatMsg.createdAt,
                         qChatMsg.textContent,
                         qChatMsg.imgPath,
                         qChatMsg.imgName,
-                        qChatMsg.programName,
-                        qChatMsg.programSchedule,
-                        qChatMsg.programConfirm
+                        qPtProgram.id,
+                        qPtProgram.title,
+                        qPtReservation.startDateTime,
+                        qPtReservation.endDateTime,
+                        qPtReservation.status
                 ))
                 .from(qChatMsg)
-                .join(qChatMsg.chat, qChat)
+                .innerJoin(qChatMsg.chat, qChat)
+                .leftJoin(qChatMsg.ptReservation, qPtReservation)
+                .leftJoin(qPtReservation.ptProgram, qPtProgram)
                 .where(
                         qChat.aMember.id.eq(aMemberId),
                         qChat.bMember.id.eq(bMemberId)

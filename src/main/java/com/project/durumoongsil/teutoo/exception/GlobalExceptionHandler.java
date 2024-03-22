@@ -78,4 +78,17 @@ public class GlobalExceptionHandler {
     public RestError handlingMissingServletRequestParameterException(MissingServletRequestParameterException ex) {
         return new RestError(HttpStatus.BAD_REQUEST.toString(), ex.getMessage());
     }
+
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(ScheduleConflictException.class)
+    public RestError handlingScheduleConflictException(ScheduleConflictException ex) {
+        return new RestError(HttpStatus.CONFLICT.toString(), ex.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(InvalidActionException.class)
+    public RestError handlingInvalidActionException(InvalidActionException ex) {
+        return new RestError(HttpStatus.BAD_REQUEST.toString(), ex.getMessage());
+    }
+
 }

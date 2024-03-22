@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.durumoongsil.teutoo.chat.constants.ChatErrorCode;
 import com.project.durumoongsil.teutoo.chat.dto.request.ChatReadReqDto;
+import com.project.durumoongsil.teutoo.chat.dto.request.ChatReservationAcceptDto;
+import com.project.durumoongsil.teutoo.chat.dto.request.ChatReservationReqDto;
 import com.project.durumoongsil.teutoo.chat.dto.request.ChatSendTextMsgDto;
 import com.project.durumoongsil.teutoo.chat.dto.response.ChatMsgResDTO;
 import com.project.durumoongsil.teutoo.chat.dto.response.ChatReadResDto;
@@ -49,20 +51,34 @@ public class ChatWebSocketController {
     @PostMapping("/{roomId}/img")
     public void saveChatImg(@PathVariable String roomId, List<MultipartFile> chatImgMsgList) {
         List<ChatMsgResDTO> chatMsgResDTOList = chatWebSocketService.saveChatImgList(roomId, chatImgMsgList);
-        sendMessageToTopic(roomId, chatMsgResDTOList);
+        this.sendMessageToTopic(roomId, chatMsgResDTOList);
     }
 
     @MessageMapping("/chat/{roomId}/text")
     public void sendMessage(@DestinationVariable String roomId, ChatSendTextMsgDto sendTextMsgDto) {
         ChatMsgResDTO chatMsgResDTO = chatWebSocketService.saveMsgAndReturnChatTextMsg(roomId, sendTextMsgDto);
-        sendMessageToTopic(roomId, chatMsgResDTO);
+        this.sendMessageToTopic(roomId, chatMsgResDTO);
     }
 
     @MessageMapping("/chat/{roomId}/read")
     public void readMsg(@DestinationVariable String roomId, ChatReadReqDto chatReadReqDto) {
 
         ChatReadResDto chatReadResDto = chatWebSocketService.readMsgAndReturnChatReadResponse(roomId, chatReadReqDto);
-        sendMessageToTopic(roomId, chatReadResDto);
+        this.sendMessageToTopic(roomId, chatReadResDto);
+    }
+
+    @MessageMapping("/chat/{roomId}/reservation")
+    public void reservationMsg(@DestinationVariable String roomId, ChatReservationReqDto chatReservationReqDto) {
+        ChatMsgResDTO chatMsgResDTO = chatWebSocketService.saveAndReturnReservationMsg(roomId, chatReservationReqDto);
+
+        this.sendMessageToTopic(roomId, chatMsgResDTO);
+    }
+
+    @MessageMapping("/chat/{roomId}/reservation/accept")
+    public void reservationAcceptMsg(@DestinationVariable String roomId, ChatReservationAcceptDto chatReservationAcceptDto) {
+        ChatMsgResDTO chatMsgResDTO = chatWebSocketService.saveAndReturnReservationAcceptMsg(roomId, chatReservationAcceptDto);
+
+        this.sendMessageToTopic(roomId, chatMsgResDTO);
     }
 
     private void sendMessageToTopic(String roomId, Object message) {
@@ -75,7 +91,7 @@ public class ChatWebSocketController {
 
     @MessageExceptionHandler(RuntimeException.class)
     @SendToUser(destinations="/topic/error", broadcast=false)
-    public StompError handleException(RuntimeException ex, Principal principal) throws JsonProcessingException {
+    public StompError handleException(RuntimeException ex, Principal principal){
         log.info("exception occurred about {}, name: {}", ex.getMessage(), principal.getName());
 
         return this.createErrorFromException(ex);

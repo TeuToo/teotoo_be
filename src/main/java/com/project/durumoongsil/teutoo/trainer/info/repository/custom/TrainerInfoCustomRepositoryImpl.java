@@ -1,4 +1,4 @@
-package com.project.durumoongsil.teutoo.trainer.info.repository;
+package com.project.durumoongsil.teutoo.trainer.info.repository.custom;
 
 import com.project.durumoongsil.teutoo.member.domain.Member;
 import com.project.durumoongsil.teutoo.member.domain.QMember;
@@ -6,6 +6,8 @@ import com.project.durumoongsil.teutoo.member.domain.Role;
 import com.project.durumoongsil.teutoo.trainer.info.domain.QTrainerInfo;
 import com.project.durumoongsil.teutoo.trainer.info.domain.TrainerInfo;
 import com.project.durumoongsil.teutoo.trainer.info.dto.TrainerListReqDto;
+import com.project.durumoongsil.teutoo.trainer.ptprogram.domain.QPtProgram;
+import com.project.durumoongsil.teutoo.trainer.ptprogram.domain.QPtReservation;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.NumberPath;
@@ -31,6 +33,8 @@ public class TrainerInfoCustomRepositoryImpl implements TrainerInfoCustomReposit
 
     QMember qMember = QMember.member;
     QTrainerInfo qTrainerInfo = QTrainerInfo.trainerInfo;
+    QPtProgram qPtProgram = QPtProgram.ptProgram;
+    QPtReservation qPtReservation = QPtReservation.ptReservation;
 
     @Override
     public Optional<Member> findMemberByIdWithTrainerInfo(String userEmail) {
@@ -149,4 +153,6 @@ public class TrainerInfoCustomRepositoryImpl implements TrainerInfoCustomReposit
 
         return null;
     }
+
+
 }

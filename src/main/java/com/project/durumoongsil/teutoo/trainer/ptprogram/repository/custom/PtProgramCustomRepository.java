@@ -10,4 +10,5 @@ public interface PtProgramCustomRepository {
     Optional<PtProgram> findByIdAndMemberEmailWithPtImgAndFile(Long ptProgramId, String email);
     Optional<PtProgram> findByIdWithPtImgAndFile(Long ptProgramId);
     Optional<Long> findTrainerIdById(Long ptProgramId);
+    List<PtProgram> findByTrainerIdWithPtReservation(Long trainerId);
 }

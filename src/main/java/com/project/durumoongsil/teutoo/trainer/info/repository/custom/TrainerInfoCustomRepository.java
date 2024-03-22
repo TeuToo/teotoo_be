@@ -1,4 +1,4 @@
-package com.project.durumoongsil.teutoo.trainer.info.repository;
+package com.project.durumoongsil.teutoo.trainer.info.repository.custom;
 
 import com.project.durumoongsil.teutoo.member.domain.Member;
 import com.project.durumoongsil.teutoo.trainer.info.domain.TrainerInfo;
