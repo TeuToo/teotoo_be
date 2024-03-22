@@ -58,8 +58,8 @@ public class EstimateController {
             @ApiResponse(responseCode = "200", description = "견적서 수정 성공"),
             @ApiResponse(responseCode = "403", description = "자기가 작성한게 아닌 타인이 수정하려할때 권한 제어")
     })
-    @PatchMapping("{estimateId}")
-    public RestResult updateEstimate(@PathVariable Long estimateId, UpdateEstimateDto updateEstimateDto) {
+    @PatchMapping(value = "{estimateId}", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public RestResult updateEstimate(@PathVariable Long estimateId, @Validated UpdateEstimateDto updateEstimateDto) {
         return estimateFrontService.updateEstimateResult(estimateId, updateEstimateDto,LoginEmail.getLoginUserEmail());
     }
 

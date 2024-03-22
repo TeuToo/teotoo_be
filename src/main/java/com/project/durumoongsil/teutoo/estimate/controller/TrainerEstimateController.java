@@ -6,7 +6,11 @@ import com.project.durumoongsil.teutoo.common.RestResult;
 import com.project.durumoongsil.teutoo.estimate.dto.trainer.CreateTrainerEstimateDto;
 import com.project.durumoongsil.teutoo.estimate.dto.trainer.UpdateTrainerEstimateDto;
 import com.project.durumoongsil.teutoo.estimate.service.front.TrainerEstimateFrontService;
+import com.project.durumoongsil.teutoo.login.dto.LoginDto;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -71,8 +75,8 @@ public class TrainerEstimateController {
             @ApiResponse(responseCode = "200", description = "견적서 수정 성공"),
             @ApiResponse(responseCode = "403", description = "자기가 작성한게 아닌 타인이 수정하려할때 권한 제어")
     })
-    @PatchMapping(value = "{estimateId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public RestResult updateEstimate(@PathVariable Long estimateId, UpdateTrainerEstimateDto updateTrainerEstimateDto) {
+    @PatchMapping(value = "{estimateId}", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public RestResult updateEstimate(@PathVariable Long estimateId, @Validated UpdateTrainerEstimateDto updateTrainerEstimateDto) {
         return frontService.updateEstimateResult(estimateId, updateTrainerEstimateDto);
     }
 
