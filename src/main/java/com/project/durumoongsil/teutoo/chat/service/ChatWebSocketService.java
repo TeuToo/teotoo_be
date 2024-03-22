@@ -140,18 +140,18 @@ public class ChatWebSocketService {
     @Transactional
     public ChatReadResDto readMsgAndReturnChatReadResponse(String roomId, ChatReadReqDto chatReadReqDto) {
         Chat chat = getChatByRoomId(roomId);
-        Member receiver = getMemberFromChat(chat);
-        updateReceiverMsgIdx(chat, receiver.getId(), chatReadReqDto.getReadIdx());
+        Member reader = getMemberFromChat(chat);
+        this.updateReceiverMsgIdx(chat, reader.getId(), chatReadReqDto.getReadIdx());
 
-        return buildChatReadResDto(chat, receiver);
+        return buildChatReadResDto(chat, reader);
     }
 
-    private void updateReceiverMsgIdx(Chat chat, Long memberId, Long updatedMsgIdx) {
+    private void updateReceiverMsgIdx(Chat chat, Long readerId, Long updatedMsgIdx) {
 
-        if (isAMember(chat, memberId)) {
-            validateAndUpdateMsgIdx(chat, updatedMsgIdx, chat.getAMsgIdx(), chat.getBMsgIdx());
+        if (isAMember(chat, readerId)) {
+            validateAndUpdateMsgIdx(chat, readerId, updatedMsgIdx, chat.getAMsgIdx(), chat.getBMsgIdx());
         } else {
-            validateAndUpdateMsgIdx(chat, updatedMsgIdx, chat.getBMsgIdx(), chat.getAMsgIdx());
+            validateAndUpdateMsgIdx(chat, readerId, updatedMsgIdx, chat.getBMsgIdx(), chat.getAMsgIdx());
         }
     }
 
@@ -159,11 +159,12 @@ public class ChatWebSocketService {
         return chat.getAMember().getId().equals(memberId);
     }
 
-    private void validateAndUpdateMsgIdx(Chat chat, Long updatedMsgIdx, Long currentMsgIdx, Long otherMsgIdx) {
+    private void validateAndUpdateMsgIdx(Chat chat, Long readerId, Long updatedMsgIdx, Long currentMsgIdx, Long otherMsgIdx) {
         if (updatedMsgIdx < currentMsgIdx || updatedMsgIdx > otherMsgIdx) {
             throw new InvalidActionException("유효하지 않은 MsgIdx 갱신 요청 입니다.");
         }
-        if (isAMember(chat, updatedMsgIdx)) {
+
+        if (isAMember(chat, readerId)) {
             chat.updateAMsgIdx(updatedMsgIdx);
         } else {
             chat.updateBMsgIdx(updatedMsgIdx);
