@@ -47,4 +47,14 @@ public class MemberFrontService {
                 .setRole(member.getRole().toString())
                 .build();
     }
+
+    /**
+     * 패스워드 재발송을 위해서 입력한 이메일로 비밀번호 재설정 링크를 보낸다
+     * @param email 회원가입시 입력한 이메일
+     * @return "비밀번호 재설정 링크를 보냈습니다."
+     */
+    public RestResult startPasswordResetProcess(String email) {
+        // 실제로 가입한 이메일인지 확인
+        return new RestResult(memberService.sendResetLink(email));
+    }
 }
