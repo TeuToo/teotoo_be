@@ -57,9 +57,8 @@ public class MemberService {
     public Member updateInfo(String userEmail, MemberUpdateDto memberUpdateDto) {
         Member member = getMember(userEmail,"사용자를 찾을 수 없습니다.");
 
-        // 이미지가 있을 경우 이미지 처리
         updateProfileImage(memberUpdateDto, member);
-
+        updatePassword(memberUpdateDto.getPassword(), member);
         return member.updateInfo(memberUpdateDto);
     }
 
@@ -139,5 +138,9 @@ public class MemberService {
     private Member getMember(String userEmail, String errorMsg) {
         return memberRepository.findMemberByEmail(userEmail)
                 .orElseThrow(() -> new NotFoundUserException(errorMsg));
+    }
+
+    private void updatePassword(String password, Member member) {
+        member.setPassword(passwordEncoder.encode(password));
     }
 }

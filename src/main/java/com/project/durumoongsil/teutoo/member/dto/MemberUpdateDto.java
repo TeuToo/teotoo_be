@@ -19,6 +19,8 @@ public class MemberUpdateDto {
     @Schema(description = "프로필 이미지")
     private MultipartFile profileImage;
 
+    @Schema(description = "비밀번호")
+    private String password;
 
     @Builder
     public MemberUpdateDto(String address) {
