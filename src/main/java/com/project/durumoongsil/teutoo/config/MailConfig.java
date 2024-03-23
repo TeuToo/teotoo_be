@@ -35,9 +35,8 @@ public class MailConfig {
         props.put("mail.transport.protocol", "smtp");
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.debug", "true"); // 운영 환경에서는 false 로 설정
+        props.put("mail.debug", "false"); // 운영 환경에서는 false 로 설정
 
         return mailSender;
     }
 }
-
