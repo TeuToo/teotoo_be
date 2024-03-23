@@ -17,12 +17,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import static com.project.durumoongsil.teutoo.member.domain.Role.*;
+import java.util.UUID;
 
+import static com.project.durumoongsil.teutoo.member.domain.Role.*;
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
-@Slf4j
 public class MemberService {
 
     private final MemberRepository memberRepository;
@@ -48,14 +49,13 @@ public class MemberService {
         memberRepository.save(member);
     }
 
+    @Transactional(readOnly = true)
     public Member findMember(String userEmail) {
-        return memberRepository.findMemberByEmail(userEmail)
-                .orElseThrow(() -> new NotFoundUserException("사용자를 찾을 수 없습니다."));
+        return getMember(userEmail,"사용자를 찾을 수 없습니다.");
     }
 
     public Member updateInfo(String userEmail, MemberUpdateDto memberUpdateDto) {
-        Member member = memberRepository.findMemberByEmail(userEmail)
-                .orElseThrow(() -> new NotFoundUserException("사용자를 찾을 수 없습니다."));
+        Member member = getMember(userEmail,"사용자를 찾을 수 없습니다.");
 
         // 이미지가 있을 경우 이미지 처리
         updateProfileImage(memberUpdateDto, member);
@@ -69,9 +69,10 @@ public class MemberService {
      * @return "비밀번호 재설정 링크가 이메일로 전송되었습니다."
      */
     public String sendResetLink(String email) {
-        checkSignUpMember(email);
+        Member member = checkSignUpMember(email);
+        String tempPassword = createTempPassword(member);
         try {
-            emailService.sendMail(email);
+            emailService.sendMail(email, tempPassword);
             return "비밀번호 재설정 링크가 이메일로 전송되었습니다.";
         } catch (Exception e) {
             throw new MailSendException("이메일 발송 실패");
@@ -109,10 +110,8 @@ public class MemberService {
     }
 
 
-    private void checkSignUpMember(String email) {
-        if(memberRepository.findMemberByEmail(email).isEmpty()){
-            throw new NotFoundUserException("이메일이 유효하지 않습니다.");
-        }
+    private Member checkSignUpMember(String email) {
+        return getMember(email, "유효한 이메일이 아닙니다.");
     }
 
     private void checkEmailAvailable(String email) {
@@ -121,4 +120,24 @@ public class MemberService {
         }
     }
 
+
+    /**
+     * 임시 비밀번호 생성 UUID 로 8자리 생성
+     * @return 임시 비밀번호
+     */
+    private String createTempPassword(Member member) {
+        // UUID를 생성하고 문자열로 변환
+        String uuid = UUID.randomUUID().toString();
+
+        // 하이픈(-)을 제거하고, 8글자로 자름
+        String tempPassword = uuid.replace("-", "").substring(0, 8);
+
+        member.setPassword(passwordEncoder.encode(tempPassword));
+        return tempPassword;
+    }
+
+    private Member getMember(String userEmail, String errorMsg) {
+        return memberRepository.findMemberByEmail(userEmail)
+                .orElseThrow(() -> new NotFoundUserException(errorMsg));
+    }
 }

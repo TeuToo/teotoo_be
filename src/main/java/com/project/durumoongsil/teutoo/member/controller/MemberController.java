@@ -68,6 +68,12 @@ public class MemberController {
         return memberFrontService.updateInfoResult(getLoginUserEmail(), memberUpdateDto);
     }
 
+
+    @Operation(summary = "임시 비밀번호 전송 API", description = "비밀번호 찾기 시 임시 비밀번호를 발급합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "임시 비밀번호 발급 성공"),
+            @ApiResponse(responseCode = "500", description = "메일 전송 실패")
+    })
     @PostMapping(value = "/password-reset-requests", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public RestResult requestPasswordReset(@Validated PasswordResetRequestRecord requestDto) {
         return memberFrontService.startPasswordResetProcess(requestDto.email());

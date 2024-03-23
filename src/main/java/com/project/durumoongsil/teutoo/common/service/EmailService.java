@@ -13,14 +13,14 @@ public class EmailService{
 
     private final JavaMailSender javaMailSender;
 
-    public void sendMail(String email) {
+    public void sendMail(String email, String tempPassword) {
         SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
         try{
             simpleMailMessage.setTo(email);
             // 2. 메일 제목 설정
-            simpleMailMessage.setSubject("비밀번호 재설정");
+            simpleMailMessage.setSubject("임시 비밀 번호 발급");
             // 3. 메일 내용 설정
-            simpleMailMessage.setText("비밀번호를 재설정하려면 다음 링크를 클릭하세요: ");
+            simpleMailMessage.setText("임시 비밀 번호 : " + tempPassword);
             // 4. 메일 전송
             javaMailSender.send(simpleMailMessage);
         }catch (Exception e){
