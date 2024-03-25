@@ -18,6 +18,9 @@ RUN chmod +x ./gradlew && \
 # 5. 애플리케이션 실행을 위한 새로운 스테이지
 FROM openjdk:17-jdk-alpine
 
+# 시간설정
+RUN apk add tzdata && ln -snf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
+
 # 애플리케이션 파일 저장을 위한 디렉토리 생성
 WORKDIR /app
 
