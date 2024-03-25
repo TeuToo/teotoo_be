@@ -66,6 +66,7 @@ public class TrainerEstimateFrontService {
 
     private PageUserEstimateDto convertToDto(Estimate estimate) {
         return PageUserEstimateDto.builder()
+                .memberId(estimate.getMember().getId())
                 .estimateId(estimate.getId())
                 .price(estimate.getPrice())
                 .name(estimate.getMember().getName())

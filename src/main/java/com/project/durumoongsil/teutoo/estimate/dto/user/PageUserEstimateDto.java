@@ -9,6 +9,7 @@ import lombok.Data;
 @Builder
 @AllArgsConstructor
 public class PageUserEstimateDto {
+    private Long memberId;
     private Long estimateId;
     private Integer price;
     private String name;
