@@ -11,6 +11,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -91,7 +92,9 @@ public class PtProgramCustomRepositoryImpl implements PtProgramCustomRepository 
                 .selectFrom(qPtProgram)
                 .innerJoin(qPtProgram.trainerInfo, qTrainerInfo)
                 .leftJoin(qPtProgram.ptReservationList, qPtReservation).fetchJoin()
-                .where(qTrainerInfo.id.eq(trainerId))
+                .where(qTrainerInfo.id.eq(trainerId).and(
+                        qPtReservation.startDateTime.goe(LocalDateTime.now())
+                ))
                 .fetch();
     }
 
