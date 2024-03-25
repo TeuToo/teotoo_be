@@ -1,14 +1,10 @@
 package com.project.durumoongsil.teutoo.estimate.repository.query.user;
 
 import com.project.durumoongsil.teutoo.estimate.domain.Estimate;
-import com.project.durumoongsil.teutoo.estimate.domain.QTrainerEstimate;
 import com.project.durumoongsil.teutoo.estimate.domain.TrainerEstimate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,21 +29,15 @@ public class EstimateQueryRepositoryImpl implements EstimateQueryRepository{
                 .fetchOne();
     }
 
+
     @Override
-    public Page<Estimate> pageUserEstimateWithPtAddress(Pageable pageable, String ptAddress) {
-        List<Estimate> estimates = factory.selectFrom(estimate)
+    public List<Estimate> pageUserEstimateWithPtAddress(Long courseId, int size, String ptAddress) {
+        return factory.selectFrom(estimate)
                 .join(estimate.member, member).fetchJoin()
-                .where(estimate.ptAddress.like("%" + ptAddress + "%"))
+                .where(estimate.ptAddress.like("%" + ptAddress + "%").and(estimate.id.gt(courseId)))
                 .orderBy(estimate.createdAt.desc())
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
+                .limit(size)
                 .fetch();
-
-        Long totalCount = factory.select(estimate.count())
-                .from(estimate)
-                .fetchOne();
-
-        return new PageImpl<>(estimates, pageable, totalCount);
     }
 
     @Override
