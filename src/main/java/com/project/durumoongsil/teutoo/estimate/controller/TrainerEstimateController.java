@@ -6,17 +6,11 @@ import com.project.durumoongsil.teutoo.common.RestResult;
 import com.project.durumoongsil.teutoo.estimate.dto.trainer.CreateTrainerEstimateDto;
 import com.project.durumoongsil.teutoo.estimate.dto.trainer.UpdateTrainerEstimateDto;
 import com.project.durumoongsil.teutoo.estimate.service.front.TrainerEstimateFrontService;
-import com.project.durumoongsil.teutoo.login.dto.LoginDto;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -55,8 +49,8 @@ public class TrainerEstimateController {
             @ApiResponse(responseCode = "400", description = "파라미터 오류")
     })
     @GetMapping
-    public RestEstimateResult getEstimates(@PageableDefault Pageable pageable, String ptAddress) {
-        return frontService.searchAllEstimateResult(pageable, ptAddress);
+    public RestEstimateResult getEstimates(Long courseId, int size, String ptAddress) {
+        return frontService.searchAllEstimateResult(courseId, size, ptAddress);
     }
 
 
