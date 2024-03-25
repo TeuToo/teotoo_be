@@ -11,9 +11,6 @@ import com.project.durumoongsil.teutoo.estimate.service.TrainerEstimateService;
 import com.project.durumoongsil.teutoo.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -41,9 +38,9 @@ public class TrainerEstimateFrontService {
     /**
      * 트레이너 입장에서 유저는 페이징으로 전체 조회
      */
-    public RestEstimateResult searchAllEstimateResult(Pageable pageable, String ptAddress) {
-        Page<Estimate> userEstimates = estimateService.searchEstimates(pageable, ptAddress);
-        Page<PageUserEstimateDto> dtoPage = userEstimates.map(this::convertToDto);
+    public RestEstimateResult searchAllEstimateResult(Long courseId, int size, String ptAddress) {
+        List<Estimate> userEstimates = estimateService.searchEstimates(courseId, size, ptAddress);
+        List<PageUserEstimateDto> dtoPage = userEstimates.stream().map(this::convertToDto).toList();
         Long myEstimateId = estimateService.getMyEstimateId();
         return new RestEstimateResult(dtoPage, myEstimateId);
     }
