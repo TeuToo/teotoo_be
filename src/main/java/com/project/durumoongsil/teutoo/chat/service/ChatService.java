@@ -21,10 +21,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -64,7 +62,9 @@ public class ChatService {
             List<ChatMsgQueryDto> chatMsgQueryList =
                     chatMsgRepository.findBySenderIdAndReceiverId(sender.getId(), receiver.getId());
 
-            chatMsgList = chatMsgQueryList.stream().map(this::toChatMessageResDTO).toList();
+            chatMsgList = chatMsgQueryList.stream()
+                    .map(this::toChatMessageResDTO).collect(Collectors.toList());
+            Collections.reverse(chatMsgList);
         }
 
         ChatInfo chatInfo = this.getChatInfo(chat, sender.getId(), receiver.getId());
