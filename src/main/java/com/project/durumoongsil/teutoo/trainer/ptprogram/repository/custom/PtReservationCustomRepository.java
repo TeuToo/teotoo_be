@@ -4,5 +4,5 @@ import java.time.LocalDateTime;
 
 public interface PtReservationCustomRepository {
 
-    Long countPtReservationByProgramIdANdDateTimeRange(Long programId, LocalDateTime startDateTime, LocalDateTime endDateTime);
+    Long countPtReservationByProgramIdANdDateTimeRange(Long trainerId, LocalDateTime startDateTime, LocalDateTime endDateTime);
 }

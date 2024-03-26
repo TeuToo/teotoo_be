@@ -1,9 +1,12 @@
 package com.project.durumoongsil.teutoo.trainer.ptprogram.repository.custom;
 
+import com.project.durumoongsil.teutoo.trainer.info.domain.QTrainerInfo;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.constants.ReservationStatus;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.domain.QPtProgram;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.domain.QPtReservation;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -18,6 +21,7 @@ public class PtReservationCustomRepositoryImpl implements PtReservationCustomRep
 
     QPtProgram qPtProgram = QPtProgram.ptProgram;
     QPtReservation qPtReservation = QPtReservation.ptReservation;
+    QTrainerInfo qTrainerInfo = QTrainerInfo.trainerInfo;
 
     /**
      * 해당 program 의 예약 스케쥴의 startDateTime <= , <= endDateTime 조건에 속하는 레코드의 개수 파악
@@ -28,17 +32,16 @@ public class PtReservationCustomRepositoryImpl implements PtReservationCustomRep
      */
     @Override
     public Long countPtReservationByProgramIdANdDateTimeRange(Long programId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+
         return queryFactory.select(qPtReservation.count())
-                .from(qPtProgram)
-                .innerJoin(qPtProgram.ptReservationList, qPtReservation)
+                .from(qPtReservation)
+                .innerJoin(qPtReservation.ptProgram, qPtProgram)
+                .innerJoin(qPtProgram.trainerInfo, qTrainerInfo)
                 .where(
                         qPtProgram.id.eq(programId)
-                        .and(
-                                this.isWithinTimeRange(startDateTime, endDateTime)
-                        .and(
-                                this.isReservedOrPending()
-                        )
-                ))
+                                .and(this.isWithinTimeRange(startDateTime, endDateTime))
+                                .and(this.isReservedOrPending())
+                )
                 .fetchOne();
     }
 
