@@ -92,11 +92,11 @@ public class PtProgramCustomRepositoryImpl implements PtProgramCustomRepository 
                 .selectFrom(qPtProgram)
                 .innerJoin(qPtProgram.trainerInfo, qTrainerInfo)
                 .leftJoin(qPtProgram.ptReservationList, qPtReservation).fetchJoin()
+                .leftJoin(qPtReservation.member, qMember).fetchJoin()
                 .where(qTrainerInfo.id.eq(trainerId).and(
-                        qPtReservation.startDateTime.goe(LocalDateTime.now())
+                        qPtReservation.endDateTime.goe(LocalDateTime.now())
                 ))
                 .fetch();
     }
-
 
 }
