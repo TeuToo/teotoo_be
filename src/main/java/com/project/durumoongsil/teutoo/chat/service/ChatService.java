@@ -21,9 +21,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -63,7 +62,9 @@ public class ChatService {
             List<ChatMsgQueryDto> chatMsgQueryList =
                     chatMsgRepository.findBySenderIdAndReceiverId(sender.getId(), receiver.getId());
 
-            chatMsgList = chatMsgQueryList.stream().map(this::toChatMessageResDTO).toList();
+            chatMsgList = chatMsgQueryList.stream()
+                    .map(this::toChatMessageResDTO).collect(Collectors.toList());
+            Collections.reverse(chatMsgList);
         }
 
         ChatInfo chatInfo = this.getChatInfo(chat, sender.getId(), receiver.getId());
@@ -122,7 +123,7 @@ public class ChatService {
         switch (chatMsgQueryDTO.getContentType()) {
             case TEXT -> this.setTextMsg(chatMessageResDTO, chatMsgQueryDTO);
             case IMG -> this.setImgMsg(chatMessageResDTO, chatMsgQueryDTO);
-            case RESERVATION -> this.setReservationMsg(chatMessageResDTO, chatMsgQueryDTO);
+            case RESERVATION, RESERVATION_ACCEPT, RESERVATION_CANCEL -> this.setReservationMsg(chatMessageResDTO, chatMsgQueryDTO);
         }
 
         return chatMessageResDTO;
@@ -152,13 +153,17 @@ public class ChatService {
                         .memberName(chatMsgQueryDto.getSenderName())
                         .build();
 
+        chatMsgResDTO.setContent(this.toPtReservationMsgDtoJsonStr(ptReservationMsgDto));
+
+        return chatMsgResDTO;
+    }
+
+    private String toPtReservationMsgDtoJsonStr(PtReservationMsgDto ptReservationMsgDto) {
         try {
-            chatMsgResDTO.setContent(om.writeValueAsString(ptReservationMsgDto));
+            return om.writeValueAsString(ptReservationMsgDto);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-
-        return chatMsgResDTO;
     }
 
 
@@ -185,7 +190,7 @@ public class ChatService {
         ChatPreviewResDto chatPreviewResDto = new ChatPreviewResDto();
 
         // 상대방이 BMember 라면,
-        boolean isOtherUserBMember = (chatPreviewQueryDto.getAMemberId() == memberId);
+        boolean isOtherUserBMember = (Objects.equals(chatPreviewQueryDto.getAMemberId(), memberId));
 
         this.setChatPreviewResDto(chatPreviewResDto, chatPreviewQueryDto, isOtherUserBMember);
         this.setUnReadChatCnt(chatPreviewResDto, chatPreviewQueryDto, isOtherUserBMember);

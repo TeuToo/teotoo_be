@@ -45,8 +45,8 @@ public class PtReservationCustomRepositoryImpl implements PtReservationCustomRep
     private BooleanBuilder isWithinTimeRange(LocalDateTime startDateTime, LocalDateTime endDateTime) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
 
-        booleanBuilder.and(qPtReservation.startDateTime.eq(startDateTime));
-        booleanBuilder.and(qPtReservation.endDateTime.eq(endDateTime));
+        booleanBuilder.and(qPtReservation.startDateTime.lt(endDateTime));
+        booleanBuilder.and(qPtReservation.endDateTime.gt(startDateTime));
 
         return booleanBuilder;
     }
