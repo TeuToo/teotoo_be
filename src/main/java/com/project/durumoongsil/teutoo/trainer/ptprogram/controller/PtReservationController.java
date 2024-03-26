@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "트레이너 PT 프로그램 예약 API")
+@Tag(name = "PT 프로그램 예약 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("trainer/program/reservation")
