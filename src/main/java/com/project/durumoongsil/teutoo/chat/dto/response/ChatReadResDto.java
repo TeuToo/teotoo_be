@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Getter
 public class ChatReadResDto {
-    private MsgAction action = MsgAction.READ;
+    private MsgAction msgAction = MsgAction.READ;
     private Long senderId;
     private Long senderIdx;
     private Long receiverId;

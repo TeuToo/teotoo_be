@@ -40,8 +40,8 @@ public class EstimateController {
             @ApiResponse(responseCode = "200", description = "견적서 목록 조회 성공")
     })
     @GetMapping
-    public RestEstimateResult getEstimates(@RequestParam Long cursorId, @RequestParam int size) {
-        return estimateFrontService.searchAllTrainerEstimatesResult(cursorId, size);
+    public RestEstimateResult getEstimates(Long courseId, int size) {
+        return estimateFrontService.searchAllTrainerEstimatesResult(courseId, size);
     }
 
     @Operation(summary = "견적서 단건 조회", description = "견적서 단건 조회(본인, 타인)")
@@ -58,8 +58,8 @@ public class EstimateController {
             @ApiResponse(responseCode = "200", description = "견적서 수정 성공"),
             @ApiResponse(responseCode = "403", description = "자기가 작성한게 아닌 타인이 수정하려할때 권한 제어")
     })
-    @PatchMapping("{estimateId}")
-    public RestResult updateEstimate(@PathVariable Long estimateId, UpdateEstimateDto updateEstimateDto) {
+    @PatchMapping(value = "{estimateId}", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public RestResult updateEstimate(@PathVariable Long estimateId, @Validated UpdateEstimateDto updateEstimateDto) {
         return estimateFrontService.updateEstimateResult(estimateId, updateEstimateDto,LoginEmail.getLoginUserEmail());
     }
 

@@ -11,8 +11,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -51,8 +49,8 @@ public class TrainerEstimateController {
             @ApiResponse(responseCode = "400", description = "파라미터 오류")
     })
     @GetMapping
-    public RestEstimateResult getEstimates(@PageableDefault Pageable pageable, String ptAddress) {
-        return frontService.searchAllEstimateResult(pageable, ptAddress);
+    public RestEstimateResult getEstimates(Long courseId, int size, String ptAddress) {
+        return frontService.searchAllEstimateResult(courseId, size, ptAddress);
     }
 
 
@@ -71,8 +69,8 @@ public class TrainerEstimateController {
             @ApiResponse(responseCode = "200", description = "견적서 수정 성공"),
             @ApiResponse(responseCode = "403", description = "자기가 작성한게 아닌 타인이 수정하려할때 권한 제어")
     })
-    @PatchMapping(value = "{estimateId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public RestResult updateEstimate(@PathVariable Long estimateId, UpdateTrainerEstimateDto updateTrainerEstimateDto) {
+    @PatchMapping(value = "{estimateId}", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public RestResult updateEstimate(@PathVariable Long estimateId, @Validated UpdateTrainerEstimateDto updateTrainerEstimateDto) {
         return frontService.updateEstimateResult(estimateId, updateTrainerEstimateDto);
     }
 

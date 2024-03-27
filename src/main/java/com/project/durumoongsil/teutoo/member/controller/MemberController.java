@@ -4,6 +4,7 @@ import com.project.durumoongsil.teutoo.common.RestResult;
 import com.project.durumoongsil.teutoo.exception.UserUnauthorizedException;
 import com.project.durumoongsil.teutoo.member.dto.MemberJoinDto;
 import com.project.durumoongsil.teutoo.member.dto.MemberUpdateDto;
+import com.project.durumoongsil.teutoo.member.dto.PasswordResetRequestRecord;
 import com.project.durumoongsil.teutoo.member.service.front.MemberFrontService;
 import com.project.durumoongsil.teutoo.security.util.SecurityUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -15,6 +16,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -64,6 +66,17 @@ public class MemberController {
     @PatchMapping("/members/me")
     public RestResult updateMemberInfo(@Validated MemberUpdateDto memberUpdateDto) {
         return memberFrontService.updateInfoResult(getLoginUserEmail(), memberUpdateDto);
+    }
+
+
+    @Operation(summary = "임시 비밀번호 전송 API", description = "비밀번호 찾기 시 임시 비밀번호를 발급합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "임시 비밀번호 발급 성공"),
+            @ApiResponse(responseCode = "500", description = "메일 전송 실패")
+    })
+    @PostMapping(value = "/password-reset-requests", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public RestResult requestPasswordReset(@Validated PasswordResetRequestRecord requestDto) {
+        return memberFrontService.startPasswordResetProcess(requestDto.email());
     }
 
     /**

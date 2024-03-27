@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "트레이너 PT 프로그램 관리/조회 API")
+@Tag(name = "PT 프로그램 관리/조회 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("trainer/program")

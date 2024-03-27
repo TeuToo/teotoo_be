@@ -15,8 +15,6 @@ import com.project.durumoongsil.teutoo.trainer.ptprogram.domain.PtProgram;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.repository.PtProgramRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,8 +31,8 @@ public class TrainerEstimateService {
     private final PtProgramRepository ptProgramRepository;
     private final EstimateRepository estimateRepository;
 
-    public Page<Estimate> searchEstimates(Pageable pageable, String ptAddress) {
-        return estimateRepository.pageUserEstimateWithPtAddress(pageable, ptAddress);
+    public List<Estimate> searchEstimates(Long courseId, int size, String ptAddress) {
+        return estimateRepository.pageUserEstimateWithPtAddress(courseId, size, ptAddress);
     }
 
     public Long getMyEstimateId() {
