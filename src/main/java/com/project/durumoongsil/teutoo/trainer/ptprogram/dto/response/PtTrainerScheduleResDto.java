@@ -15,7 +15,7 @@ public class PtTrainerScheduleResDto {
     private Long memberId;
     @Schema(description = "회원 이름")
     private String memberName;
-    @Schema(description = "프로필 이미지")
+    @Schema(description = "회원 프로필 이미지")
     private ImgResDto imgResDto;
     @Schema(description = "예약 시작 시간")
     private LocalDateTime startDateTime;
