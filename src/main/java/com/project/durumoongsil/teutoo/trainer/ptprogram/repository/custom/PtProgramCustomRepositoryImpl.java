@@ -3,6 +3,7 @@ package com.project.durumoongsil.teutoo.trainer.ptprogram.repository.custom;
 import com.project.durumoongsil.teutoo.common.domain.QFile;
 import com.project.durumoongsil.teutoo.member.domain.QMember;
 import com.project.durumoongsil.teutoo.trainer.info.domain.QTrainerInfo;
+import com.project.durumoongsil.teutoo.trainer.ptprogram.constants.ReservationStatus;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.domain.PtProgram;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.domain.QPtImg;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.domain.QPtProgram;
@@ -94,7 +95,8 @@ public class PtProgramCustomRepositoryImpl implements PtProgramCustomRepository 
                 .leftJoin(qPtProgram.ptReservationList, qPtReservation).fetchJoin()
                 .leftJoin(qPtReservation.member, qMember).fetchJoin()
                 .where(qTrainerInfo.id.eq(trainerId).and(
-                        qPtReservation.endDateTime.goe(LocalDateTime.now())
+                        qPtReservation.endDateTime.goe(LocalDateTime.now())).and(
+                        qPtReservation.status.eq(ReservationStatus.RESERVED)
                 ))
                 .fetch();
     }
