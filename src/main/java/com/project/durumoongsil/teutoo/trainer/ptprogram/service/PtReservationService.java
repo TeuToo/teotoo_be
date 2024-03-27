@@ -1,8 +1,12 @@
 package com.project.durumoongsil.teutoo.trainer.ptprogram.service;
 
 import com.project.durumoongsil.teutoo.chat.domain.Chat;
+import com.project.durumoongsil.teutoo.common.domain.FilePath;
+import com.project.durumoongsil.teutoo.common.dto.ImgResDto;
+import com.project.durumoongsil.teutoo.common.service.FileService;
 import com.project.durumoongsil.teutoo.exception.*;
 import com.project.durumoongsil.teutoo.member.domain.Member;
+import com.project.durumoongsil.teutoo.member.domain.Role;
 import com.project.durumoongsil.teutoo.member.repository.MemberRepository;
 import com.project.durumoongsil.teutoo.security.service.SecurityService;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.constants.ReservationStatus;
@@ -11,7 +15,9 @@ import com.project.durumoongsil.teutoo.trainer.ptprogram.domain.PtReservation;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.request.PtAcceptReqDto;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.request.PtReservationReqDto;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.response.PtAcceptResDto;
+import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.response.PtMemberScheduleResDto;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.response.PtReservationResDto;
+import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.response.PtTrainerScheduleResDto;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.repository.PtProgramRepository;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.repository.PtReservationRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -30,6 +37,7 @@ public class PtReservationService {
     private final PtProgramRepository ptProgramRepository;
     private final SecurityService securityService;
     private final MemberRepository memberRepository;
+    private final FileService fileService;
 
     @Transactional
     public PtReservationResDto reserve(PtReservationReqDto reservationReqDto) {
@@ -96,4 +104,89 @@ public class PtReservationService {
 
         return new PtAcceptResDto(ptReservation.getId());
     }
+
+
+
+    /**
+     * 트레이너의 PT 스케쥴 리스트를 얻기 위한 메소드입니다.
+     */
+    public List<PtTrainerScheduleResDto> getPtProgramTrainerScheduleList() {
+        Member member = this.getMember();
+
+        if (!isTrainer(member.getRole()))
+            throw new InvalidActionException("해당 사용자의 예약 스케쥴을 조회 할 수 없습니다.");
+
+        List<PtProgram> ptProgramList = ptProgramRepository.findByTrainerIdWithPtReservation(member.getId());
+
+        return ptProgramList.stream()
+                .flatMap(ptProgram -> ptProgram.getPtReservationList().stream())
+                .map(this::createPtTrainerScheduleResDto)
+                .toList();
+    }
+
+    private boolean isTrainer(Role role) {
+        return role == Role.TRAINER;
+    }
+
+    private PtTrainerScheduleResDto createPtTrainerScheduleResDto(PtReservation ptReservation) {
+        ImgResDto imgResDto = new ImgResDto(
+                ptReservation.getMember().getProfileImageName(),
+                fileService.getImgUrl(
+                        FilePath.MEMBER_PROFILE.getPath(),
+                        ptReservation.getMember().getProfileImageName()
+                )
+        );
+
+        return PtTrainerScheduleResDto.builder()
+                .memberId(ptReservation.getMember().getId())
+                .memberName(ptReservation.getMember().getName())
+                .imgResDto(imgResDto)
+                .startDateTime(ptReservation.getStartDateTime())
+                .endDateTime(ptReservation.getEndDateTime())
+                .build();
+    }
+
+
+    /**
+     * 회원의 PT 스케쥴 리스트를 얻기 위한 메소드입니다.
+     */
+    public List<PtMemberScheduleResDto> getPtProgramMemberScheduleList() {
+        Member member = this.getMember();
+        if (!isMember(member.getRole()))
+            throw new InvalidActionException("해당 사용자의 예약 스케쥴을 조회 할 수 없습니다.");
+
+        List<PtReservation> ptReservationList = ptReservationRepository
+                .findByMemberIdWithPtProgramAndTrainerInfoAndMember(member.getId());
+
+
+        return ptReservationList.stream().map(this::createMemberScheduleDto).toList();
+    }
+
+    private boolean isMember(Role role) {
+        return role == Role.USER;
+    }
+
+    private PtMemberScheduleResDto createMemberScheduleDto(PtReservation ptReservation) {
+        PtProgram ptProgram = ptReservation.getPtProgram();
+        Member member = ptProgram.getTrainerInfo().getMember();
+
+        ImgResDto imgResDto = new ImgResDto(
+                member.getProfileImageName(),
+                fileService.getImgUrl(FilePath.MEMBER_PROFILE.getPath(), member.getProfileImageName())
+        );
+
+        return PtMemberScheduleResDto.builder()
+                .trainerId(member.getId())
+                .trainerName(member.getName())
+                .programId(ptProgram.getId())
+                .programName(ptProgram.getTitle())
+                .startDateTime(ptReservation.getStartDateTime())
+                .endDateTime(ptReservation.getEndDateTime())
+                .status(ptReservation.getStatus())
+                .imgResDto(imgResDto)
+                .build();
+    }
+
+
+
 }

@@ -1,7 +1,9 @@
 package com.project.durumoongsil.teutoo.trainer.ptprogram.controller;
 
+import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.response.PtMemberScheduleResDto;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.response.PtTrainerScheduleResDto;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.service.PtProgramService;
+import com.project.durumoongsil.teutoo.trainer.ptprogram.service.PtReservationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -20,6 +22,7 @@ import java.util.List;
 public class PtScheduleController {
 
     private final PtProgramService ptProgramService;
+    private final PtReservationService ptReservationService;
 
     @Operation(summary = "트레이너 PT 일정 조회", description = "트레이너의 PT 프로그램 스케쥴 조회를 위한 API입니다.")
     @ApiResponses({
@@ -27,7 +30,17 @@ public class PtScheduleController {
             @ApiResponse(responseCode = "400", description = "클라이언트의 잘못된 요청")
     })
     @GetMapping("/trainer/me")
-    public List<PtTrainerScheduleResDto> getPtProgramOverviewForScheduling() {
-        return ptProgramService.getPtProgramTrainerScheduleList();
+    public List<PtTrainerScheduleResDto> getPtProgramScheduleForTrainer() {
+        return ptReservationService.getPtProgramTrainerScheduleList();
+    }
+
+    @Operation(summary = "회원 PT 일정 조회", description = "회원의 PT 프로그램 스케쥴 조회를 위한 API입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "회원의 PT 프로그램 스케쥴 조회 성공"),
+            @ApiResponse(responseCode = "400", description = "클라이언트의 잘못된 요청")
+    })
+    @GetMapping("/member/me")
+    public List<PtMemberScheduleResDto> getPtProgramScheduleForMember() {
+        return ptReservationService.getPtProgramMemberScheduleList();
     }
 }

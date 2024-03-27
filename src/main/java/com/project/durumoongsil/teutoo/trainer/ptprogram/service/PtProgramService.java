@@ -234,43 +234,4 @@ public class PtProgramService {
         return new PtProgramOverviewResDto(ptProgramInfoDtoList, ptProgramReservedTimeDtoList);
     }
 
-    /**
-     * 트레이너의 PT 스케쥴 리스트를 얻기 위한 메소드입니다.
-     */
-    public List<PtTrainerScheduleResDto> getPtProgramTrainerScheduleList() {
-        Member member = this.getMember();
-
-        if (!isTrainer(member.getRole()))
-            throw new InvalidActionException("해당 사용자는 조회 할 수 없습니다.");
-
-        List<PtProgram> ptProgramList = ptProgramRepository.findByTrainerIdWithPtReservation(member.getId());
-
-        return ptProgramList.stream()
-                .flatMap(ptProgram -> ptProgram.getPtReservationList().stream())
-                .map(this::createPtTrainerScheduleResDto)
-                .toList();
-    }
-
-    private boolean isTrainer(Role role) {
-        return role == Role.TRAINER;
-    }
-
-    private PtTrainerScheduleResDto createPtTrainerScheduleResDto(PtReservation ptReservation) {
-        ImgResDto imgResDto = new ImgResDto(
-                ptReservation.getMember().getProfileImageName(),
-                fileService.getImgUrl(
-                        FilePath.MEMBER_PROFILE.getPath(),
-                        ptReservation.getMember().getProfileImageName()
-                )
-        );
-
-        return PtTrainerScheduleResDto.builder()
-                .memberId(ptReservation.getMember().getId())
-                .memberName(ptReservation.getMember().getName())
-                .imgResDto(imgResDto)
-                .startDateTime(ptReservation.getStartDateTime())
-                .endDateTime(ptReservation.getEndDateTime())
-                .build();
-    }
-
 }
