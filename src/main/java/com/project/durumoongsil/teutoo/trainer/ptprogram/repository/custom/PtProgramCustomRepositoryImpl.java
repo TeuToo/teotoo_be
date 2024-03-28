@@ -94,10 +94,9 @@ public class PtProgramCustomRepositoryImpl implements PtProgramCustomRepository 
                 .innerJoin(qPtProgram.trainerInfo, qTrainerInfo)
                 .leftJoin(qPtProgram.ptReservationList, qPtReservation).fetchJoin()
                 .leftJoin(qPtReservation.member, qMember).fetchJoin()
-                .where(qTrainerInfo.id.eq(trainerId).and(
-                        qPtReservation.endDateTime.goe(LocalDateTime.now())).and(
-                        qPtReservation.status.eq(ReservationStatus.RESERVED)
-                ))
+                .where(qTrainerInfo.id.eq(trainerId)
+                        .and(qPtReservation.status.eq(ReservationStatus.RESERVED))
+                )
                 .fetch();
     }
 
