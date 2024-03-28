@@ -75,7 +75,6 @@ public class PtReservationCustomRepositoryImpl implements PtReservationCustomRep
                 .innerJoin(qTrainerInfo.member, qTrainer).fetchJoin()
                 .where(
                         qMember.id.eq(memberId).and(
-                        qPtReservation.endDateTime.goe(LocalDateTime.now())).and(
                         qPtReservation.status.ne(ReservationStatus.CANCELED
                         ))
                 )
