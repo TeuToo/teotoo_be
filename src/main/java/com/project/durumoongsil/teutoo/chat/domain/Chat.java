@@ -38,6 +38,12 @@ public class Chat {
 
     private Long bMsgIdx;
 
+    private int ptProgramPrice;
+
+    private String gymAddress;
+
+    private boolean ptProgramConfirm;
+
     public void updateAMsgIdx(Long aMsgIdx) {
         this.aMsgIdx = aMsgIdx;
     }

@@ -123,7 +123,7 @@ public class ChatService {
         switch (chatMsgQueryDTO.getContentType()) {
             case TEXT -> this.setTextMsg(chatMessageResDTO, chatMsgQueryDTO);
             case IMG -> this.setImgMsg(chatMessageResDTO, chatMsgQueryDTO);
-            case RESERVATION, RESERVATION_ACCEPT, RESERVATION_CANCEL -> this.setReservationMsg(chatMessageResDTO, chatMsgQueryDTO);
+            case RESERVATION, RESERVATION_ACCEPTED, RESERVATION_CANCELED -> this.setReservationMsg(chatMessageResDTO, chatMsgQueryDTO);
         }
 
         return chatMessageResDTO;
@@ -182,11 +182,11 @@ public class ChatService {
         List<ChatPreviewQueryDto> previewQueryDtoList = chatRepository.findChatMembersByEmailAndName(userEmail, searchName);
 
         return previewQueryDtoList.stream()
-                .map(chatPreviewQueryDto -> mapToChatPreviewResDto(chatPreviewQueryDto, memberId))
+                .map(chatPreviewQueryDto -> toChatPreviewResDto(chatPreviewQueryDto, memberId))
                 .toList();
     }
 
-    private ChatPreviewResDto mapToChatPreviewResDto(ChatPreviewQueryDto chatPreviewQueryDto, Long memberId) {
+    private ChatPreviewResDto toChatPreviewResDto(ChatPreviewQueryDto chatPreviewQueryDto, Long memberId) {
         ChatPreviewResDto chatPreviewResDto = new ChatPreviewResDto();
 
         // 상대방이 BMember 라면,

@@ -352,7 +352,7 @@ public class ChatWebSocketService {
         ChatMsg chatMsg = ChatMsg.builder()
                 .chat(chat)
                 .sender(sender)
-                .msgType(MsgType.RESERVATION_ACCEPT)
+                .msgType(MsgType.RESERVATION_ACCEPTED)
                 .ptReservation(ptReservation)
                 .build();
 
@@ -366,11 +366,13 @@ public class ChatWebSocketService {
         return ChatMsgResDTO.builder()
                 .msgIdx(savedChatMsg.getId())
                 .msgAction(MsgAction.SEND)
-                .contentType(MsgType.RESERVATION_ACCEPT)
+                .contentType(MsgType.RESERVATION_ACCEPTED)
                 .senderId(trainer.getId())
                 .createdAt(savedChatMsg.getCreatedAt())
                 .content(content)
                 .build();
     }
+
+
 
 }
