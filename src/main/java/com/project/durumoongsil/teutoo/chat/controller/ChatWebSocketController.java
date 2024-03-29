@@ -86,6 +86,12 @@ public class ChatWebSocketController {
         this.sendMessageToTopic(roomId, chatMsgResDTO);
     }
 
+    @MessageMapping("/chat/{roomId}/reservation-request/trainer")
+    public void reservationRequestFromTrainer(@DestinationVariable String roomId, ChatTrainerReservationReqDto chatMemberReservationReqDto) {
+        ChatMsgResDTO chatMsgResDTO = chatWebSocketService.saveAndReturnReservationRequestFromTrainer(roomId, chatMemberReservationReqDto);
+
+        this.sendMessageToTopic(roomId, chatMsgResDTO);
+    }
 
     private void sendMessageToTopic(String roomId, Object message) {
         try {
