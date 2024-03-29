@@ -2,7 +2,6 @@ package com.project.durumoongsil.teutoo.login.controller;
 
 import com.project.durumoongsil.teutoo.login.dto.LoginDto;
 import com.project.durumoongsil.teutoo.login.dto.TokenDto;
-import com.project.durumoongsil.teutoo.member.dto.MemberJoinDto;
 import com.project.durumoongsil.teutoo.security.jwt.JwtAuthenticationFilter;
 import com.project.durumoongsil.teutoo.security.jwt.TokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,7 +13,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,13 +21,12 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @Tag(name = "로그인 API")
 @RestController
 @RequiredArgsConstructor
-@Slf4j
 public class LoginController {
     private final TokenProvider tokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
@@ -43,7 +40,7 @@ public class LoginController {
             @ApiResponse(responseCode = "401", description = "로그인 실패"),
             @ApiResponse(responseCode = "403", description = "권한이 없는 오류")
     })
-    @PostMapping(value = "/login")
+    @PostMapping("/login")
     public ResponseEntity<TokenDto> authorize(@Validated LoginDto loginDto) {
         log.info("loginDto ={}", loginDto);
 
