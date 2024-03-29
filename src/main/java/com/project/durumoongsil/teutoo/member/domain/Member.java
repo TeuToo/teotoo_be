@@ -31,12 +31,9 @@ public class Member extends BaseTimeEntity {
     @OneToOne(mappedBy = "member", fetch = FetchType.LAZY, optional = false)
     private TrainerInfo trainerInfo;
 
-    // 카카오 로그인
-    private Boolean isOauth2;
-
     @Builder
     public Member(Long id, String name, String email, String password, String address,
-                  Role role, String profileImagePath, String profileImageName, Boolean isOauth2) {
+                  Role role, String profileImagePath, String profileImageName) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -45,7 +42,6 @@ public class Member extends BaseTimeEntity {
         this.role = role;
         this.profileImageName = profileImagePath;
         this.profileOriginalImageName = profileImageName;
-        this.isOauth2 = isOauth2;
     }
 
     public static Member toEntity(MemberJoinDto memberJoinDto) {

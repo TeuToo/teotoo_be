@@ -41,7 +41,6 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
         return Member.builder()
                 .email(kakaoOAuth2Response.email())
                 .role(Role.USER) // 우선 조회는 되야하니 기본값으로 USER 권한 부여
-                .isOauth2(true)
                 .build();
     }
 }
