@@ -9,10 +9,7 @@ import com.project.durumoongsil.teutoo.chat.domain.Chat;
 import com.project.durumoongsil.teutoo.chat.domain.ChatMsg;
 import com.project.durumoongsil.teutoo.chat.constants.MsgType;
 import com.project.durumoongsil.teutoo.chat.dto.request.*;
-import com.project.durumoongsil.teutoo.chat.dto.response.ChatMsgResDTO;
-import com.project.durumoongsil.teutoo.chat.dto.response.ChatReadResDto;
-import com.project.durumoongsil.teutoo.chat.dto.response.PtMemberReservationMsgDto;
-import com.project.durumoongsil.teutoo.chat.dto.response.PtReservationMsgDto;
+import com.project.durumoongsil.teutoo.chat.dto.response.*;
 import com.project.durumoongsil.teutoo.chat.repository.ChatMsgRepository;
 import com.project.durumoongsil.teutoo.chat.repository.ChatRepository;
 import com.project.durumoongsil.teutoo.common.domain.FilePath;
@@ -378,6 +375,7 @@ public class ChatWebSocketService {
     /**
      * 사용자가 트레이너의 견적서를 보고, 예약 하기 위해 예약 요청 메시지를 처리하기 위한 메소드입니다.
      */
+    @Transactional
     public ChatMsgResDTO saveAndReturnReservationRequestFromMember(String roomId, ChatMemberReservationReqDto memberReservationReqDto) {
         Chat chat = this.getChatByRoomId(roomId);
         Member member = this.getMemberFromChat(chat);
@@ -390,17 +388,17 @@ public class ChatWebSocketService {
         PtProgram ptProgram = ptProgramRepository.findById(memberReservationReqDto.getPtProgramId())
                 .orElseThrow(PtProgramNotFoundException::new);
 
-        ChatMsg savedChatMsg = this.saveMemberReservationRequestChatMsg(chat, member, ptProgram, memberReservationReqDto);
+        ChatMsg savedChatMsg = this.saveMemberReservationChatMsg(chat, member, ptProgram, memberReservationReqDto);
 
         PtMemberReservationMsgDto ptMemberReservationMsgDto = this
                 .createPtMemberReservationMsgDto(ptProgram, savedChatMsg);
 
-        String reservationReqContent = this.toPtMemberReservationMsgDtoJsonStr(ptMemberReservationMsgDto);
+        String reservationMsgContent = this.toPtMemberReservationMsgDtoJsonStr(ptMemberReservationMsgDto);
 
         return ChatMsgResDTO.builder()
                 .msgIdx(savedChatMsg.getId())
                 .msgAction(MsgAction.SEND)
-                .content(reservationReqContent)
+                .content(reservationMsgContent)
                 .contentType(MsgType.RESERVATION_REQ_MEMBER)
                 .senderId(member.getId())
                 .createdAt(savedChatMsg.getCreatedAt())
@@ -414,7 +412,7 @@ public class ChatWebSocketService {
         return Objects.equals(trainer.getId(), savedTrainerId);
     }
 
-    private ChatMsg saveMemberReservationRequestChatMsg(Chat chat, Member member, PtProgram ptProgram,
+    private ChatMsg saveMemberReservationChatMsg(Chat chat, Member member, PtProgram ptProgram,
                                                         ChatMemberReservationReqDto memberReservationReqDto) {
         ChatMsg chatMsg = ChatMsg.builder()
                 .chat(chat)
@@ -443,5 +441,56 @@ public class ChatWebSocketService {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+
+
+    /**
+     * 트레이너가 사용자의 견적서를 보고, 예약 하기 위해 예약 요청 메시지를 처리하기 위한 메소드입니다.
+     */
+    @Transactional
+    public ChatMsgResDTO saveAndReturnReservationRequestFromTrainer(String roomId, ChatTrainerReservationReqDto trainerReservationReqDto) {
+
+        Chat chat = this.getChatByRoomId(roomId);
+        Member trainer = this.getMemberFromChat(chat);
+
+        ChatMsg chatMsg = this.saveTrainerReservationChatMsg(chat, trainer, trainerReservationReqDto);
+
+        PtTrainerReservationMsgDto ptTrainerReservationMsgDto = PtTrainerReservationMsgDto.builder()
+                .price(chatMsg.getPtProgramPrice())
+                .address(chatMsg.getGymAddress())
+                .build();
+
+        String reservationMsgContent = this.toPtTrainerReservationMsgDtoJsonStr(ptTrainerReservationMsgDto);
+
+        return ChatMsgResDTO.builder()
+                .msgIdx(chatMsg.getId())
+                .msgAction(MsgAction.SEND)
+                .content(reservationMsgContent)
+                .contentType(MsgType.RESERVATION_REQ_TRAINER)
+                .senderId(trainer.getId())
+                .createdAt(chatMsg.getCreatedAt())
+                .build();
+    }
+
+    private String toPtTrainerReservationMsgDtoJsonStr(PtTrainerReservationMsgDto ptTrainerReservationMsgDto) {
+        try {
+            return om.writeValueAsString(ptTrainerReservationMsgDto);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private ChatMsg saveTrainerReservationChatMsg(Chat chat, Member trainer,
+                                                  ChatTrainerReservationReqDto trainerReservationReqDto) {
+        ChatMsg chatMsg = ChatMsg.builder()
+                .chat(chat)
+                .sender(trainer)
+                .msgType(MsgType.RESERVATION_REQ_TRAINER)
+                .gymAddress(trainerReservationReqDto.getAddress())
+                .ptProgramPrice(trainerReservationReqDto.getPrice())
+                .build();
+
+        return chatMsgRepository.save(chatMsg);
     }
 }
