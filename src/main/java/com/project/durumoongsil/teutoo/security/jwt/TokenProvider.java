@@ -11,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -62,6 +63,24 @@ public class TokenProvider implements InitializingBean {
                 .compact();
     }
 
+    public String createToken(OAuth2AuthenticationToken authentication, String oauth2Email) {
+        String authorities = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(","));
+
+        // 토큰만료 시간
+        Instant validity = Instant.now().atZone(ZoneId.of("Asia/Seoul")).plusSeconds(this.tokenExpirationSec).toInstant();
+        ZonedDateTime validityInKST = validity.atZone(ZoneId.of("Asia/Seoul"));
+        log.info("토큰만료 시간={}", validityInKST);
+
+        return Jwts.builder()
+                .setSubject(oauth2Email)
+                .claim(AUTHORITIES_KEY, authorities)
+                .signWith(key, SignatureAlgorithm.HS512)
+                .setExpiration(Date.from(validityInKST.toInstant()))
+                .compact();
+    }
+
     public Authentication getAuthentication(String token) {
         Claims claims = Jwts
                 .parserBuilder()
@@ -94,5 +113,16 @@ public class TokenProvider implements InitializingBean {
             log.info("JWT 토큰이 잘못되었습니다.");
         }
         return false;
+    }
+
+    public String createTokenWithUserName(String email) {
+        // 토큰 만료 시간
+        Instant validity = Instant.now().plusSeconds(this.tokenExpirationSec);
+
+        return Jwts.builder()
+                .setSubject(email)
+                .signWith(key, SignatureAlgorithm.HS512)
+                .setExpiration(Date.from(validity))
+                .compact();
     }
 }
