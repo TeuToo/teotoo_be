@@ -1,6 +1,6 @@
 package com.project.durumoongsil.teutoo.security.service;
 
-import com.project.durumoongsil.teutoo.login.CustomOauth2User;
+import com.project.durumoongsil.teutoo.security.oauth2.CustomOauth2User;
 import com.project.durumoongsil.teutoo.security.jwt.TokenProvider;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

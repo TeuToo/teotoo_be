@@ -1,4 +1,4 @@
-package com.project.durumoongsil.teutoo.login;
+package com.project.durumoongsil.teutoo.security.oauth2;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

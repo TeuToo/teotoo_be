@@ -1,6 +1,6 @@
 package com.project.durumoongsil.teutoo.security.service;
 
-import com.project.durumoongsil.teutoo.login.CustomOauth2User;
+import com.project.durumoongsil.teutoo.security.oauth2.CustomOauth2User;
 import com.project.durumoongsil.teutoo.login.dto.KakaoOAuth2Response;
 import com.project.durumoongsil.teutoo.member.domain.Member;
 import com.project.durumoongsil.teutoo.member.domain.Role;
