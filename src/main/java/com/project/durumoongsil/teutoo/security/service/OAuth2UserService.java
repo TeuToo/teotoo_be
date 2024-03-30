@@ -40,6 +40,7 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
     private Member createOauth2Member(KakaoOAuth2Response kakaoOAuth2Response) {
         return Member.builder()
                 .email(kakaoOAuth2Response.email())
+                .name(kakaoOAuth2Response.nickname())
                 .role(Role.USER) // 우선 조회는 되야하니 기본값으로 USER 권한 부여
                 .build();
     }
