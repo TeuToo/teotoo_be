@@ -31,7 +31,7 @@ jobs:
         run: |
           touch ./src/test/resources/application.yaml
           echo "${{ secrets.PROPERTIES_TEST }}" > ./src/test/resources/application.yaml
-
+          
 
       # Gradle Caching 을 통해서 빌드 과정 시간 단축
       - name: Cache Gradle packages
