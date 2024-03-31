@@ -42,10 +42,23 @@ public class ChatMsgQueryDto {
 
     private ReservationStatus status;
 
+    private Long memberId;
+
+    private String memberName;
+
+    private Long trainerId;
+
+    private String trainerName;
+
+    private Long reservationId;
+
+    private String msgProgramName;
+
+
     @QueryProjection
     public ChatMsgQueryDto(Long msgIdx, Long senderId, String senderName, MsgType contentType, LocalDateTime createdAt, String textContent,
-                           String imgPath, String imgName, Long programId, String programName, Integer ptProgramPrice, String gymAddress,
-                           LocalDateTime startDateTime, LocalDateTime endDateTime, ReservationStatus status) {
+                           String imgPath, String imgName, Long programId, String programName, Integer ptProgramPrice, String gymAddress, LocalDateTime startDateTime,
+                           LocalDateTime endDateTime, ReservationStatus status, Long memberId, String memberName, Long trainerId, String trainerName, Long reservationId, String msgProgramName) {
         this.msgIdx = msgIdx;
         this.senderId = senderId;
         this.senderName = senderName;
@@ -61,5 +74,11 @@ public class ChatMsgQueryDto {
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
         this.status = status;
+        this.memberId = memberId;
+        this.memberName = memberName;
+        this.trainerId = trainerId;
+        this.trainerName = trainerName;
+        this.reservationId = reservationId;
+        this.msgProgramName = msgProgramName;
     }
 }

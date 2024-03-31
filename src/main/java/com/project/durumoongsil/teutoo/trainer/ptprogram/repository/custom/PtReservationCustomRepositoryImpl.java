@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -66,6 +67,7 @@ public class PtReservationCustomRepositoryImpl implements PtReservationCustomRep
         return booleanBuilder;
     }
 
+    @Override
     public List<PtReservation> findByMemberIdWithPtProgramAndTrainerInfoAndMember(Long memberId) {
         return queryFactory
                 .selectFrom(qPtReservation)
@@ -79,5 +81,18 @@ public class PtReservationCustomRepositoryImpl implements PtReservationCustomRep
                         ))
                 )
                 .fetch();
+    }
+
+    @Override
+    public Optional<Long> findTrainerIdById(Long reservationId) {
+        Long trainerId = queryFactory
+                .select(qMember.id)
+                .from(qPtReservation)
+                .innerJoin(qPtReservation.ptProgram, qPtProgram)
+                .innerJoin(qPtProgram.trainerInfo, qTrainerInfo)
+                .innerJoin(qTrainerInfo.member, qMember)
+                .fetchFirst();
+
+        return Optional.ofNullable(trainerId);
     }
 }

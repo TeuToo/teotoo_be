@@ -5,6 +5,7 @@ import com.project.durumoongsil.teutoo.chat.domain.QChatMsg;
 import com.project.durumoongsil.teutoo.chat.dto.query.ChatMsgQueryDto;
 import com.project.durumoongsil.teutoo.chat.dto.query.QChatMsgQueryDto;
 import com.project.durumoongsil.teutoo.member.domain.QMember;
+import com.project.durumoongsil.teutoo.trainer.info.domain.QTrainerInfo;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.domain.QPtProgram;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.domain.QPtReservation;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -21,9 +22,11 @@ public class ChatMsgCustomRepositoryImpl implements ChatMsgCustomRepository{
 
     QChat qChat = QChat.chat;
     QMember qMember = QMember.member;
+    QMember qTrainer = new QMember("trainer");
     QChatMsg qChatMsg = QChatMsg.chatMsg;
     QPtReservation qPtReservation = QPtReservation.ptReservation;
     QPtProgram qPtProgram = QPtProgram.ptProgram;
+    QTrainerInfo qTrainerInfo = QTrainerInfo.trainerInfo;
 
 
     @Override
@@ -49,12 +52,21 @@ public class ChatMsgCustomRepositoryImpl implements ChatMsgCustomRepository{
                         qChatMsg.gymAddress,
                         qPtReservation.startDateTime,
                         qPtReservation.endDateTime,
-                        qPtReservation.status
+                        qPtReservation.status,
+                        qMember.id,
+                        qMember.name,
+                        qTrainer.id,
+                        qTrainer.name,
+                        qPtReservation.id,
+                        qChatMsg.ptProgramName
                 ))
                 .from(qChatMsg)
                 .innerJoin(qChatMsg.chat, qChat)
                 .leftJoin(qChatMsg.ptReservation, qPtReservation)
                 .leftJoin(qPtReservation.ptProgram, qPtProgram)
+                .leftJoin(qPtProgram.trainerInfo, qTrainerInfo)
+                .leftJoin(qTrainerInfo.member, qTrainer)
+                .leftJoin(qPtReservation.member, qMember)
                 .where(
                         qChat.aMember.id.eq(aMemberId),
                         qChat.bMember.id.eq(bMemberId)
