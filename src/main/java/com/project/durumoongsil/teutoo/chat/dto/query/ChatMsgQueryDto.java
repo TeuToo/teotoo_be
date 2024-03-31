@@ -11,9 +11,11 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class ChatMsgQueryDto {
+
     private Long msgIdx;
 
     private Long senderId;
+
     private String senderName;
 
     private MsgType contentType;
@@ -30,6 +32,10 @@ public class ChatMsgQueryDto {
 
     private String programName;
 
+    private Integer ptProgramPrice;
+
+    private String gymAddress;
+
     private LocalDateTime startDateTime;
 
     private LocalDateTime endDateTime;
@@ -37,8 +43,9 @@ public class ChatMsgQueryDto {
     private ReservationStatus status;
 
     @QueryProjection
-    public ChatMsgQueryDto(Long msgIdx, Long senderId, String senderName, MsgType contentType, LocalDateTime createdAt, String textContent, String imgPath,
-                           String imgName, Long programId, String programName, LocalDateTime startDateTime, LocalDateTime endDateTime, ReservationStatus status) {
+    public ChatMsgQueryDto(Long msgIdx, Long senderId, String senderName, MsgType contentType, LocalDateTime createdAt, String textContent,
+                           String imgPath, String imgName, Long programId, String programName, Integer ptProgramPrice, String gymAddress,
+                           LocalDateTime startDateTime, LocalDateTime endDateTime, ReservationStatus status) {
         this.msgIdx = msgIdx;
         this.senderId = senderId;
         this.senderName = senderName;
@@ -49,6 +56,8 @@ public class ChatMsgQueryDto {
         this.imgName = imgName;
         this.programId = programId;
         this.programName = programName;
+        this.ptProgramPrice = ptProgramPrice;
+        this.gymAddress = gymAddress;
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
         this.status = status;

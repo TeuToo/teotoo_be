@@ -5,10 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.durumoongsil.teutoo.chat.domain.*;
 import com.project.durumoongsil.teutoo.chat.dto.query.ChatMsgQueryDto;
 import com.project.durumoongsil.teutoo.chat.dto.query.ChatPreviewQueryDto;
-import com.project.durumoongsil.teutoo.chat.dto.response.ChatActivationResDTO;
-import com.project.durumoongsil.teutoo.chat.dto.response.ChatMsgResDTO;
-import com.project.durumoongsil.teutoo.chat.dto.response.ChatPreviewResDto;
-import com.project.durumoongsil.teutoo.chat.dto.response.PtReservationMsgDto;
+import com.project.durumoongsil.teutoo.chat.dto.response.*;
 import com.project.durumoongsil.teutoo.chat.repository.ChatMsgRepository;
 import com.project.durumoongsil.teutoo.chat.repository.ChatRepository;
 import com.project.durumoongsil.teutoo.common.domain.FilePath;
@@ -112,23 +109,34 @@ public class ChatService {
         return UUID.randomUUID().toString();
     }
 
-    private ChatMsgResDTO toChatMessageResDTO(ChatMsgQueryDto chatMsgQueryDTO) {
+    private ChatMsgResDTO toChatMessageResDTO(ChatMsgQueryDto chatMsgQueryDto) {
 
-        ChatMsgResDTO chatMessageResDTO = new ChatMsgResDTO();
-        chatMessageResDTO.setCreatedAt(chatMsgQueryDTO.getCreatedAt());
-        chatMessageResDTO.setMsgIdx(chatMsgQueryDTO.getMsgIdx());
-        chatMessageResDTO.setContentType(chatMsgQueryDTO.getContentType());
-        chatMessageResDTO.setSenderId(chatMsgQueryDTO.getSenderId());
+        ChatMsgResDTO chatMessageResDto = initializeChatMessageResponse(chatMsgQueryDto);
+        this.setMessageContentBasedOnType(chatMessageResDto, chatMsgQueryDto);
 
-        switch (chatMsgQueryDTO.getContentType()) {
-            case TEXT -> this.setTextMsg(chatMessageResDTO, chatMsgQueryDTO);
-            case IMG -> this.setImgMsg(chatMessageResDTO, chatMsgQueryDTO);
-            case RESERVATION, RESERVATION_ACCEPTED, RESERVATION_CANCELED -> this.setReservationMsg(chatMessageResDTO, chatMsgQueryDTO);
-        }
-
-        return chatMessageResDTO;
+        return chatMessageResDto;
     }
-    
+
+    private ChatMsgResDTO initializeChatMessageResponse(ChatMsgQueryDto chatMsgQueryDto) {
+        ChatMsgResDTO chatMessageResponse = new ChatMsgResDTO();
+        chatMessageResponse.setCreatedAt(chatMsgQueryDto.getCreatedAt());
+        chatMessageResponse.setMsgIdx(chatMsgQueryDto.getMsgIdx());
+        chatMessageResponse.setContentType(chatMsgQueryDto.getContentType());
+        chatMessageResponse.setSenderId(chatMsgQueryDto.getSenderId());
+        return chatMessageResponse;
+    }
+
+    private void setMessageContentBasedOnType(ChatMsgResDTO chatMessageResDto, ChatMsgQueryDto chatMsgQueryDto) {
+        switch (chatMsgQueryDto.getContentType()) {
+            case TEXT -> this.setTextMsg(chatMessageResDto, chatMsgQueryDto);
+            case IMG -> this.setImgMsg(chatMessageResDto, chatMsgQueryDto);
+            case RESERVATION, RESERVATION_ACCEPTED, RESERVATION_CANCELED -> this.setReservationMsg(chatMessageResDto, chatMsgQueryDto);
+            case RESERVATION_REQ_MEMBER -> this.setMemberReservationRequestMsg(chatMessageResDto, chatMsgQueryDto);
+            case RESERVATION_REQ_TRAINER -> this.setTrainerReservationRequestMsg(chatMessageResDto, chatMsgQueryDto);
+        }
+    }
+
+
     private ChatMsgResDTO setTextMsg(ChatMsgResDTO chatMsgResDTO, ChatMsgQueryDto chatMsgQueryDto) {
         chatMsgResDTO.setContent(chatMsgQueryDto.getTextContent());
 
@@ -153,14 +161,37 @@ public class ChatService {
                         .memberName(chatMsgQueryDto.getSenderName())
                         .build();
 
-        chatMsgResDTO.setContent(this.toPtReservationMsgDtoJsonStr(ptReservationMsgDto));
+        chatMsgResDTO.setContent(this.toContentJsonStr(ptReservationMsgDto));
 
         return chatMsgResDTO;
     }
 
-    private String toPtReservationMsgDtoJsonStr(PtReservationMsgDto ptReservationMsgDto) {
+    private ChatMsgResDTO setMemberReservationRequestMsg(ChatMsgResDTO chatMsgResDTO, ChatMsgQueryDto chatMsgQueryDto) {
+        PtMemberReservationMsgDto memberReservationMsgDto = PtMemberReservationMsgDto.builder()
+                .ptProgramName(chatMsgQueryDto.getProgramName())
+                .ptProgramPrice(chatMsgQueryDto.getPtProgramPrice())
+                .gymAddress(chatMsgQueryDto.getGymAddress())
+                .build();
+
+        chatMsgResDTO.setContent(this.toContentJsonStr(memberReservationMsgDto));
+
+        return chatMsgResDTO;
+    }
+
+    private ChatMsgResDTO setTrainerReservationRequestMsg(ChatMsgResDTO chatMsgResDTO, ChatMsgQueryDto chatMsgQueryDto) {
+        PtTrainerReservationMsgDto trainerReservationMsgDto = PtTrainerReservationMsgDto.builder()
+                .price(chatMsgQueryDto.getPtProgramPrice())
+                .address(chatMsgQueryDto.getGymAddress())
+                .build();
+
+        chatMsgResDTO.setContent(this.toContentJsonStr(trainerReservationMsgDto));
+
+        return chatMsgResDTO;
+    }
+
+    private String toContentJsonStr(Object content) {
         try {
-            return om.writeValueAsString(ptReservationMsgDto);
+            return om.writeValueAsString(content);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
