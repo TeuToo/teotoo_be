@@ -57,7 +57,8 @@ public class ChatMsgCustomRepositoryImpl implements ChatMsgCustomRepository{
                         qMember.name,
                         qTrainer.id,
                         qTrainer.name,
-                        qPtReservation.id
+                        qPtReservation.id,
+                        qChatMsg.ptProgramName
                 ))
                 .from(qChatMsg)
                 .innerJoin(qChatMsg.chat, qChat)

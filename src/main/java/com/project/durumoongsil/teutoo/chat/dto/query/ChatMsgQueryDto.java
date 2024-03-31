@@ -52,11 +52,13 @@ public class ChatMsgQueryDto {
 
     private Long reservationId;
 
+    private String msgProgramName;
+
 
     @QueryProjection
     public ChatMsgQueryDto(Long msgIdx, Long senderId, String senderName, MsgType contentType, LocalDateTime createdAt, String textContent,
                            String imgPath, String imgName, Long programId, String programName, Integer ptProgramPrice, String gymAddress, LocalDateTime startDateTime,
-                           LocalDateTime endDateTime, ReservationStatus status, Long memberId, String memberName, Long trainerId, String trainerName, Long reservationId) {
+                           LocalDateTime endDateTime, ReservationStatus status, Long memberId, String memberName, Long trainerId, String trainerName, Long reservationId, String msgProgramName) {
         this.msgIdx = msgIdx;
         this.senderId = senderId;
         this.senderName = senderName;
@@ -77,5 +79,6 @@ public class ChatMsgQueryDto {
         this.trainerId = trainerId;
         this.trainerName = trainerName;
         this.reservationId = reservationId;
+        this.msgProgramName = msgProgramName;
     }
 }

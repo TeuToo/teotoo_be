@@ -123,7 +123,8 @@ public class ChatCustomRepositoryImpl implements ChatCustomRepository {
                                             qMember.name,
                                             qTrainer.id,
                                             qTrainer.name,
-                                            qPtReservation.id
+                                            qPtReservation.id,
+                                            qChatMsg.ptProgramName
                                     )
                             )
                     )

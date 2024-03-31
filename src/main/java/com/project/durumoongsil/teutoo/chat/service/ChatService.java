@@ -173,7 +173,7 @@ public class ChatService {
 
     private ChatMsgResDTO setMemberReservationRequestMsg(ChatMsgResDTO chatMsgResDTO, ChatMsgQueryDto chatMsgQueryDto) {
         PtMemberReservationMsgDto memberReservationMsgDto = PtMemberReservationMsgDto.builder()
-                .programName(chatMsgQueryDto.getProgramName())
+                .programName(chatMsgQueryDto.getMsgProgramName())
                 .price(chatMsgQueryDto.getPtProgramPrice())
                 .address(chatMsgQueryDto.getGymAddress())
                 .build();
