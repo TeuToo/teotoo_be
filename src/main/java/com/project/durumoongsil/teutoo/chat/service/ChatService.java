@@ -168,9 +168,9 @@ public class ChatService {
 
     private ChatMsgResDTO setMemberReservationRequestMsg(ChatMsgResDTO chatMsgResDTO, ChatMsgQueryDto chatMsgQueryDto) {
         PtMemberReservationMsgDto memberReservationMsgDto = PtMemberReservationMsgDto.builder()
-                .ptProgramName(chatMsgQueryDto.getProgramName())
-                .ptProgramPrice(chatMsgQueryDto.getPtProgramPrice())
-                .gymAddress(chatMsgQueryDto.getGymAddress())
+                .programName(chatMsgQueryDto.getProgramName())
+                .price(chatMsgQueryDto.getPtProgramPrice())
+                .address(chatMsgQueryDto.getGymAddress())
                 .build();
 
         chatMsgResDTO.setContent(this.toContentJsonStr(memberReservationMsgDto));

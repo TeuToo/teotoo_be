@@ -7,6 +7,6 @@ import lombok.Setter;
 @Setter
 public class ChatMemberReservationReqDto {
     private int price;
-    private long ptProgramId;
+    private long programId;
     private String address;
 }

@@ -381,11 +381,11 @@ public class ChatWebSocketService {
         Member member = this.getMemberFromChat(chat);
         Member trainer = this.getOtherMemberFromChat(chat);
 
-        if (!isPtProgramValid(trainer, memberReservationReqDto.getPtProgramId())) {
+        if (!isPtProgramValid(trainer, memberReservationReqDto.getProgramId())) {
             throw new InvalidActionException("잘못된 예약 요청입니다.");
         }
 
-        PtProgram ptProgram = ptProgramRepository.findById(memberReservationReqDto.getPtProgramId())
+        PtProgram ptProgram = ptProgramRepository.findById(memberReservationReqDto.getProgramId())
                 .orElseThrow(PtProgramNotFoundException::new);
 
         ChatMsg savedChatMsg = this.saveMemberReservationChatMsg(chat, member, ptProgram, memberReservationReqDto);
@@ -428,9 +428,9 @@ public class ChatWebSocketService {
 
     private PtMemberReservationMsgDto createPtMemberReservationMsgDto(PtProgram ptProgram, ChatMsg chatMsg) {
         return PtMemberReservationMsgDto.builder()
-                .ptProgramName(ptProgram.getTitle())
-                .gymAddress(chatMsg.getGymAddress())
-                .ptProgramPrice(chatMsg.getPtProgramPrice())
+                .programName(ptProgram.getTitle())
+                .address(chatMsg.getGymAddress())
+                .price(chatMsg.getPtProgramPrice())
                 .build();
     }
 

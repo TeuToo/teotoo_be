@@ -7,9 +7,9 @@ import lombok.Getter;
 @Builder
 public class PtMemberReservationMsgDto {
 
-    private String ptProgramName;
+    private String programName;
 
-    private int ptProgramPrice;
+    private int price;
 
-    private String gymAddress;
+    private String address;
 }
