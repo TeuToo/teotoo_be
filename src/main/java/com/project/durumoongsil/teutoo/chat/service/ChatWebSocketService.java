@@ -210,7 +210,7 @@ public class ChatWebSocketService {
         this.updateSenderMsgIdx(chat, sender.getId(), savedChatMsg.getId());
 
         String imgUrl = fileService.getImgUrl(FilePath.CHAT_IMG.getPath(), savedImgName);
-        return createChatMsgResDTO(savedChatMsg, sender, imgUrl);
+        return this.createChatMsgResDTO(savedChatMsg, sender, imgUrl);
     }
 
     private ChatMsg createChatMsg(Chat chat, Member sender, String savedImgName) {
@@ -225,6 +225,7 @@ public class ChatWebSocketService {
 
     private ChatMsgResDTO createChatMsgResDTO(ChatMsg savedChatMsg, Member sender, String imgUrl) {
         return ChatMsgResDTO.builder()
+                .msgAction(MsgAction.SEND)
                 .msgIdx(savedChatMsg.getId())
                 .senderId(sender.getId())
                 .contentType(MsgType.IMG)
