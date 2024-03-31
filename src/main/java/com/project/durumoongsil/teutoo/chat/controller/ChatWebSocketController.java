@@ -3,12 +3,10 @@ package com.project.durumoongsil.teutoo.chat.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.durumoongsil.teutoo.chat.constants.ChatErrorCode;
-import com.project.durumoongsil.teutoo.chat.dto.request.ChatReadReqDto;
-import com.project.durumoongsil.teutoo.chat.dto.request.ChatReservationAcceptDto;
-import com.project.durumoongsil.teutoo.chat.dto.request.ChatReservationReqDto;
-import com.project.durumoongsil.teutoo.chat.dto.request.ChatSendTextMsgDto;
+import com.project.durumoongsil.teutoo.chat.dto.request.*;
 import com.project.durumoongsil.teutoo.chat.dto.response.ChatMsgResDTO;
 import com.project.durumoongsil.teutoo.chat.dto.response.ChatReadResDto;
+import com.project.durumoongsil.teutoo.chat.dto.response.PtMemberReservationMsgDto;
 import com.project.durumoongsil.teutoo.chat.dto.response.StompError;
 import com.project.durumoongsil.teutoo.chat.service.ChatWebSocketService;
 import com.project.durumoongsil.teutoo.exception.ChatNotFoundException;
@@ -77,6 +75,20 @@ public class ChatWebSocketController {
     @MessageMapping("/chat/{roomId}/reservation/accept")
     public void reservationAcceptMsg(@DestinationVariable String roomId, ChatReservationAcceptDto chatReservationAcceptDto) {
         ChatMsgResDTO chatMsgResDTO = chatWebSocketService.saveAndReturnReservationAcceptMsg(roomId, chatReservationAcceptDto);
+
+        this.sendMessageToTopic(roomId, chatMsgResDTO);
+    }
+
+    @MessageMapping("/chat/{roomId}/reservation-request/member")
+    public void reservationRequestFromMember(@DestinationVariable String roomId, ChatMemberReservationReqDto chatMemberReservationReqDto) {
+        ChatMsgResDTO chatMsgResDTO = chatWebSocketService.saveAndReturnReservationRequestFromMember(roomId, chatMemberReservationReqDto);
+
+        this.sendMessageToTopic(roomId, chatMsgResDTO);
+    }
+
+    @MessageMapping("/chat/{roomId}/reservation-request/trainer")
+    public void reservationRequestFromTrainer(@DestinationVariable String roomId, ChatTrainerReservationReqDto chatMemberReservationReqDto) {
+        ChatMsgResDTO chatMsgResDTO = chatWebSocketService.saveAndReturnReservationRequestFromTrainer(roomId, chatMemberReservationReqDto);
 
         this.sendMessageToTopic(roomId, chatMsgResDTO);
     }

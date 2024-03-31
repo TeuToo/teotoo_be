@@ -45,6 +45,8 @@ public class ChatMsgCustomRepositoryImpl implements ChatMsgCustomRepository{
                         qChatMsg.imgName,
                         qPtProgram.id,
                         qPtProgram.title,
+                        qChatMsg.ptProgramPrice,
+                        qChatMsg.gymAddress,
                         qPtReservation.startDateTime,
                         qPtReservation.endDateTime,
                         qPtReservation.status

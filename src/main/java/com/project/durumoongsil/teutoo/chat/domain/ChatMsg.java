@@ -30,6 +30,12 @@ public class ChatMsg extends BaseTimeEntity {
 
     private String imgName;
 
+    private String ptProgramName;
+
+    private Integer ptProgramPrice;
+
+    private String gymAddress;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sender_id")
     private Member sender;
@@ -43,12 +49,15 @@ public class ChatMsg extends BaseTimeEntity {
     private PtReservation ptReservation;
 
     @Builder
-    public ChatMsg(MsgType msgType, String textContent, String imgPath, String imgName,
-                   Member sender, Chat chat, PtReservation ptReservation) {
+    public ChatMsg(MsgType msgType, String textContent, String imgPath, String imgName, int ptProgramPrice, String ptProgramName,
+                   String gymAddress, Member sender, Chat chat, PtReservation ptReservation) {
         this.msgType = msgType;
         this.textContent = textContent;
         this.imgPath = imgPath;
         this.imgName = imgName;
+        this.ptProgramPrice = ptProgramPrice;
+        this.ptProgramName = ptProgramName;
+        this.gymAddress = gymAddress;
         this.sender = sender;
         this.chat = chat;
         this.ptReservation = ptReservation;
