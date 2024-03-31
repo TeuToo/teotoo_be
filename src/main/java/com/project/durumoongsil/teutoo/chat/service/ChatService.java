@@ -153,6 +153,11 @@ public class ChatService {
     private ChatMsgResDTO setReservationMsg(ChatMsgResDTO chatMsgResDTO, ChatMsgQueryDto chatMsgQueryDto) {
 
         PtReservationMsgDto ptReservationMsgDto = PtReservationMsgDto.builder()
+                        .reservationId(chatMsgQueryDto.getReservationId())
+                        .trainerId(chatMsgQueryDto.getTrainerId())
+                        .trainerName(chatMsgQueryDto.getTrainerName())
+                        .memberId(chatMsgQueryDto.getMemberId())
+                        .memberName(chatMsgQueryDto.getMemberName())
                         .programId(chatMsgQueryDto.getProgramId())
                         .programName(chatMsgQueryDto.getProgramName())
                         .status(chatMsgQueryDto.getStatus())
