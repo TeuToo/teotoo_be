@@ -428,7 +428,6 @@ public class ChatWebSocketService {
 
     private PtMemberReservationMsgDto createPtMemberReservationMsgDto(PtProgram ptProgram, ChatMsg chatMsg) {
         return PtMemberReservationMsgDto.builder()
-                .ptProgramId(ptProgram.getId())
                 .ptProgramName(ptProgram.getTitle())
                 .gymAddress(chatMsg.getGymAddress())
                 .ptProgramPrice(chatMsg.getPtProgramPrice())

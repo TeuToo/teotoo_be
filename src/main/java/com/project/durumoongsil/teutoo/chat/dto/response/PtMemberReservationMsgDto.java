@@ -7,8 +7,6 @@ import lombok.Getter;
 @Builder
 public class PtMemberReservationMsgDto {
 
-    private long ptProgramId;
-
     private String ptProgramName;
 
     private int ptProgramPrice;
