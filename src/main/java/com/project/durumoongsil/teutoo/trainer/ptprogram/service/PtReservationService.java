@@ -1,5 +1,6 @@
 package com.project.durumoongsil.teutoo.trainer.ptprogram.service;
 
+import com.amazonaws.services.kms.model.NotFoundException;
 import com.project.durumoongsil.teutoo.chat.domain.Chat;
 import com.project.durumoongsil.teutoo.common.domain.FilePath;
 import com.project.durumoongsil.teutoo.common.dto.ImgResDto;
@@ -87,12 +88,15 @@ public class PtReservationService {
     @Transactional
     public PtAcceptResDto accept(PtAcceptReqDto ptAcceptReqDto) {
 
-        Member member = this.getMember();
+        Member trainer = this.getMember();
 
-        PtReservation ptReservation = ptReservationRepository.findByIdWithMemberAndPtProgram(ptAcceptReqDto.getReservationId())
+        PtReservation ptReservation = ptReservationRepository.findById(ptAcceptReqDto.getReservationId())
                 .orElseThrow(() -> new PtReservationNotFoundException("해당 예약 정보를 찾을 수 없습니다."));
 
-        if (!Objects.equals(member.getId(), ptReservation.getMember().getId())) {
+        Long savedTrainerId = ptReservationRepository.findTrainerIdById(ptAcceptReqDto.getReservationId())
+                .orElseThrow(() -> new NotFoundUserException("해당 사용자를 찾을 수 없습니다."));
+
+        if (!Objects.equals(trainer.getId(), savedTrainerId)) {
             throw new UnauthorizedActionException();
         }
 
