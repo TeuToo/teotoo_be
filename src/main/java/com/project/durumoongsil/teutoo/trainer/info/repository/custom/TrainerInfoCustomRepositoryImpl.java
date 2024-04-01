@@ -5,7 +5,7 @@ import com.project.durumoongsil.teutoo.member.domain.QMember;
 import com.project.durumoongsil.teutoo.member.domain.Role;
 import com.project.durumoongsil.teutoo.trainer.info.domain.QTrainerInfo;
 import com.project.durumoongsil.teutoo.trainer.info.domain.TrainerInfo;
-import com.project.durumoongsil.teutoo.trainer.info.dto.TrainerListReqDto;
+import com.project.durumoongsil.teutoo.trainer.info.dto.request.TrainerListReqDto;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.domain.QPtProgram;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.domain.QPtReservation;
 import com.querydsl.core.types.OrderSpecifier;

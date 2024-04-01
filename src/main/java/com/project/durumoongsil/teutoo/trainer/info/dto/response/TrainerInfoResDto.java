@@ -1,4 +1,4 @@
-package com.project.durumoongsil.teutoo.trainer.info.dto;
+package com.project.durumoongsil.teutoo.trainer.info.dto.response;
 
 import com.project.durumoongsil.teutoo.common.dto.ImgResDto;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.response.PtProgramResDto;
