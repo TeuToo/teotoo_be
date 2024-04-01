@@ -114,15 +114,4 @@ public class TokenProvider implements InitializingBean {
         }
         return false;
     }
-
-    public String createTokenWithUserName(String email) {
-        // 토큰 만료 시간
-        Instant validity = Instant.now().plusSeconds(this.tokenExpirationSec);
-
-        return Jwts.builder()
-                .setSubject(email)
-                .signWith(key, SignatureAlgorithm.HS512)
-                .setExpiration(Date.from(validity))
-                .compact();
-    }
 }
