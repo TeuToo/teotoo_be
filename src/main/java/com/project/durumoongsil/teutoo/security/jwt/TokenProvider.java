@@ -50,6 +50,8 @@ public class TokenProvider implements InitializingBean {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
+        log.info("추가해야할 authorites = {}", authorities);
+
         // 토큰만료 시간
         Instant validity = Instant.now().atZone(ZoneId.of("Asia/Seoul")).plusSeconds(this.tokenExpirationSec).toInstant();
         ZonedDateTime validityInKST = validity.atZone(ZoneId.of("Asia/Seoul"));
@@ -78,6 +80,21 @@ public class TokenProvider implements InitializingBean {
                 .claim(AUTHORITIES_KEY, authorities)
                 .signWith(key, SignatureAlgorithm.HS512)
                 .setExpiration(Date.from(validityInKST.toInstant()))
+                .compact();
+    }
+
+    public String createToken(String userEmail, String authorities) {
+        // 토큰만료 시간
+        Instant validity = Instant.now().atZone(ZoneId.of("Asia/Seoul")).plusSeconds(this.tokenExpirationSec).toInstant();
+        ZonedDateTime validityInKST = validity.atZone(ZoneId.of("Asia/Seoul"));
+        log.info("토큰만료 시간={}", validityInKST);
+
+        return Jwts.builder()
+                .setSubject(userEmail) // JWT 토큰의 subject로 사용자 이메일 설정
+                .claim(AUTHORITIES_KEY, authorities)
+                .setIssuedAt(new Date()) // 토큰 발행 시간 설정
+                .signWith(key,SignatureAlgorithm.HS512) // 서명 알고리즘과 키 설정
+                .setExpiration(Date.from(validityInKST.toInstant())) // 토큰 만료 시간 설정
                 .compact();
     }
 
