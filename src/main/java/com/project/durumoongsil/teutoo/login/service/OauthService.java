@@ -20,10 +20,6 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
