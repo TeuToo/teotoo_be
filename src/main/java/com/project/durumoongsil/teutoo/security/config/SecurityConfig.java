@@ -52,13 +52,6 @@ public class SecurityConfig {
 //                        .requestMatchers("/login","/join","/swagger-ui/**","/").permitAll()
 //                        .requestMatchers(PathRequest.toH2Console()).permitAll()
                         .anyRequest().permitAll())
-                .oauth2Login(oauth2Login -> oauth2Login
-                        .userInfoEndpoint(userInfoEndpoint -> {
-                            userInfoEndpoint.userService(oAuth2UserService);
-                        })
-                        .successHandler(oauth2SuccessHandler)
-                        .failureHandler(oauth2FailureHandler)
-                )
                 .addFilterBefore(corsFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .accessDeniedHandler(jwtAccessDeniedHandler)
