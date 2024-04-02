@@ -97,4 +97,16 @@ public class GlobalExceptionHandler {
         return new RestError(HttpStatus.INTERNAL_SERVER_ERROR.toString(), ex.getMessage());
     }
 
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(KakaoAccessTokenException.class)
+    public RestError KakaoAccessTokenException(KakaoAccessTokenException ex) {
+        return new RestError(HttpStatus.INTERNAL_SERVER_ERROR.toString(), ex.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(KakaoUserInfoException.class)
+    public RestError KakaoUserInfoException(KakaoUserInfoException ex) {
+        return new RestError(HttpStatus.INTERNAL_SERVER_ERROR.toString(), ex.getMessage());
+    }
 }
