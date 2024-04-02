@@ -90,11 +90,11 @@ public class TokenProvider implements InitializingBean {
         log.info("토큰만료 시간={}", validityInKST);
 
         return Jwts.builder()
-                .setSubject(userEmail) // JWT 토큰의 subject로 사용자 이메일 설정
+                .setSubject(userEmail)
                 .claim(AUTHORITIES_KEY, authorities)
-                .setIssuedAt(new Date()) // 토큰 발행 시간 설정
-                .signWith(key,SignatureAlgorithm.HS512) // 서명 알고리즘과 키 설정
-                .setExpiration(Date.from(validityInKST.toInstant())) // 토큰 만료 시간 설정
+                .setIssuedAt(new Date())
+                .signWith(key,SignatureAlgorithm.HS512)
+                .setExpiration(Date.from(validityInKST.toInstant()))
                 .compact();
     }
 
