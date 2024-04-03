@@ -20,6 +20,8 @@ import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.response.PtProgramR
 import com.project.durumoongsil.teutoo.trainer.ptprogram.service.PtProgramService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -37,7 +39,9 @@ public class TrainerInfoService {
     private final PtProgramService ptProgramService;
     private final TrainerInfoConverter converter = new TrainerInfoConverter();
 
-    // 트레이너 소개 페이지 등록 및 갱신
+    /**
+     * 트레이너 소개 페이지 등록 및 갱신
+     */
     @Transactional
     public void saveOrUpdate(String memberEmail, TrainerUpdateInfoDto trainerUpdateInfoDto) {
 
@@ -83,7 +87,9 @@ public class TrainerInfoService {
         }
     }
 
-    // 트레이너 소개 페이지 데이터 조회
+    /**
+     * 트레이너 소개 페이지 데이터 조회
+     */
     public TrainerInfoResDto getInfo(Long trainerId) {
         Member member = trainerInfoRepository.findMemberByIdWithTrainerInfo(trainerId)
                 .orElseThrow(NotFoundUserException::new);
@@ -91,7 +97,11 @@ public class TrainerInfoService {
         return this.getTrainerInfoDto(member);
     }
 
-    // 트레이너 관리 페이지 데이터 조회
+    //
+
+    /**
+     * 트레이너 관리 페이지 데이터 조회
+     */
     public TrainerInfoResDto getInfoForManagement(String memberEmail) {
         Member member = trainerInfoRepository.findMemberByIdWithTrainerInfo(memberEmail)
                 .orElseThrow(() -> new NotFoundUserException("해당 트레이너를 찾을 수 없습니다."));
@@ -128,10 +138,14 @@ public class TrainerInfoService {
     }
 
 
+    /**
+     * 페이지네이션 방식으로, 트레이너 목록 조회
+     */
+    public Page<TrainerSummaryResDto> getTrainerList(TrainerListReqDto trainerListReqDto) {
 
-    // 페이지네이션 방식으로, 트레이너 목록 조회
-    public Page<TrainerSummaryResDto> getTrainerList(TrainerListReqDto TrainerListReqDto) {
-        Page<TrainerInfo> trainerInfoPage = trainerInfoRepository.findBySearchCondition(TrainerListReqDto);
+        Sort.Direction direction = trainerListReqDto.getDirection().equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+        PageRequest pageRequest = PageRequest.of(trainerListReqDto.getPage(), trainerListReqDto.getSize(), Sort.by(direction, trainerListReqDto.getSort()));
+        Page<TrainerInfo> trainerInfoPage = trainerInfoRepository.findBySearchCondition(pageRequest, trainerListReqDto.getSearch());
 
         return trainerInfoPage.map(trainerInfo -> {
             Member member = trainerInfo.getMember();
