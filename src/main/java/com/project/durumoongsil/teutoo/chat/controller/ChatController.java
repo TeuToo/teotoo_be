@@ -52,7 +52,8 @@ public class ChatController {
 
 
     @PostMapping("/activation/{receiverId}")
-    @Operation(summary = "대화방 데이터 조회", description = "채팅을 하기전 상대방과의 대화방 관련 데이터를 얻기 위한 API 입니다.")
+    @Operation(summary = "대화방 데이터 조회 & 예약 요청", description = "채팅을 하기전 상대방과의 대화방 관련 데이터를 얻기 위한 API 입니다. " +
+            "예약 요청시에, 채팅방 데이터 조회 뿐만이 아니라, 해당 채팅방에 메시지 전송")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "대화방 데이터 조회 성공"),
             @ApiResponse(responseCode = "400", description = "클라이언트의 잘못된 요청")
