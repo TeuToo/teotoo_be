@@ -2,12 +2,16 @@ package com.project.durumoongsil.teutoo.member.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
 @Data
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 @Schema(description = "회원 수정 Dto")
 public class MemberUpdateDto {
@@ -22,8 +26,7 @@ public class MemberUpdateDto {
     @Schema(description = "비밀번호")
     private String password;
 
-    @Builder
-    public MemberUpdateDto(String address) {
-        this.address = address;
-    }
+    @Schema( description = "역할 구분 (true: 트레이너, false: 일반 사용자)")
+    @NotNull
+    private Boolean role;
 }

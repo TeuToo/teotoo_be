@@ -55,6 +55,7 @@ public class Member extends BaseTimeEntity {
 
     public Member updateInfo(MemberUpdateDto memberUpdateDto) {
         this.address = memberUpdateDto.getAddress();
+        this.role = (memberUpdateDto.getRole() ? Role.TRAINER : Role.USER);
         return this;
     }
 
