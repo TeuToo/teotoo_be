@@ -80,6 +80,7 @@ class MemberServiceTest {
 
         MemberUpdateDto updateMember = MemberUpdateDto.builder()
                 .address("서울특별시 강남구")
+                .role(true)
                 .build();
 
         when(memberRepository.findMemberByEmail(userId)).thenReturn(Optional.of(originalMember));
