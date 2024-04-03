@@ -2,12 +2,11 @@ package com.project.durumoongsil.teutoo.chat.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.project.durumoongsil.teutoo.chat.constants.ChatActivationType;
 import com.project.durumoongsil.teutoo.chat.constants.ChatErrorCode;
 import com.project.durumoongsil.teutoo.chat.dto.request.*;
-import com.project.durumoongsil.teutoo.chat.dto.response.ChatMsgResDTO;
-import com.project.durumoongsil.teutoo.chat.dto.response.ChatReadResDto;
-import com.project.durumoongsil.teutoo.chat.dto.response.PtMemberReservationMsgDto;
-import com.project.durumoongsil.teutoo.chat.dto.response.StompError;
+import com.project.durumoongsil.teutoo.chat.dto.response.*;
+import com.project.durumoongsil.teutoo.chat.service.ChatService;
 import com.project.durumoongsil.teutoo.chat.service.ChatWebSocketService;
 import com.project.durumoongsil.teutoo.exception.ChatNotFoundException;
 import com.project.durumoongsil.teutoo.exception.InvalidActionException;
@@ -38,6 +37,7 @@ public class ChatWebSocketController {
 
     private final SimpMessagingTemplate template;
     private final ChatWebSocketService chatWebSocketService;
+    private final ChatService chatService;
 
     private final ObjectMapper om;
 
@@ -50,6 +50,40 @@ public class ChatWebSocketController {
     public void saveChatImg(@PathVariable String roomId, List<MultipartFile> chatImgMsgList) {
         List<ChatMsgResDTO> chatMsgResDTOList = chatWebSocketService.saveChatImgList(roomId, chatImgMsgList);
         this.sendMessageToTopic(roomId, chatMsgResDTOList);
+    }
+
+    @PostMapping("/activation/{receiverId}")
+    @Operation(summary = "대화방 데이터 조회", description = "채팅을 하기전 상대방과의 대화방 관련 데이터를 얻기 위한 API 입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "대화방 데이터 조회 성공"),
+            @ApiResponse(responseCode = "400", description = "클라이언트의 잘못된 요청")
+    })
+    public ChatActivationResDto getChatActivation(@PathVariable("receiverId")Long receiverId, @RequestBody ChatActivationReqDto chatActivationReqDto) {
+
+        ChatActivationResDto chatActivationResDto = chatService.getActivationChat(receiverId);
+
+        ChatActivationType requestType = chatActivationReqDto.getActivationType();
+        if (requestType != ChatActivationType.INFO) {
+            ChatMsgResDTO chatMsgResDTO = null;
+
+            if (requestType == ChatActivationType.MEMBER_RESERVE) {
+                // 회원이 예약 요청시,
+                chatMsgResDTO = chatWebSocketService
+                        .saveAndReturnReservationRequestFromMember(chatActivationResDto.getRoomId(), chatActivationReqDto.getMemberReservationDto());
+            } else if (requestType == ChatActivationType.TRAINER_RESERVE) {
+                // 트레이너가 예약 요청시,
+                chatMsgResDTO = chatWebSocketService
+                        .saveAndReturnReservationRequestFromTrainer(chatActivationResDto.getRoomId(), chatActivationReqDto.getTrainerReservationDto());
+            }
+
+            // 메시지 추가해서 반환해줌,
+            chatActivationResDto.getMessages().add(chatMsgResDTO);
+
+            // 채팅방에 메시지 전송
+            this.sendMessageToTopic(chatActivationResDto.getRoomId(), chatMsgResDTO);
+        }
+
+        return chatActivationResDto;
     }
 
     @MessageMapping("/chat/{roomId}/text")
@@ -75,20 +109,6 @@ public class ChatWebSocketController {
     @MessageMapping("/chat/{roomId}/reservation/accept")
     public void reservationAcceptMsg(@DestinationVariable String roomId, ChatReservationAcceptDto chatReservationAcceptDto) {
         ChatMsgResDTO chatMsgResDTO = chatWebSocketService.saveAndReturnReservationAcceptMsg(roomId, chatReservationAcceptDto);
-
-        this.sendMessageToTopic(roomId, chatMsgResDTO);
-    }
-
-    @MessageMapping("/chat/{roomId}/reservation-request/member")
-    public void reservationRequestFromMember(@DestinationVariable String roomId, ChatMemberReservationReqDto chatMemberReservationReqDto) {
-        ChatMsgResDTO chatMsgResDTO = chatWebSocketService.saveAndReturnReservationRequestFromMember(roomId, chatMemberReservationReqDto);
-
-        this.sendMessageToTopic(roomId, chatMsgResDTO);
-    }
-
-    @MessageMapping("/chat/{roomId}/reservation-request/trainer")
-    public void reservationRequestFromTrainer(@DestinationVariable String roomId, ChatTrainerReservationReqDto chatMemberReservationReqDto) {
-        ChatMsgResDTO chatMsgResDTO = chatWebSocketService.saveAndReturnReservationRequestFromTrainer(roomId, chatMemberReservationReqDto);
 
         this.sendMessageToTopic(roomId, chatMsgResDTO);
     }

@@ -39,7 +39,7 @@ public class ChatService {
      * @return 활성화 될 room id, 메세지 내역과 자신과 상대방의 메시지 index를 포함한 DTO
      */
     @Transactional
-    public ChatActivationResDTO getActivationChat(Long receiverId) {
+    public ChatActivationResDto getActivationChat(Long receiverId) {
 
         String userEmail = securityService.getLoginedUserEmail();
 
@@ -66,7 +66,7 @@ public class ChatService {
 
         ChatInfo chatInfo = this.getChatInfo(chat, sender.getId(), receiver.getId());
 
-        return ChatActivationResDTO.builder()
+        return ChatActivationResDto.builder()
                 .roomId(chatInfo.getRoomId())
                 .senderIdx(chatInfo.getSenderChatIdx())
                 .receiverIdx(chatInfo.getReceiverChatIdx())

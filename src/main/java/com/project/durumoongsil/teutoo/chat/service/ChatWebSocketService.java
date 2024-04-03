@@ -377,19 +377,19 @@ public class ChatWebSocketService {
      * 사용자가 트레이너의 견적서를 보고, 예약 하기 위해 예약 요청 메시지를 처리하기 위한 메소드입니다.
      */
     @Transactional
-    public ChatMsgResDTO saveAndReturnReservationRequestFromMember(String roomId, ChatMemberReservationReqDto memberReservationReqDto) {
+    public ChatMsgResDTO saveAndReturnReservationRequestFromMember(String roomId, MemberReservationDto memberReservationDto) {
         Chat chat = this.getChatByRoomId(roomId);
         Member member = this.getMemberFromChat(chat);
         Member trainer = this.getOtherMemberFromChat(chat);
 
-        if (!isPtProgramValid(trainer, memberReservationReqDto.getProgramId())) {
+        if (!isPtProgramValid(trainer, memberReservationDto.getProgramId())) {
             throw new InvalidActionException("잘못된 예약 요청입니다.");
         }
 
-        PtProgram ptProgram = ptProgramRepository.findById(memberReservationReqDto.getProgramId())
+        PtProgram ptProgram = ptProgramRepository.findById(memberReservationDto.getProgramId())
                 .orElseThrow(PtProgramNotFoundException::new);
 
-        ChatMsg savedChatMsg = this.saveMemberReservationChatMsg(chat, member, ptProgram, memberReservationReqDto);
+        ChatMsg savedChatMsg = this.saveMemberReservationChatMsg(chat, member, ptProgram, memberReservationDto);
 
         PtMemberReservationMsgDto ptMemberReservationMsgDto = this
                 .createPtMemberReservationMsgDto(ptProgram, savedChatMsg);
@@ -414,13 +414,13 @@ public class ChatWebSocketService {
     }
 
     private ChatMsg saveMemberReservationChatMsg(Chat chat, Member member, PtProgram ptProgram,
-                                                        ChatMemberReservationReqDto memberReservationReqDto) {
+                                                 MemberReservationDto memberReservationDto) {
         ChatMsg chatMsg = ChatMsg.builder()
                 .chat(chat)
                 .sender(member)
                 .msgType(MsgType.RESERVATION_REQ_MEMBER)
-                .gymAddress(memberReservationReqDto.getAddress())
-                .ptProgramPrice(memberReservationReqDto.getPrice())
+                .gymAddress(memberReservationDto.getAddress())
+                .ptProgramPrice(memberReservationDto.getPrice())
                 .ptProgramName(ptProgram.getTitle())
                 .build();
 
@@ -449,12 +449,12 @@ public class ChatWebSocketService {
      * 트레이너가 사용자의 견적서를 보고, 예약 하기 위해 예약 요청 메시지를 처리하기 위한 메소드입니다.
      */
     @Transactional
-    public ChatMsgResDTO saveAndReturnReservationRequestFromTrainer(String roomId, ChatTrainerReservationReqDto trainerReservationReqDto) {
+    public ChatMsgResDTO saveAndReturnReservationRequestFromTrainer(String roomId, TrainerReservationDto trainerReservationDto) {
 
         Chat chat = this.getChatByRoomId(roomId);
         Member trainer = this.getMemberFromChat(chat);
 
-        ChatMsg chatMsg = this.saveTrainerReservationChatMsg(chat, trainer, trainerReservationReqDto);
+        ChatMsg chatMsg = this.saveTrainerReservationChatMsg(chat, trainer, trainerReservationDto);
 
         PtTrainerReservationMsgDto ptTrainerReservationMsgDto = PtTrainerReservationMsgDto.builder()
                 .price(chatMsg.getPtProgramPrice())
@@ -482,13 +482,13 @@ public class ChatWebSocketService {
     }
 
     private ChatMsg saveTrainerReservationChatMsg(Chat chat, Member trainer,
-                                                  ChatTrainerReservationReqDto trainerReservationReqDto) {
+                                                  TrainerReservationDto trainerReservationDto) {
         ChatMsg chatMsg = ChatMsg.builder()
                 .chat(chat)
                 .sender(trainer)
                 .msgType(MsgType.RESERVATION_REQ_TRAINER)
-                .gymAddress(trainerReservationReqDto.getAddress())
-                .ptProgramPrice(trainerReservationReqDto.getPrice())
+                .gymAddress(trainerReservationDto.getAddress())
+                .ptProgramPrice(trainerReservationDto.getPrice())
                 .build();
 
         return chatMsgRepository.save(chatMsg);
