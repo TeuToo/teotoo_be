@@ -9,7 +9,7 @@ import java.util.List;
 @Schema(description = "대화방 관련 데이터 DTO")
 @Builder
 @Getter
-public class ChatActivationResDTO {
+public class ChatActivationResDto {
     @Schema(description = "대화방 ID")
     private String roomId;
     @Schema(description = "자신의 메시지 index")
