@@ -1,4 +1,4 @@
-package com.project.durumoongsil.teutoo.trainer.info.dto;
+package com.project.durumoongsil.teutoo.trainer.info.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;

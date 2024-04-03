@@ -1,10 +1,10 @@
 package com.project.durumoongsil.teutoo.trainer.info.controller;
 
 import com.project.durumoongsil.teutoo.security.service.SecurityService;
-import com.project.durumoongsil.teutoo.trainer.info.dto.TrainerInfoResDto;
-import com.project.durumoongsil.teutoo.trainer.info.dto.TrainerListReqDto;
-import com.project.durumoongsil.teutoo.trainer.info.dto.TrainerSummaryResDto;
-import com.project.durumoongsil.teutoo.trainer.info.dto.TrainerUpdateInfoDto;
+import com.project.durumoongsil.teutoo.trainer.info.dto.response.TrainerInfoResDto;
+import com.project.durumoongsil.teutoo.trainer.info.dto.request.TrainerListReqDto;
+import com.project.durumoongsil.teutoo.trainer.info.dto.response.TrainerSummaryResDto;
+import com.project.durumoongsil.teutoo.trainer.info.dto.request.TrainerUpdateInfoDto;
 import com.project.durumoongsil.teutoo.trainer.info.service.TrainerInfoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

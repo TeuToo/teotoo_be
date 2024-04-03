@@ -3,9 +3,9 @@ package com.project.durumoongsil.teutoo.trainer.info.util;
 import com.project.durumoongsil.teutoo.common.dto.ImgResDto;
 import com.project.durumoongsil.teutoo.member.domain.Member;
 import com.project.durumoongsil.teutoo.trainer.info.domain.TrainerInfo;
-import com.project.durumoongsil.teutoo.trainer.info.dto.TrainerInfoResDto;
-import com.project.durumoongsil.teutoo.trainer.info.dto.TrainerSummaryResDto;
-import com.project.durumoongsil.teutoo.trainer.info.dto.TrainerUpdateInfoDto;
+import com.project.durumoongsil.teutoo.trainer.info.dto.response.TrainerInfoResDto;
+import com.project.durumoongsil.teutoo.trainer.info.dto.response.TrainerSummaryResDto;
+import com.project.durumoongsil.teutoo.trainer.info.dto.request.TrainerUpdateInfoDto;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.response.PtProgramResDto;
 
 import java.util.List;

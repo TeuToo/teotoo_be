@@ -1,4 +1,4 @@
-package com.project.durumoongsil.teutoo.trainer.info.dto;
+package com.project.durumoongsil.teutoo.trainer.info.dto.request;
 
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -25,12 +25,6 @@ public class TrainerListReqDto {
     @Parameter(description = "asc: 오름차순, desc: 내림차순", example = "asc or desc", required = true)
     private String direction = "desc";
 
-    @Parameter(description = "검색 할 트레이너 이름", example = "김김김")
-    String searchTrainer;
-
-    @Parameter(description = "검색 할 헬스장 이름", example = "Good GYM")
-    String searchGym;
-
-    @Parameter(description = "검색 할 지역이름, 서버에서는 start with로 조회됨", example = "서울특별시 강서구")
-    String searchLocation;
+    @Parameter(description = "검색(트레이너 이름 or 헬스장 이름 or 지역이름)")
+    private String search;
 }

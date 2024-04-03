@@ -8,7 +8,10 @@ import com.project.durumoongsil.teutoo.member.domain.Member;
 import com.project.durumoongsil.teutoo.member.domain.Role;
 import com.project.durumoongsil.teutoo.trainer.info.domain.CareerImg;
 import com.project.durumoongsil.teutoo.trainer.info.domain.TrainerInfo;
-import com.project.durumoongsil.teutoo.trainer.info.dto.*;
+import com.project.durumoongsil.teutoo.trainer.info.dto.request.TrainerListReqDto;
+import com.project.durumoongsil.teutoo.trainer.info.dto.request.TrainerUpdateInfoDto;
+import com.project.durumoongsil.teutoo.trainer.info.dto.response.TrainerInfoResDto;
+import com.project.durumoongsil.teutoo.trainer.info.dto.response.TrainerSummaryResDto;
 import com.project.durumoongsil.teutoo.trainer.info.repository.CareerImgRepository;
 import com.project.durumoongsil.teutoo.trainer.info.repository.TrainerInfoRepository;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.dto.response.PtProgramResDto;
@@ -22,6 +25,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -223,13 +227,18 @@ class TrainerInfoServiceTest {
             testTrainerInfoList.add(testTrainerInfo);
         }
 
-        TrainerListReqDto trainerListReqDtoMock = mock(TrainerListReqDto.class);
+        TrainerListReqDto testTrainerListReqDto = new TrainerListReqDto();
+        testTrainerListReqDto.setDirection("asc");
+        testTrainerListReqDto.setPage(10);
+        testTrainerListReqDto.setSize(1);
+        testTrainerListReqDto.setSort("alpha");
+        testTrainerListReqDto.setSearch("aaa");
 
         Page<TrainerInfo> mockTrainerInfoPage = new PageImpl<>(testTrainerInfoList);
 
-        when(trainerInfoRepository.findBySearchCondition(trainerListReqDtoMock)).thenReturn(mockTrainerInfoPage);
+        when(trainerInfoRepository.findBySearchCondition(any(PageRequest.class), eq("aaa"))).thenReturn(mockTrainerInfoPage);
 
-        List<TrainerSummaryResDto> trainerSummaryResDtoList = trainerInfoService.getTrainerList(trainerListReqDtoMock).getContent();
+        List<TrainerSummaryResDto> trainerSummaryResDtoList = trainerInfoService.getTrainerList(testTrainerListReqDto).getContent();
 
         // return 된 값 크기 검사
         assertEquals(trainerSummaryResDtoList.size(), 5);
