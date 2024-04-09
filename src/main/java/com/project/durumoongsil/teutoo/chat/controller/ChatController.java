@@ -36,9 +36,7 @@ public class ChatController {
     private final ChatService chatService;
     private final SimpMessagingTemplate template;
     private final ChatWebSocketService chatWebSocketService;
-
     private final ObjectMapper om;
-
 
     @GetMapping("/list")
     @Operation(summary = "대화목록 조회", description = "대화 목록을 얻기 위한 API입니다.")
@@ -49,7 +47,6 @@ public class ChatController {
     public List<ChatPreviewResDto> getChatList(@RequestParam(value = "searchName", defaultValue = "", required = false) String searchName) {
         return chatService.getChatPreviewList(searchName);
     }
-
 
     @PostMapping("/activation/{receiverId}")
     @Operation(summary = "대화방 데이터 조회 & 예약 요청", description = "채팅을 하기전 상대방과의 대화방 관련 데이터를 얻기 위한 API 입니다. " +
@@ -84,6 +81,18 @@ public class ChatController {
         }
 
         return chatActivationResDto;
+    }
+
+    @GetMapping("{memberId}/messages")
+    @Operation(summary = "대화 메시지 조회", description = "대화 메시지를 조회하기 위한 API 입니다. " +
+            "size: 조회 할 개수, baseMsgIdx: baseMsgIdx 보다 이전 메시지를 조회하기 위한 값이며, 클라이언트가 받은 가장 오래된 msgIdx. 0 일때는 가장 최신의 메시지부터 조회")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "대화방 데이터 조회 성공"),
+            @ApiResponse(responseCode = "400", description = "클라이언트의 잘못된 요청")
+    })
+    private List<ChatMsgResDTO> getMessages(@PathVariable long memberId, @RequestParam(value = "baseMsgIdx", defaultValue = "0")long baseMsgIdx,
+                                            @RequestParam(value = "size",  defaultValue = "10")int size) {
+        return chatService.getMessages(memberId, baseMsgIdx, size);
     }
 
     @Operation(summary = "채팅 중 이미지 메시지 전송", description = "채팅 중 상대방 에게 이미지 메시지 전송하기 위한 API입니다.")

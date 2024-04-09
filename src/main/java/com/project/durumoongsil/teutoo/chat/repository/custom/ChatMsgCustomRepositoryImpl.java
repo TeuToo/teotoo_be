@@ -8,6 +8,7 @@ import com.project.durumoongsil.teutoo.member.domain.QMember;
 import com.project.durumoongsil.teutoo.trainer.info.domain.QTrainerInfo;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.domain.QPtProgram;
 import com.project.durumoongsil.teutoo.trainer.ptprogram.domain.QPtReservation;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -30,7 +31,7 @@ public class ChatMsgCustomRepositoryImpl implements ChatMsgCustomRepository{
 
 
     @Override
-    public List<ChatMsgQueryDto> findBySenderIdAndReceiverId(Long senderId, Long receiverId) {
+    public List<ChatMsgQueryDto> findBySenderIdAndReceiverId(Long senderId, Long receiverId, Long currentOldestMsgIdx, int size) {
 
         // ID를 기준으로, 작다면 a member, 크면 b member 로 지정.
         Long aMemberId = Math.min(senderId, receiverId);
@@ -69,10 +70,15 @@ public class ChatMsgCustomRepositoryImpl implements ChatMsgCustomRepository{
                 .leftJoin(qPtReservation.member, qMember)
                 .where(
                         qChat.aMember.id.eq(aMemberId),
-                        qChat.bMember.id.eq(bMemberId)
+                        qChat.bMember.id.eq(bMemberId),
+                        msgIdxLessThan(currentOldestMsgIdx)
                 )
                 .orderBy(qChatMsg.id.desc())
-                .limit(10)
+                .limit(size)
                 .fetch();
+    }
+
+    private BooleanExpression msgIdxLessThan(Long msgIdx) {
+        return (msgIdx != null) ? qChatMsg.id.lt(msgIdx) : null;
     }
 }

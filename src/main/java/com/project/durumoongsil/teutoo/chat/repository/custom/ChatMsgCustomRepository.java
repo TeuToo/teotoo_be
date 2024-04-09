@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface ChatMsgCustomRepository {
 
-    List<ChatMsgQueryDto> findBySenderIdAndReceiverId(Long senderId, Long receiverId);
+    List<ChatMsgQueryDto> findBySenderIdAndReceiverId(Long senderId, Long receiverId, Long currentOldestMsgIdx, int size);
 }

@@ -58,7 +58,7 @@ public class ChatService {
         } else {
             // 존재하면, 최근 채팅목록 불러옴,
             List<ChatMsgQueryDto> chatMsgQueryList =
-                    chatMsgRepository.findBySenderIdAndReceiverId(sender.getId(), receiver.getId());
+                    chatMsgRepository.findBySenderIdAndReceiverId(sender.getId(), receiver.getId(), null, 10);
 
             chatMsgList = chatMsgQueryList.stream()
                     .map(this::toChatMessageResDTO).collect(Collectors.toList());
@@ -270,5 +270,28 @@ public class ChatService {
         ChatMsgResDTO latestChatMsgResDTO = this.toChatMessageResDTO(chatPreviewQueryDto.getChatMsgQueryDTO());
         chatPreviewResDto.setLatestChat(latestChatMsgResDTO);
     }
+
+
+    public List<ChatMsgResDTO> getMessages(long receiverId, long baseMsgIdx, int requestMsgSize) {
+
+        String userEmail = securityService.getLoginedUserEmail();
+
+        Member sender = memberRepository.findMemberByEmail(userEmail)
+                .orElseThrow(() -> new NotFoundUserException("해당 사용자를 찾을 수 없습니다."));
+        Member receiver = memberRepository.findById(receiverId)
+                .orElseThrow(() -> new NotFoundUserException("해당 사용자를 찾을 수 없습니다."));
+
+        List<ChatMsgQueryDto> chatMsgQueryList = chatMsgRepository
+                .findBySenderIdAndReceiverId(sender.getId(), receiver.getId(), baseMsgIdx != 0 ? baseMsgIdx : null, requestMsgSize);
+
+        List<ChatMsgResDTO> chatMsgList = chatMsgQueryList.stream()
+                .map(this::toChatMessageResDTO)
+                .collect(Collectors.toList());
+        Collections.reverse(chatMsgList);
+
+        return chatMsgList;
+    }
+
+
 }
 
