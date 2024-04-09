@@ -1,5 +1,6 @@
 package com.project.durumoongsil.teutoo.chat.dto.response;
 
+import com.project.durumoongsil.teutoo.common.dto.ImgResDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,5 +19,6 @@ public class ChatActivationResDto {
     private Long receiverIdx;
     @Schema(description = "메시지 목록")
     private List<ChatMsgResDTO> messages;
-
+    @Schema(description = "상대방의 프로필 사진 정보")
+    private ImgResDto receiverImg;
 }

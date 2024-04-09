@@ -9,6 +9,7 @@ import com.project.durumoongsil.teutoo.chat.dto.response.*;
 import com.project.durumoongsil.teutoo.chat.repository.ChatMsgRepository;
 import com.project.durumoongsil.teutoo.chat.repository.ChatRepository;
 import com.project.durumoongsil.teutoo.common.domain.FilePath;
+import com.project.durumoongsil.teutoo.common.dto.ImgResDto;
 import com.project.durumoongsil.teutoo.common.service.FileService;
 import com.project.durumoongsil.teutoo.exception.NotFoundUserException;
 import com.project.durumoongsil.teutoo.member.domain.Member;
@@ -64,13 +65,18 @@ public class ChatService {
             Collections.reverse(chatMsgList);
         }
 
+
         ChatInfo chatInfo = this.getChatInfo(chat, sender.getId(), receiver.getId());
+
+        ImgResDto receiverImgResDto = new ImgResDto(receiver.getProfileImageName(),
+                fileService.getImgUrl(FilePath.MEMBER_PROFILE.getPath(), receiver.getProfileImageName()));
 
         return ChatActivationResDto.builder()
                 .roomId(chatInfo.getRoomId())
                 .senderIdx(chatInfo.getSenderChatIdx())
                 .receiverIdx(chatInfo.getReceiverChatIdx())
                 .messages(chatMsgList)
+                .receiverImg(receiverImgResDto)
                 .build();
     }
 
