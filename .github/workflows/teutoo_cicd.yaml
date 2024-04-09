@@ -91,7 +91,7 @@ jobs:
           script: |
             docker pull ${{ secrets.DOCKER_IMAGE_NAME }}
             cd /srv/teutoo-server/bin
-            docker-compose stop; docker-compose rm -f; docker-compose up -d
+            docker-compose up --build teutoo-server -d
 
   notify:
     needs: deploy
