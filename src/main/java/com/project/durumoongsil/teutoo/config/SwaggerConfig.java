@@ -6,6 +6,7 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -17,11 +18,14 @@ public class SwaggerConfig {
     private static final String API_NAME = "TEUTOO API";
     private static final String API_VERSION = "1.0.0";
     private static final String API_DESCRIPTION = "description";
-    private static final String SERVER_URL = "https://api.teutoo.site";
+
+    @Value("${server.url:https://api.teutoo.site}")
+    private String SERVER_URL;
 
 
     @Bean
     public OpenAPI openAPI() {
+
         Info info = new Info()
                 .title(API_NAME)
                 .version(API_VERSION)
