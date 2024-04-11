@@ -27,6 +27,5 @@ public class MemberUpdateDto {
     private String password;
 
     @Schema( description = "역할 구분 (true: 트레이너, false: 일반 사용자)")
-    @NotNull
     private Boolean role;
 }
