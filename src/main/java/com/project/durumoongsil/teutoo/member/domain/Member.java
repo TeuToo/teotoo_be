@@ -55,7 +55,8 @@ public class Member extends BaseTimeEntity {
 
     public Member updateInfo(MemberUpdateDto memberUpdateDto) {
         this.address = memberUpdateDto.getAddress();
-        this.role = (memberUpdateDto.getRole() ? Role.TRAINER : Role.USER);
+        //기존에는 역할 바꾸기가 가능했지만 회의 결과 바꾸면 안되는결로 변경(오직 회원가입할때만 입력 가능)
+        //this.role = (memberUpdateDto.getRole() ? Role.TRAINER : Role.USER);
         return this;
     }
 
