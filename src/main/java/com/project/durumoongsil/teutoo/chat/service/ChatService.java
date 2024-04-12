@@ -65,7 +65,6 @@ public class ChatService {
             Collections.reverse(chatMsgList);
         }
 
-
         ChatInfo chatInfo = this.getChatInfo(chat, sender.getId(), receiver.getId());
 
         ImgResDto receiverImgResDto = new ImgResDto(receiver.getProfileImageName(),
@@ -77,6 +76,7 @@ public class ChatService {
                 .receiverIdx(chatInfo.getReceiverChatIdx())
                 .messages(chatMsgList)
                 .receiverImg(receiverImgResDto)
+                .receiverName(receiver.getName())
                 .build();
     }
 

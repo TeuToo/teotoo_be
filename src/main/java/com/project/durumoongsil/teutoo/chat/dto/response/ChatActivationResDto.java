@@ -21,4 +21,6 @@ public class ChatActivationResDto {
     private List<ChatMsgResDTO> messages;
     @Schema(description = "상대방의 프로필 사진 정보")
     private ImgResDto receiverImg;
+    @Schema(description = "상대방의 이름")
+    private String receiverName;
 }
