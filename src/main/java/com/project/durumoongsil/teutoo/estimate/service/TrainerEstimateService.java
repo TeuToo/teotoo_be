@@ -7,6 +7,7 @@ import com.project.durumoongsil.teutoo.estimate.dto.trainer.CreateTrainerEstimat
 import com.project.durumoongsil.teutoo.estimate.dto.trainer.UpdateTrainerEstimateDto;
 import com.project.durumoongsil.teutoo.estimate.repository.EstimateRepository;
 import com.project.durumoongsil.teutoo.estimate.repository.TrainerEstimateRepository;
+import com.project.durumoongsil.teutoo.exception.DuplicateEstimateException;
 import com.project.durumoongsil.teutoo.exception.NotFoundUserException;
 import com.project.durumoongsil.teutoo.exception.UnauthorizedActionException;
 import com.project.durumoongsil.teutoo.member.domain.Member;
@@ -56,6 +57,7 @@ public class TrainerEstimateService {
      */
     public void createTrainerEstimate(CreateTrainerEstimateDto createEstimateDto) {
         PtProgram ptProgram = getPtProgram(createEstimateDto.getProgramId());
+        isEstimateAvailable(ptProgram.getTrainerInfo().getMember());
         TrainerEstimate trainerEstimate = TrainerEstimate
                 .builder()
                 .price(createEstimateDto.getPrice())
@@ -118,5 +120,11 @@ public class TrainerEstimateService {
             throw new UnauthorizedActionException("권한이 없습니다");
         }
         return trainerEstimate;
+    }
+
+    private void isEstimateAvailable(Member member) {
+        if (trainerEstimateRepository.countTrainerEstimateByMember(member) > 0) {
+            throw new DuplicateEstimateException("이미 작성한 견적서가 있습니다.");
+        }
     }
 }

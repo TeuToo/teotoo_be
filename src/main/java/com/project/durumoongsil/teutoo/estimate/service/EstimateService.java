@@ -6,15 +6,12 @@ import com.project.durumoongsil.teutoo.estimate.domain.TrainerEstimate;
 import com.project.durumoongsil.teutoo.estimate.dto.user.CreateEstimateDto;
 import com.project.durumoongsil.teutoo.estimate.dto.user.UpdateEstimateDto;
 import com.project.durumoongsil.teutoo.estimate.repository.EstimateRepository;
-import com.project.durumoongsil.teutoo.estimate.repository.TrainerEstimateRepository;
 import com.project.durumoongsil.teutoo.exception.DuplicateEstimateException;
 import com.project.durumoongsil.teutoo.exception.UnauthorizedActionException;
 import com.project.durumoongsil.teutoo.member.domain.Member;
 import com.project.durumoongsil.teutoo.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,7 +47,7 @@ public class EstimateService {
      */
     public void createEstimate(CreateEstimateDto createEstimateDto, String loginUserEmail) {
         Member member = getMember(loginUserEmail);
-//        isEstimateAvailable(member);
+        isEstimateAvailable(member);
         estimateRepository.save(createEstimateEntity(createEstimateDto, member));
     }
 
@@ -101,5 +98,11 @@ public class EstimateService {
     private Member getMember(String loginUserEmail) {
         log.info("loinEmail ={}", loginUserEmail);
         return memberRepository.findMemberByEmail(loginUserEmail).get();
+    }
+
+    private void isEstimateAvailable(Member member) {
+        if (estimateRepository.countEstimateByMember(member) > 0) {
+            throw new DuplicateEstimateException("이미 작성한 견적서가 있습니다.");
+        }
     }
 }
