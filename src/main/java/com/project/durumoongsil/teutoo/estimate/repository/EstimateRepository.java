@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface EstimateRepository extends JpaRepository<Estimate, Long>, EstimateQueryRepository {
+    int countEstimateByMember(Member member);
 }
